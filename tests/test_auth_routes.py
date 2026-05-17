@@ -1,5 +1,6 @@
 import json
 
+import aiograpi.exceptions as aiograpi_exceptions
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -153,6 +154,48 @@ async def test_login_2fa_fallback_invokes_input_patch(fake_storage):
 
     assert response.status_code == 200
     assert captured["called"] == ("u", "p")
+
+
+@pytest.mark.asyncio
+async def test_login_two_factor_required_returns_actionable_401(fake_storage):
+    async def two_factor_required(username, password, verification_code=""):
+        fake_storage.created.calls.append(("login", username, password, verification_code))
+        raise aiograpi_exceptions.TwoFactorRequired(
+            "Two-factor authentication required (you did not provide verification_code for login method)"
+        )
+
+    fake_storage.created.login = two_factor_required
+    transport = ASGITransport(app=app, raise_app_exceptions=False)
+
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.post("/auth/login", data={"username": "u", "password": "p"})
+
+    assert response.status_code == 401
+    assert response.json()["exc_type"] == "TwoFactorRequired"
+    assert "verification_code" in response.json()["detail"]
+    assert response.json()["hint"] == "Retry POST /auth/login with verification_code."
+    assert fake_storage.saved == []
+
+
+@pytest.mark.asyncio
+async def test_login_challenge_required_returns_actionable_403(fake_storage):
+    async def challenge_required(username, password, verification_code=""):
+        fake_storage.created.calls.append(("login", username, password, verification_code))
+        raise aiograpi_exceptions.ChallengeRequired("challenge_required")
+
+    fake_storage.created.login = challenge_required
+    transport = ASGITransport(app=app, raise_app_exceptions=False)
+
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.post("/auth/login", data={"username": "u", "password": "p", "verification_code": "123456"})
+
+    assert response.status_code == 403
+    assert response.json() == {
+        "detail": "challenge_required",
+        "exc_type": "ChallengeRequired",
+        "hint": "Resolve the Instagram challenge, then retry login or import a saved session.",
+    }
+    assert fake_storage.saved == []
 
 
 @pytest.mark.asyncio

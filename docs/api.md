@@ -15,6 +15,15 @@ Session-creation routes:
 Session-aware routes still accept legacy `sessionid` values from query
 parameters, form data, or a `sessionid` cookie for backwards compatibility.
 
+### Two-Factor Login
+
+If `POST /auth/login` returns `TwoFactorRequired`, retry the same endpoint with
+the same `username` and `password` plus `verification_code`.
+
+If it returns `ChallengeRequired`, resolve the Instagram challenge in the
+account/session context first, then retry login or import a known-good saved
+session through `PATCH /auth/settings`.
+
 ## Route Conventions
 
 - `GET` routes read or download data.

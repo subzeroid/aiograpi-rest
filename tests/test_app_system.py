@@ -518,6 +518,19 @@ async def test_exception_handler_wraps_errors_in_envelope(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_auth_login_openapi_describes_verification_code():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/openapi.json")
+
+    assert response.status_code == 200
+    schemas = response.json()["components"]["schemas"]
+    login_schema = schemas["AuthLoginRequest"]
+    verification_code = login_schema["properties"]["verification_code"]
+    assert "Two-factor" in verification_code["description"]
+    assert "POST /auth/login" in verification_code["description"]
+
+
+@pytest.mark.asyncio
 async def test_authorized_routes_accept_sessionid_header(monkeypatch):
     from dependencies import get_clients
 

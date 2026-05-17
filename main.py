@@ -9,6 +9,7 @@ from importlib.metadata import version as package_version
 from pathlib import Path
 from typing import Any
 
+from aiograpi import exceptions as aiograpi_exceptions
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from fastapi.routing import APIRoute
@@ -478,10 +479,18 @@ async def version():
 
 @app.exception_handler(Exception)
 async def handle_exception(request, exc: Exception):
-    return JSONResponse({
+    body = {
         "detail": str(exc),
-        "exc_type": str(type(exc).__name__)
-    }, status_code=500)
+        "exc_type": str(type(exc).__name__),
+    }
+    status_code = 500
+    if isinstance(exc, aiograpi_exceptions.TwoFactorRequired):
+        status_code = 401
+        body["hint"] = "Retry POST /auth/login with verification_code."
+    elif isinstance(exc, aiograpi_exceptions.ChallengeRequired):
+        status_code = 403
+        body["hint"] = "Resolve the Instagram challenge, then retry login or import a saved session."
+    return JSONResponse(body, status_code=status_code)
 
 
 def custom_openapi():

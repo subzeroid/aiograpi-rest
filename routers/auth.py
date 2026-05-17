@@ -16,7 +16,14 @@ router = APIRouter(
 @router.post("/login")
 async def auth_login(username: str = Form(...),
                      password: str = Form(...),
-                     verification_code: Optional[str] = Form(""),
+                     verification_code: Optional[str] = Form(
+                         "",
+                         description=(
+                             "Two-factor authentication code from SMS, email, or TOTP. "
+                             "When Instagram returns TwoFactorRequired, retry POST /auth/login "
+                             "with the same username and password plus this value."
+                         ),
+                     ),
                      proxy: Optional[str] = Form(""),
                      locale: Optional[str] = Form(""),
                      timezone: Optional[str] = Form(""),
