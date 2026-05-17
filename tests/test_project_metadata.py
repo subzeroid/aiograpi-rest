@@ -204,6 +204,7 @@ def test_live_tests_workflow_runs_nightly_against_real_session_flow():
     assert job["timeout-minutes"] == "30"
     assert job["env"]["TEST_ACCOUNTS_URL"] == "${{ secrets.TEST_ACCOUNTS_URL }}"
     assert job["env"]["TEST_ACCOUNTS_COUNT"] == "25"
+    assert job["env"]["LIVE_ACCOUNT_TIMEOUT"] == "90"
     assert job["env"]["LIVE_API_BASE_URL"] == "http://127.0.0.1:8000"
 
     steps = job["steps"]

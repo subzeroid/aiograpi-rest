@@ -140,7 +140,8 @@ def test_live_http_login_authorize_and_user_about_flow():
                 f"/user/about?user_id={user['pk']}",
                 headers=headers,
             )
-            assert about["username"]
+            assert "is_verified" in about
+            assert isinstance(about["former_usernames"], str)
             return
         except Exception as exc:
             errors.append(f"{account.get('username', '?')}: {type(exc).__name__}: {exc}")
