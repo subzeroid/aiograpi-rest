@@ -511,8 +511,8 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <h2 id="summary">Summary</h2>
 <ul>
 <li>Public <code>aiograpi.Client</code> methods: <strong>500</strong></li>
-<li>Methods reached by REST routes: <strong>125</strong></li>
-<li>Methods not exposed as REST routes: <strong>375</strong></li>
+<li>Methods reached by REST routes: <strong>124</strong></li>
+<li>Methods not exposed as REST routes: <strong>376</strong></li>
 </ul>
 <h2 id="coverage-by-area">Coverage By Area</h2>
 <table>
@@ -621,7 +621,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>media</code></td>
-<td style="text-align: right;">20</td>
+<td style="text-align: right;">19</td>
 <td style="text-align: right;">59</td>
 </tr>
 <tr>
@@ -1008,10 +1008,6 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>GET /media/user/medias</code></td>
-<td><code>user_medias</code></td>
-</tr>
-<tr>
-<td><code>GET /media/user/medias/paginated</code></td>
 <td><code>user_medias_paginated</code></td>
 </tr>
 <tr>
@@ -3451,7 +3447,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_medias(self, user_id: int, amount: int = 0, sleep: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
-<td><code>GET /media/user/medias</code></td>
+<td>-</td>
 </tr>
 <tr>
 <td><code>user_medias_chunk(self, user_id: int, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
@@ -3476,7 +3472,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
-<td><code>GET /media/user/medias/paginated</code></td>
+<td><code>GET /media/user/medias</code></td>
 </tr>
 <tr>
 <td><code>user_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
