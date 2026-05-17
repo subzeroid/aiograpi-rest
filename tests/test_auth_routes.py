@@ -16,6 +16,7 @@ class FakeClient:
         self.timezone = None
         self.settings = {"authorization_data": {"sessionid": "sid"}}
         self.calls = []
+        self.challenge_code_handler = self._challenge_code_handler
 
     def set_proxy(self, proxy):
         self.proxy = proxy
@@ -50,6 +51,26 @@ class FakeClient:
 
     async def get_timeline_feed(self):
         return {"feed": []}
+
+    async def _challenge_code_handler(self, username, choice=None, **kwargs):
+        self.calls.append(("challenge_code_handler", username, choice, kwargs))
+        return None
+
+    async def challenge_resolve(self, last_json):
+        code = await self.challenge_code_handler(
+            "u",
+            "email",
+            challenge_url=last_json["challenge"]["api_path"],
+            sessionid=self.sessionid,
+        )
+        self.calls.append(("challenge_resolve", last_json, code))
+        if not code:
+            raise aiograpi_exceptions.ChallengeRequired(
+                "Challenge code required. Provide it via challenge_code_handler "
+                "or retry login after saving client settings.",
+                challenge=last_json["challenge"],
+            )
+        return True
 
 
 class FakeStorage:
@@ -333,6 +354,48 @@ async def test_settings_set_requires_a_change_for_existing_session(fake_storage)
     assert response.status_code == 422
     assert response.json()["detail"] == "settings, proxy, locale, or timezone is required"
     assert fake_storage.saved == []
+
+
+@pytest.mark.asyncio
+async def test_challenge_resolve_uses_security_code_without_stdin(fake_storage):
+    original_handler = fake_storage.created.challenge_code_handler
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/auth/challenge/resolve",
+            data={
+                "sessionid": "sid",
+                "last_json": json.dumps({"challenge": {"api_path": "/challenge/1/nonce/"}}),
+                "security_code": "123456",
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.json() is True
+    assert (
+        "challenge_resolve",
+        {"challenge": {"api_path": "/challenge/1/nonce/"}},
+        "123456",
+    ) in fake_storage.created.calls
+    assert fake_storage.created.challenge_code_handler is original_handler
+
+
+@pytest.mark.asyncio
+async def test_challenge_resolve_without_security_code_returns_actionable_403(fake_storage):
+    transport = ASGITransport(app=app, raise_app_exceptions=False)
+
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.post(
+            "/auth/challenge/resolve",
+            data={
+                "sessionid": "sid",
+                "last_json": json.dumps({"challenge": {"api_path": "/challenge/1/nonce/"}}),
+            },
+        )
+
+    assert response.status_code == 403
+    assert response.json()["exc_type"] == "ChallengeRequired"
+    assert response.json()["hint"] == "Retry POST /auth/challenge/resolve with last_json and security_code."
 
 
 @pytest.mark.asyncio

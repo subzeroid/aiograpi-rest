@@ -39,6 +39,12 @@ If it returns `ChallengeRequired`, resolve the Instagram challenge in the
 account/session context first, then retry login or import a known-good saved
 session through `PATCH /auth/settings`.
 
+If the challenge asks for an SMS or email code, call
+`POST /auth/challenge/resolve` with the same `last_json` challenge payload and
+the `security_code` from Instagram. The service injects that code into
+`aiograpi` for one request and restores the default handler afterwards, so the
+server never waits for stdin.
+
 If Instagram says the username does not belong to an account, the API returns
 HTTP 401 with a hint to check the username and retry `POST /auth/login`.
 

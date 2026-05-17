@@ -489,7 +489,10 @@ async def handle_exception(request, exc: Exception):
         body["hint"] = "Retry POST /auth/login with verification_code."
     elif isinstance(exc, aiograpi_exceptions.ChallengeRequired):
         status_code = 403
-        body["hint"] = "Resolve the Instagram challenge, then retry login or import a saved session."
+        if "Challenge code required" in str(exc):
+            body["hint"] = "Retry POST /auth/challenge/resolve with last_json and security_code."
+        else:
+            body["hint"] = "Resolve the Instagram challenge, then retry login or import a saved session."
     elif isinstance(
         exc,
         (

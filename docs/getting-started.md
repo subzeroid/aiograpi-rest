@@ -62,6 +62,16 @@ curl "http://localhost:8000/user/about?user_id=25025320" \
   -H "X-Session-ID: $SESSIONID"
 ```
 
+If Instagram asks for an SMS or email checkpoint code, resolve it without
+interactive stdin:
+
+```bash
+curl -fsS -X POST http://localhost:8000/auth/challenge/resolve \
+  -H "X-Session-ID: $SESSIONID" \
+  --data-urlencode 'last_json={"challenge":{"api_path":"/challenge/<USER_ID>/<NONCE>/"}}' \
+  -d "security_code=<SMS_OR_EMAIL_CODE>"
+```
+
 Older clients may still pass `sessionid` in query parameters or form data, but
 new integrations should use `X-Session-ID`.
 

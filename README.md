@@ -268,6 +268,22 @@ curl -X 'POST' \
   -d 'username=<USERNAME>&password=<PASSWORD>&verification_code=<2FA CODE>'
 ```
 
+### Resolve a checkpoint challenge
+
+When Instagram asks for an SMS or email checkpoint code, send the challenge
+payload and code to the resolver. The service passes the code to `aiograpi`
+without waiting for server stdin.
+
+```
+curl -X 'POST' \
+  'http://localhost:8000/auth/challenge/resolve' \
+  -H 'accept: application/json' \
+  -H 'X-Session-ID: <SESSIONID>' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'last_json={"challenge":{"api_path":"/challenge/<USER_ID>/<NONCE>/"}}' \
+  -d 'security_code=<SMS_OR_EMAIL_CODE>'
+```
+
 ### Upload photo
 
 ```

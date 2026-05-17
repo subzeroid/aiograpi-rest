@@ -165,6 +165,13 @@ async def totp_disable(sessionid: str = Depends(get_sessionid),
 
 @router.post("/challenge/resolve", response_model=bool)
 async def challenge_resolve(last_json: str = Form(...),
+                            security_code: Optional[str] = Form(
+                                None,
+                                description=(
+                                    "Security code from Instagram SMS or email challenge. "
+                                    "Send this after ChallengeRequired asks for a challenge code."
+                                ),
+                            ),
                             sessionid: str = Depends(get_sessionid),
                             clients: ClientStorage = Depends(get_clients)) -> bool:
     """Resolve an Instagram login challenge
@@ -174,4 +181,15 @@ async def challenge_resolve(last_json: str = Form(...),
     except json.JSONDecodeError:
         raise HTTPException(status_code=422, detail="last_json must be valid JSON")
     cl = await clients.get(sessionid)
-    return await cl.challenge_resolve(payload)
+    original_handler = getattr(cl, "challenge_code_handler", None)
+    if original_handler is None:
+        return await cl.challenge_resolve(payload)
+
+    async def challenge_code_handler(username: str, choice=None, **kwargs):
+        return security_code or None
+
+    cl.challenge_code_handler = challenge_code_handler
+    try:
+        return await cl.challenge_resolve(payload)
+    finally:
+        cl.challenge_code_handler = original_handler
