@@ -636,6 +636,11 @@ the same <code>username</code> and <code>password</code> plus <code>verification
 <p>If it returns <code>ChallengeRequired</code>, resolve the Instagram challenge in the
 account/session context first, then retry login or import a known-good saved
 session through <code>PATCH /auth/settings</code>.</p>
+<p>If the challenge asks for an SMS or email code, call
+<code>POST /auth/challenge/resolve</code> with the same <code>last_json</code> challenge payload and
+the <code>security_code</code> from Instagram. The service injects that code into
+<code>aiograpi</code> for one request and restores the default handler afterwards, so the
+server never waits for stdin.</p>
 <p>If Instagram says the username does not belong to an account, the API returns
 HTTP 401 with a hint to check the username and retry <code>POST /auth/login</code>.</p>
 <p>If Instagram returns <code>FeedbackRequired</code>, <code>PleaseWaitFewMinutes</code>, or

@@ -544,6 +544,13 @@ HTTP calls, send it as <code>X-Session-ID</code>:</p>
 curl<span class="w"> </span><span class="s2">&quot;http://localhost:8000/user/about?user_id=25025320&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;X-Session-ID: </span><span class="nv">$SESSIONID</span><span class="s2">&quot;</span>
 </code></pre></div>
+<p>If Instagram asks for an SMS or email checkpoint code, resolve it without
+interactive stdin:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-fsS<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/auth/challenge/resolve<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;X-Session-ID: </span><span class="nv">$SESSIONID</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s1">&#39;last_json={&quot;challenge&quot;:{&quot;api_path&quot;:&quot;/challenge/&lt;USER_ID&gt;/&lt;NONCE&gt;/&quot;}}&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;security_code=&lt;SMS_OR_EMAIL_CODE&gt;&quot;</span>
+</code></pre></div>
 <p>Older clients may still pass <code>sessionid</code> in query parameters or form data, but
 new integrations should use <code>X-Session-ID</code>.</p>
 <h2 id="check-the-service">Check The Service</h2>
