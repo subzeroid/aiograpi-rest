@@ -309,10 +309,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#run-with-docker-compose" class="md-nav__link">
+  <a href="#run-with-docker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Run With Docker Compose
+        Run With Docker
       
     </span>
   </a>
@@ -441,10 +441,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#run-with-docker-compose" class="md-nav__link">
+  <a href="#run-with-docker" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Run With Docker Compose
+        Run With Docker
       
     </span>
   </a>
@@ -505,10 +505,13 @@
 
 
 <h1 id="getting-started">Getting Started</h1>
-<h2 id="run-with-docker-compose">Run With Docker Compose</h2>
-<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>api
+<h2 id="run-with-docker">Run With Docker</h2>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>subzeroid/aiograpi-rest
 </code></pre></div>
 <p>Open <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> for Swagger UI.</p>
+<p>For local development from a checkout:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>api
+</code></pre></div>
 <h2 id="run-locally">Run Locally</h2>
 <div class="highlight"><pre><span></span><code>python3.13<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
 .<span class="w"> </span>.venv/bin/activate
@@ -517,14 +520,19 @@ python3.13<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> 
 uvicorn<span class="w"> </span>main:app<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span><span class="w"> </span>--reload
 </code></pre></div>
 <h2 id="create-a-session">Create A Session</h2>
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/auth/login<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code><span class="nv">SESSIONID</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-fsS<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/auth/login<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/x-www-form-urlencoded&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;username=&lt;USERNAME&gt;&amp;password=&lt;PASSWORD&gt;&quot;</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;username=&lt;USERNAME&gt;&amp;password=&lt;PASSWORD&gt;&quot;</span><span class="k">)</span>
 </code></pre></div>
-<p>The response is the session ID. In Swagger UI, click <strong>Authorize</strong> and paste it
-once. For direct HTTP calls, send it as <code>X-Session-ID</code>:</p>
+<p>The response is the session ID. If you already have an Instagram <code>sessionid</code>
+cookie, use <code>POST /auth/login/by/sessionid</code> instead.</p>
+<p>In Swagger UI, click <strong>Authorize</strong> and paste the session id once. For direct
+HTTP calls, send it as <code>X-Session-ID</code>:</p>
 <div class="highlight"><pre><span></span><code>curl<span class="w"> </span><span class="s2">&quot;http://localhost:8000/user/info/by/username?username=instagram&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;X-Session-ID: &lt;SESSIONID&gt;&quot;</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;X-Session-ID: </span><span class="nv">$SESSIONID</span><span class="s2">&quot;</span>
+
+curl<span class="w"> </span><span class="s2">&quot;http://localhost:8000/user/about?user_id=25025320&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;X-Session-ID: </span><span class="nv">$SESSIONID</span><span class="s2">&quot;</span>
 </code></pre></div>
 <p>Older clients may still pass <code>sessionid</code> in query parameters or form data, but
 new integrations should use <code>X-Session-ID</code>.</p>
