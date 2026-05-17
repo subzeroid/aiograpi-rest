@@ -344,6 +344,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#two-factor-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two-Factor Login
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -460,6 +477,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#two-factor-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two-Factor Login
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -539,6 +573,12 @@ Swagger UI exposes this through the green <strong>Authorize</strong> button.</p>
 </ul>
 <p>Session-aware routes still accept legacy <code>sessionid</code> values from query
 parameters, form data, or a <code>sessionid</code> cookie for backwards compatibility.</p>
+<h3 id="two-factor-login">Two-Factor Login</h3>
+<p>If <code>POST /auth/login</code> returns <code>TwoFactorRequired</code>, retry the same endpoint with
+the same <code>username</code> and <code>password</code> plus <code>verification_code</code>.</p>
+<p>If it returns <code>ChallengeRequired</code>, resolve the Instagram challenge in the
+account/session context first, then retry login or import a known-good saved
+session through <code>PATCH /auth/settings</code>.</p>
 <h2 id="route-conventions">Route Conventions</h2>
 <ul>
 <li><code>GET</code> routes read or download data.</li>
