@@ -3,6 +3,7 @@ from typing import Dict, List, Optional
 from aiograpi import Client
 from aiograpi.types import Comment, Location, Media, UserShort, Usertag
 from fastapi import APIRouter, Depends, Form, Query
+from pydantic import BaseModel
 
 from dependencies import ClientStorage, get_clients, get_sessionid
 
@@ -11,6 +12,11 @@ router = APIRouter(
     tags=["Media"],
     responses={404: {"description": "Not found"}}
 )
+
+
+class MediaPage(BaseModel):
+    items: List[Media]
+    end_cursor: str
 
 
 @router.get("/id")
@@ -61,6 +67,19 @@ async def user_medias(sessionid: str = Depends(get_sessionid),
     """
     cl = await clients.get(sessionid)
     return await cl.user_medias(user_id, amount)
+
+
+@router.get("/user/medias/paginated", response_model=MediaPage)
+async def user_medias_paginated(sessionid: str = Depends(get_sessionid),
+                                user_id: str = Query(...),
+                                amount: Optional[int] = Query(50),
+                                end_cursor: Optional[str] = Query(""),
+                                clients: ClientStorage = Depends(get_clients)) -> MediaPage:
+    """Get a user's media page with the next pagination cursor
+    """
+    cl = await clients.get(sessionid)
+    items, next_cursor = await cl.user_medias_paginated(user_id, amount, end_cursor or "")
+    return MediaPage(items=items, end_cursor=next_cursor or "")
 
 
 @router.get("/usertag/medias", response_model=List[Media])

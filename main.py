@@ -123,6 +123,7 @@ OPERATION_SUMMARIES = {
     "getMediaPkFromUrl": "Get media PK from URL",
     "getMediaInfo": "Get media details",
     "getMediaUserMedias": "List user media",
+    "getMediaUserMediasPaginated": "List paginated user media",
     "getMediaUsertagMedias": "List media where a user is tagged",
     "deleteMedia": "Delete media",
     "patchMedia": "Edit media caption",

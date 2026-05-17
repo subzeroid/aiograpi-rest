@@ -9,8 +9,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 ## Summary
 
 - Public `aiograpi.Client` methods: **500**
-- Methods reached by REST routes: **124**
-- Methods not exposed as REST routes: **376**
+- Methods reached by REST routes: **125**
+- Methods not exposed as REST routes: **375**
 
 ## Coverage By Area
 
@@ -35,7 +35,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `igtv` | 3 | 4 |
 | `insights` | 3 | 3 |
 | `location` | 5 | 20 |
-| `media` | 19 | 59 |
+| `media` | 20 | 59 |
 | `multiple_accounts` | 0 | 2 |
 | `note` | 3 | 8 |
 | `notification` | 1 | 27 |
@@ -131,6 +131,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `PATCH /media/seen` | `media_seen` |
 | `GET /media/user` | `media_user` |
 | `GET /media/user/medias` | `user_medias` |
+| `GET /media/user/medias/paginated` | `user_medias_paginated` |
 | `GET /media/usertag/medias` | `usertag_medias` |
 | `DELETE /note` | `delete_note` |
 | `POST /note` | `create_note` |
@@ -635,7 +636,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `user_medias_chunk_gql(self, user_id: int, sleep: int = 2, end_cursor=None, amount: int = 0) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
 | `user_medias_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
 | `user_medias_gql(self, user_id: int, amount: int = 0, sleep: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
+| `user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /media/user/medias/paginated` |
 | `user_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
 | `user_medias_paginated_v1(self, user_id: str, amount: int = 33, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
 | `user_medias_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
