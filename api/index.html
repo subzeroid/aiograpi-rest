@@ -601,6 +601,8 @@ the same <code>username</code> and <code>password</code> plus <code>verification
 <p>If it returns <code>ChallengeRequired</code>, resolve the Instagram challenge in the
 account/session context first, then retry login or import a known-good saved
 session through <code>PATCH /auth/settings</code>.</p>
+<p>If Instagram says the username does not belong to an account, the API returns
+HTTP 401 with a hint to check the username and retry <code>POST /auth/login</code>.</p>
 <h2 id="route-conventions">Route Conventions</h2>
 <ul>
 <li><code>GET</code> routes read or download data.</li>
