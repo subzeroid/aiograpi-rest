@@ -674,7 +674,10 @@ request.</p>
 <h2 id="form-json-fields">Form JSON Fields</h2>
 <p>Story upload decoration fields such as <code>mentions</code>, <code>locations</code>, <code>links</code>,
 <code>hashtags</code>, and <code>stickers</code> are form fields. Repeat the field with one
-JSON-encoded object per value, or pass a single JSON array of objects.</p>
+JSON-encoded object per value, or pass a single JSON array of objects.
+For mentions, locations, and hashtags, omitted <code>x</code>, <code>y</code>, <code>width</code>, <code>height</code>, or
+<code>rotation</code> values default to a centered story position before the request is
+sent to <code>aiograpi</code>.</p>
 <h2 id="system-endpoints">System Endpoints</h2>
 <ul>
 <li><code>GET /health</code> returns <code>{"status":"ok"}</code> for liveness.</li>

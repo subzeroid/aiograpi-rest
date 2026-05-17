@@ -1092,11 +1092,11 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>POST /story/upload</code></td>
-<td><code>photo_upload_to_story</code>, <code>video_upload_to_story</code></td>
+<td><code>photo_upload_to_story</code>, <code>user_stories</code>, <code>video_upload_to_story</code></td>
 </tr>
 <tr>
 <td><code>POST /story/upload/by/url</code></td>
-<td><code>photo_upload_to_story</code>, <code>video_upload_to_story</code></td>
+<td><code>photo_upload_to_story</code>, <code>user_stories</code>, <code>video_upload_to_story</code></td>
 </tr>
 <tr>
 <td><code>GET /story/user/stories</code></td>
@@ -3512,7 +3512,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_stories(self, user_id: str, amount: int = None) -&gt; List[aiograpi.types.Story]</code></td>
 <td><code>story</code></td>
-<td><code>GET /story/user/stories</code></td>
+<td><code>POST /story/upload</code><br><code>POST /story/upload/by/url</code><br><code>GET /story/user/stories</code></td>
 </tr>
 <tr>
 <td><code>user_stories_gql(self, user_id: str, amount: int = None) -&gt; List[aiograpi.types.Story]</code></td>
