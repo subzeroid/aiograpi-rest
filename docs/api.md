@@ -86,6 +86,9 @@ request.
 Story upload decoration fields such as `mentions`, `locations`, `links`,
 `hashtags`, and `stickers` are form fields. Repeat the field with one
 JSON-encoded object per value, or pass a single JSON array of objects.
+For mentions, locations, and hashtags, omitted `x`, `y`, `width`, `height`, or
+`rotation` values default to a centered story position before the request is
+sent to `aiograpi`.
 
 ## System Endpoints
 

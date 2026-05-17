@@ -93,7 +93,9 @@ curl "http://localhost:8000/user/followers?user_id=25025320&amount=50" \
 ```
 
 Story upload decoration fields are form fields. For mentions, pass JSON as a
-form value:
+form value. If `x`, `y`, `width`, `height`, or `rotation` are omitted for a
+mention, location, or hashtag, the service applies a centered default position
+before calling `aiograpi`:
 
 ```bash
 curl -X POST "http://localhost:8000/story/upload/by/url" \
@@ -392,7 +394,10 @@ TEST_ACCOUNTS_URL="https://example.com/accounts" python3.13 -m pytest tests/live
 GitHub Actions also has a scheduled **Live Tests** workflow that runs nightly
 and can be launched manually. It starts the Docker Compose API service, creates
 a real session from `TEST_ACCOUNTS_URL`, sends it through `X-Session-ID`, and
-checks `/user/about`.
+checks `/user/about`. The direct ASGI live smoke also uploads a real JPEG to
+`/story/upload`, verifies the created story through `/story/info` and
+`/story/user/stories`, downloads the media through `/story/download`, validates
+that it is an image, and deletes the story.
 
 Generate and validate docs:
 

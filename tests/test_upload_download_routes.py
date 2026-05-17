@@ -335,6 +335,53 @@ async def test_story_upload_by_url_accepts_json_mentions(storage, fake_requests)
 
 
 @pytest.mark.asyncio
+async def test_story_upload_defaults_missing_mention_geometry(storage):
+    mention = json.dumps({"user": {"pk": "42", "username": "u", "full_name": "Full"}})
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/story/upload",
+            data={"sessionid": "sid", "mentions": mention},
+            files={"file": ("a.jpg", b"img-bytes", "image/jpeg")},
+        )
+    assert response.status_code == 200
+    story_call = next(call for call in storage.client.calls if call[0] == "photo_upload_to_story")
+    mention_model = story_call[2]["mentions"][0]
+    assert mention_model.x == 0.5
+    assert mention_model.y == 0.5
+    assert mention_model.width == 0.5
+    assert mention_model.height == 0.2
+    assert mention_model.rotation == 0.0
+
+
+@pytest.mark.asyncio
+async def test_story_upload_keeps_explicit_mention_geometry(storage):
+    mention = json.dumps(
+        {
+            "user": {"pk": "42", "username": "u", "full_name": "Full"},
+            "x": 0.1,
+            "y": 0.2,
+            "width": 0.3,
+            "height": 0.4,
+            "rotation": 12.0,
+        }
+    )
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/story/upload",
+            data={"sessionid": "sid", "mentions": mention},
+            files={"file": ("a.jpg", b"img-bytes", "image/jpeg")},
+        )
+    assert response.status_code == 200
+    story_call = next(call for call in storage.client.calls if call[0] == "photo_upload_to_story")
+    mention_model = story_call[2]["mentions"][0]
+    assert mention_model.x == 0.1
+    assert mention_model.y == 0.2
+    assert mention_model.width == 0.3
+    assert mention_model.height == 0.4
+    assert mention_model.rotation == 12.0
+
+
+@pytest.mark.asyncio
 async def test_story_upload_by_url_rejects_invalid_json_mentions(storage, fake_requests):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.post(

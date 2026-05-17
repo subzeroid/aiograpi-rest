@@ -1,7 +1,10 @@
 import os
 import tempfile
 
+from aiograpi.exceptions import PhotoConfigureStoryError, VideoConfigureStoryError
 from aiograpi.story import StoryBuilder
+
+STORY_CONFIGURE_WITHOUT_MEDIA = "configure succeeded without media payload"
 
 
 def _write_temp_file(directory, content, suffix):
@@ -21,19 +24,40 @@ def _normalize_thumbnail(kwargs, directory):
     return kwargs
 
 
+async def _latest_story_after_configure_without_media(cl, exc):
+    if STORY_CONFIGURE_WITHOUT_MEDIA not in str(exc):
+        raise exc
+    user_id = getattr(cl, "user_id", None)
+    if not user_id:
+        raise exc
+    try:
+        stories = await cl.user_stories(user_id, amount=5)
+    except Exception:
+        raise exc
+    if not stories:
+        raise exc
+    return stories[0]
+
+
 async def photo_upload_story_as_video(cl, content, **kwargs):
     with tempfile.NamedTemporaryFile(suffix='.jpg') as fp:
         fp.write(content)
         mentions = kwargs.get('mentions') or []
         caption = kwargs.get('caption') or ''
         video = StoryBuilder(fp.name, caption, mentions).photo(15)
-        return await cl.video_upload_to_story(video.path, **kwargs)
+        try:
+            return await cl.video_upload_to_story(video.path, **kwargs)
+        except (PhotoConfigureStoryError, VideoConfigureStoryError) as exc:
+            return await _latest_story_after_configure_without_media(cl, exc)
 
 
 async def photo_upload_story_as_photo(cl, content, **kwargs):
     with tempfile.NamedTemporaryFile(suffix='.jpg') as fp:
         fp.write(content)
-        return await cl.photo_upload_to_story(fp.name, **kwargs)
+        try:
+            return await cl.photo_upload_to_story(fp.name, **kwargs)
+        except (PhotoConfigureStoryError, VideoConfigureStoryError) as exc:
+            return await _latest_story_after_configure_without_media(cl, exc)
 
 
 async def video_upload_story(cl, content, **kwargs):
@@ -42,7 +66,10 @@ async def video_upload_story(cl, content, **kwargs):
         mentions = kwargs.get('mentions') or []
         caption = kwargs.get('caption') or ''
         video = StoryBuilder(fp.name, caption, mentions).video(15)
-        return await cl.video_upload_to_story(video.path, **kwargs)
+        try:
+            return await cl.video_upload_to_story(video.path, **kwargs)
+        except (PhotoConfigureStoryError, VideoConfigureStoryError) as exc:
+            return await _latest_story_after_configure_without_media(cl, exc)
 
 
 async def photo_upload_post(cl, content, **kwargs):

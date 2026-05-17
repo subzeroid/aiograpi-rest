@@ -27,6 +27,14 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+STORY_POSITION_DEFAULTS = {
+    "x": 0.5,
+    "y": 0.5,
+    "width": 0.5,
+    "height": 0.2,
+    "rotation": 0.0,
+}
+
 
 def _url_points_to_video(url: AnyHttpUrl) -> bool:
     path = str(url).lower().split("?", 1)[0]
@@ -40,13 +48,25 @@ def _json_form_description(model_name: str) -> str:
     )
 
 
+def _with_story_position_defaults(item):
+    fields = item.__class__.model_fields
+    updates = {
+        field: default
+        for field, default in STORY_POSITION_DEFAULTS.items()
+        if field in fields and getattr(item, field) is None
+    }
+    if not updates:
+        return item
+    return item.model_copy(update=updates)
+
+
 def _parse_json_form_models(values, model, field_name: str):
     parsed = []
     for raw_value in values or []:
         try:
             payload = json.loads(raw_value)
             items = payload if isinstance(payload, list) else [payload]
-            parsed.extend(model.model_validate(item) for item in items)
+            parsed.extend(_with_story_position_defaults(model.model_validate(item)) for item in items)
         except (json.JSONDecodeError, TypeError, ValueError, ValidationError) as exc:
             raise HTTPException(
                 status_code=422,

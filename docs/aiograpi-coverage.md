@@ -151,8 +151,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `POST /story/like` | `story_like` |
 | `GET /story/pk/from/url` | `story_pk_from_url` |
 | `PATCH /story/seen` | `story_seen` |
-| `POST /story/upload` | `photo_upload_to_story`, `video_upload_to_story` |
-| `POST /story/upload/by/url` | `photo_upload_to_story`, `video_upload_to_story` |
+| `POST /story/upload` | `photo_upload_to_story`, `user_stories`, `video_upload_to_story` |
+| `POST /story/upload/by/url` | `photo_upload_to_story`, `user_stories`, `video_upload_to_story` |
 | `GET /story/user/stories` | `user_stories` |
 | `GET /story/viewers` | `story_viewers` |
 | `GET /user/about` | `user_about_v1` |
@@ -643,7 +643,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `user_related_profiles_gql(self, user_id: str) -> List[aiograpi.types.UserShort]` | `user` | - |
 | `user_remove_follower(self, user_id: str) -> bool` | `user` | `DELETE /user/follower` |
 | `user_short_gql(self, user_id: str) -> aiograpi.types.UserShort` | `user` | - |
-| `user_stories(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | `GET /story/user/stories` |
+| `user_stories(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | `POST /story/upload`<br>`POST /story/upload/by/url`<br>`GET /story/user/stories` |
 | `user_stories_gql(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | - |
 | `user_stories_v1(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | - |
 | `user_stream_by_id_flat(self, user_id: str) -> dict` | `user` | - |

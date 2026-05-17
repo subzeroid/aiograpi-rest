@@ -4,10 +4,12 @@ import os
 import ssl
 import urllib.request
 from contextlib import asynccontextmanager
+from io import BytesIO
 
 import pytest
 from aiograpi import Client
 from httpx import ASGITransport, AsyncClient
+from PIL import Image
 
 from dependencies import get_clients
 from main import app
@@ -79,6 +81,100 @@ async def try_settings_import_user_about(account, tmp_path):
         assert isinstance(rest_about["former_usernames"], str)
 
 
+def _story_jpeg_bytes():
+    image = Image.new("RGB", (720, 1280), (33, 92, 162))
+    output = BytesIO()
+    image.save(output, format="JPEG", quality=90)
+    return output.getvalue()
+
+
+def _assert_downloaded_image(content):
+    assert len(content) > 1024
+    image = Image.open(BytesIO(content))
+    assert image.width > 0
+    assert image.height > 0
+    image.verify()
+
+
+async def _import_session_from_account_settings(api, account):
+    settings = dict(account.get("client_settings") or account.get("settings") or {})
+    settings.pop("totp_seed", None)
+    if not settings:
+        raise AssertionError("account has no client settings")
+
+    settings_response = await api.patch(
+        "/auth/settings",
+        data={"settings": json.dumps(settings)},
+    )
+    assert settings_response.status_code == 200, settings_response.text
+    return settings_response.json()
+
+
+async def _wait_for_story(api, headers, user_id, story_pk):
+    for _ in range(12):
+        stories_response = await api.get(
+            "/story/user/stories",
+            params={"user_id": user_id},
+            headers=headers,
+        )
+        assert stories_response.status_code == 200, stories_response.text
+        stories = stories_response.json()
+        for story in stories:
+            if str(story["pk"]) == str(story_pk):
+                return story
+        await asyncio.sleep(5)
+    raise AssertionError(f"Uploaded story {story_pk} was not found in /story/user/stories")
+
+
+async def try_settings_import_story_upload_image(account, tmp_path):
+    async with rest_api_for_account(account, tmp_path) as api:
+        sessionid = await _import_session_from_account_settings(api, account)
+        headers = {"X-Session-ID": sessionid}
+
+        account_response = await api.get("/account/info", headers=headers)
+        assert account_response.status_code == 200, account_response.text
+        user_id = account_response.json()["pk"]
+
+        upload_response = await api.post(
+            "/story/upload",
+            data={"caption": "aiograpi-rest live story smoke"},
+            files={"file": ("aiograpi-rest-live.jpg", BytesIO(_story_jpeg_bytes()), "image/jpeg")},
+            headers=headers,
+        )
+        assert upload_response.status_code == 200, upload_response.text
+        uploaded_story = upload_response.json()
+        story_pk = uploaded_story["pk"]
+        assert uploaded_story["id"]
+        assert uploaded_story["media_type"] == 1
+
+        try:
+            story_info_response = await api.get(
+                "/story/info",
+                params={"story_pk": story_pk},
+                headers=headers,
+            )
+            assert story_info_response.status_code == 200, story_info_response.text
+            assert str(story_info_response.json()["pk"]) == str(story_pk)
+
+            listed_story = await _wait_for_story(api, headers, user_id, story_pk)
+            assert str(listed_story["pk"]) == str(story_pk)
+
+            download_response = await api.get(
+                "/story/download",
+                params={"story_pk": story_pk},
+                headers=headers,
+            )
+            assert download_response.status_code == 200, download_response.text
+            _assert_downloaded_image(download_response.content)
+        finally:
+            delete_response = await api.delete(
+                "/story",
+                params={"story_pk": story_pk},
+                headers=headers,
+            )
+            assert delete_response.status_code in {200, 404}, delete_response.text
+
+
 @pytest.mark.asyncio
 async def test_live_settings_import_user_about_and_rest_header_session(tmp_path):
     url = os.environ.get("TEST_ACCOUNTS_URL")
@@ -96,3 +192,23 @@ async def test_live_settings_import_user_about_and_rest_header_session(tmp_path)
             errors.append(f"{account.get('username', '?')}: {type(exc).__name__}: {exc}")
 
     pytest.fail("No live test account succeeded: " + " | ".join(errors[:5]))
+
+
+@pytest.mark.asyncio
+async def test_live_story_upload_creates_visible_downloadable_image_story(tmp_path):
+    url = os.environ.get("TEST_ACCOUNTS_URL")
+    if not url:
+        pytest.skip("TEST_ACCOUNTS_URL not configured")
+
+    count = int(os.environ.get("LIVE_STORY_ACCOUNTS_COUNT", "5"))
+    accounts = fetch_accounts(url, count=count)
+    timeout = int(os.environ.get("LIVE_STORY_TIMEOUT", "240"))
+    errors = []
+    for account in accounts:
+        try:
+            await asyncio.wait_for(try_settings_import_story_upload_image(account, tmp_path), timeout=timeout)
+            return
+        except Exception as exc:
+            errors.append(f"{account.get('username', '?')}: {type(exc).__name__}: {exc}")
+
+    pytest.fail("No live story upload account succeeded: " + " | ".join(errors[:5]))
