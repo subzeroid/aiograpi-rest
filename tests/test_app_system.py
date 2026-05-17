@@ -531,6 +531,18 @@ async def test_auth_login_openapi_describes_verification_code():
 
 
 @pytest.mark.asyncio
+async def test_story_upload_openapi_documents_json_encoded_form_mentions():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/openapi.json")
+
+    assert response.status_code == 200
+    schemas = response.json()["components"]["schemas"]
+    for schema_name in ("StoryUploadRequest", "StoryUploadByUrlRequest"):
+        mention_items = schemas[schema_name]["properties"]["mentions"]["anyOf"][0]["items"]
+        assert mention_items == {"type": "string"}
+
+
+@pytest.mark.asyncio
 async def test_authorized_routes_accept_sessionid_header(monkeypatch):
     from dependencies import get_clients
 

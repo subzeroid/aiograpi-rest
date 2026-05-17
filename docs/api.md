@@ -52,6 +52,12 @@ page.
 and `next_cursor`; pass the returned `next_cursor` as `cursor` on the next
 request.
 
+## Form JSON Fields
+
+Story upload decoration fields such as `mentions`, `locations`, `links`,
+`hashtags`, and `stickers` are form fields. Repeat the field with one
+JSON-encoded object per value, or pass a single JSON array of objects.
+
 ## System Endpoints
 
 - `GET /health` returns `{"status":"ok"}` for liveness.

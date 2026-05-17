@@ -84,6 +84,16 @@ curl "http://localhost:8000/user/followers?user_id=25025320&amount=50" \
   -H "X-Session-ID: $SESSIONID"
 ```
 
+Story upload decoration fields are form fields. For mentions, pass JSON as a
+form value:
+
+```bash
+curl -X POST "http://localhost:8000/story/upload/by/url" \
+  -H "X-Session-ID: $SESSIONID" \
+  -d "url=https://example.com/story.jpg" \
+  --data-urlencode 'mentions=[{"user":{"pk":"25025320"}}]'
+```
+
 Legacy `sessionid` query/form parameters are still accepted for existing
 clients, but new integrations should use `X-Session-ID`.
 

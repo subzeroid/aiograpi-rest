@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import List, Optional
 
@@ -13,9 +14,9 @@ from aiograpi.types import (
     StorySticker,
     Viewer,
 )
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
-from pydantic import AnyHttpUrl
+from pydantic import AnyHttpUrl, ValidationError
 
 from dependencies import ClientStorage, get_clients, get_sessionid
 from helpers import photo_upload_story_as_photo, photo_upload_story_as_video, video_upload_story
@@ -32,6 +33,28 @@ def _url_points_to_video(url: AnyHttpUrl) -> bool:
     return path.endswith((".mp4", ".mov", ".m4v"))
 
 
+def _json_form_description(model_name: str) -> str:
+    return (
+        f"Repeat this form field with a JSON-encoded {model_name} object, "
+        "or pass one JSON array of objects."
+    )
+
+
+def _parse_json_form_models(values, model, field_name: str):
+    parsed = []
+    for raw_value in values or []:
+        try:
+            payload = json.loads(raw_value)
+            items = payload if isinstance(payload, list) else [payload]
+            parsed.extend(model.model_validate(item) for item in items)
+        except (json.JSONDecodeError, TypeError, ValueError, ValidationError) as exc:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Invalid JSON object for form field '{field_name}'",
+            ) from exc
+    return parsed
+
+
 async def _upload_story_content(cl, content, *, is_video, as_video, **kwargs):
     if is_video:
         return await video_upload_story(cl, content, **kwargs)
@@ -45,11 +68,19 @@ async def story_upload(sessionid: str = Depends(get_sessionid),
                        file: UploadFile = File(...),
                        as_video: Optional[bool] = Form(False),
                        caption: Optional[str] = Form(""),
-                       mentions: Optional[List[StoryMention]] = Form([]),
-                       locations: Optional[List[StoryLocation]] = Form([]),
-                       links: Optional[List[StoryLink]] = Form([]),
-                       hashtags: Optional[List[StoryHashtag]] = Form([]),
-                       stickers: Optional[List[StorySticker]] = Form([]),
+                       mentions: Optional[List[str]] = Form(
+                           [], description=_json_form_description("StoryMention")
+                       ),
+                       locations: Optional[List[str]] = Form(
+                           [], description=_json_form_description("StoryLocation")
+                       ),
+                       links: Optional[List[str]] = Form([], description=_json_form_description("StoryLink")),
+                       hashtags: Optional[List[str]] = Form(
+                           [], description=_json_form_description("StoryHashtag")
+                       ),
+                       stickers: Optional[List[str]] = Form(
+                           [], description=_json_form_description("StorySticker")
+                       ),
                        clients: ClientStorage = Depends(get_clients)) -> Story:
     """Upload photo or video to story
     """
@@ -60,11 +91,11 @@ async def story_upload(sessionid: str = Depends(get_sessionid),
         is_video=(file.content_type or "").startswith("video/"),
         as_video=as_video,
         caption=caption,
-        mentions=mentions,
-        links=links,
-        hashtags=hashtags,
-        locations=locations,
-        stickers=stickers)
+        mentions=_parse_json_form_models(mentions, StoryMention, "mentions"),
+        links=_parse_json_form_models(links, StoryLink, "links"),
+        hashtags=_parse_json_form_models(hashtags, StoryHashtag, "hashtags"),
+        locations=_parse_json_form_models(locations, StoryLocation, "locations"),
+        stickers=_parse_json_form_models(stickers, StorySticker, "stickers"))
 
 
 @router.post("/upload/by/url", response_model=Story)
@@ -72,11 +103,19 @@ async def story_upload_by_url(sessionid: str = Depends(get_sessionid),
                               url: AnyHttpUrl = Form(...),
                               as_video: Optional[bool] = Form(False),
                               caption: Optional[str] = Form(""),
-                              mentions: Optional[List[StoryMention]] = Form([]),
-                              locations: Optional[List[StoryLocation]] = Form([]),
-                              links: Optional[List[StoryLink]] = Form([]),
-                              hashtags: Optional[List[StoryHashtag]] = Form([]),
-                              stickers: Optional[List[StorySticker]] = Form([]),
+                              mentions: Optional[List[str]] = Form(
+                                  [], description=_json_form_description("StoryMention")
+                              ),
+                              locations: Optional[List[str]] = Form(
+                                  [], description=_json_form_description("StoryLocation")
+                              ),
+                              links: Optional[List[str]] = Form([], description=_json_form_description("StoryLink")),
+                              hashtags: Optional[List[str]] = Form(
+                                  [], description=_json_form_description("StoryHashtag")
+                              ),
+                              stickers: Optional[List[str]] = Form(
+                                  [], description=_json_form_description("StorySticker")
+                              ),
                               clients: ClientStorage = Depends(get_clients)) -> Story:
     """Upload photo or video to story by URL
     """
@@ -87,11 +126,11 @@ async def story_upload_by_url(sessionid: str = Depends(get_sessionid),
         is_video=_url_points_to_video(url),
         as_video=as_video,
         caption=caption,
-        mentions=mentions,
-        links=links,
-        hashtags=hashtags,
-        locations=locations,
-        stickers=stickers)
+        mentions=_parse_json_form_models(mentions, StoryMention, "mentions"),
+        links=_parse_json_form_models(links, StoryLink, "links"),
+        hashtags=_parse_json_form_models(hashtags, StoryHashtag, "hashtags"),
+        locations=_parse_json_form_models(locations, StoryLocation, "locations"),
+        stickers=_parse_json_form_models(stickers, StorySticker, "stickers"))
 
 
 @router.get("/user/stories", response_model=List[Story])

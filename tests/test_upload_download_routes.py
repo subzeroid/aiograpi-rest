@@ -316,6 +316,39 @@ async def test_photo_upload_to_story_by_url_as_video(storage, fake_requests, fak
     assert any(call[0] == "video_upload_to_story" for call in storage.client.calls)
 
 
+@pytest.mark.asyncio
+async def test_story_upload_by_url_accepts_json_mentions(storage, fake_requests):
+    mention = json.dumps([{"user": {"pk": "42", "username": "u", "full_name": "Full"}}])
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/story/upload/by/url",
+            data={
+                "sessionid": "sid",
+                "url": "https://example.com/photo.jpg",
+                "mentions": mention,
+            },
+        )
+    assert response.status_code == 200
+    story_call = next(call for call in storage.client.calls if call[0] == "photo_upload_to_story")
+    mention_model = story_call[2]["mentions"][0]
+    assert mention_model.user.pk == "42"
+
+
+@pytest.mark.asyncio
+async def test_story_upload_by_url_rejects_invalid_json_mentions(storage, fake_requests):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/story/upload/by/url",
+            data={
+                "sessionid": "sid",
+                "url": "https://example.com/photo.jpg",
+                "mentions": "{bad-json",
+            },
+        )
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Invalid JSON object for form field 'mentions'"
+
+
 # Video routes
 @pytest.mark.asyncio
 async def test_video_download_returns_path_when_returnfile_false(storage):
