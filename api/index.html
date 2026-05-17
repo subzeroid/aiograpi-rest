@@ -600,6 +600,9 @@ be passed directly into OpenAPI client generators.</p>
 <p><code>GET /media/user/medias</code> returns an object with <code>items</code> and <code>end_cursor</code>; pass
 the returned <code>end_cursor</code> into the next request to continue from the previous
 page.</p>
+<p><code>GET /user/followers</code> and <code>GET /user/following</code> return an object with <code>items</code>
+and <code>next_cursor</code>; pass the returned <code>next_cursor</code> as <code>cursor</code> on the next
+request.</p>
 <h2 id="system-endpoints">System Endpoints</h2>
 <ul>
 <li><code>GET /health</code> returns <code>{"status":"ok"}</code> for liveness.</li>

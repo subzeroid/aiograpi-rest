@@ -1136,11 +1136,11 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>GET /user/followers</code></td>
-<td><code>user_followers</code></td>
+<td><code>user_followers_v1_chunk</code></td>
 </tr>
 <tr>
 <td><code>GET /user/following</code></td>
-<td><code>user_following</code></td>
+<td><code>user_following_v1_chunk</code></td>
 </tr>
 <tr>
 <td><code>GET /user/friendship</code></td>
@@ -3322,7 +3322,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_followers(self, user_id: str, amount: int = 0) -&gt; Dict[str, aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
-<td><code>GET /user/followers</code></td>
+<td>-</td>
 </tr>
 <tr>
 <td><code>user_followers_gql(self, user_id: str, amount: int = 0) -&gt; List[aiograpi.types.UserShort]</code></td>
@@ -3342,12 +3342,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_followers_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -&gt; Tuple[List[aiograpi.types.UserShort], str]</code></td>
 <td><code>user</code></td>
-<td>-</td>
+<td><code>GET /user/followers</code></td>
 </tr>
 <tr>
 <td><code>user_following(self, user_id: str, amount: int = 0) -&gt; Dict[str, aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
-<td><code>GET /user/following</code></td>
+<td>-</td>
 </tr>
 <tr>
 <td><code>user_following_gql(self, user_id: str, amount: int = 0) -&gt; List[aiograpi.types.UserShort]</code></td>
@@ -3367,7 +3367,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_following_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -&gt; Tuple[List[aiograpi.types.UserShort], str]</code></td>
 <td><code>user</code></td>
-<td>-</td>
+<td><code>GET /user/following</code></td>
 </tr>
 <tr>
 <td><code>user_friendship_v1(self, user_id: str) -&gt; aiograpi.types.Relationship</code></td>
