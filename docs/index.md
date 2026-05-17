@@ -10,7 +10,8 @@ boundary.
 
 ## What It Provides
 
-- Login, relogin, session import, and settings export/import.
+- Login, relogin, session import, settings export/import, and runtime proxy,
+  locale, and timezone updates.
 - Account profile, privacy, profile picture, and authenticated account info.
 - User profile, follower, following, follow, mute, block, search, friendship,
   follow request, highlight, and about endpoints.

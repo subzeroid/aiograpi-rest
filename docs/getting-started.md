@@ -35,6 +35,22 @@ SESSIONID=$(curl -fsS -X POST http://localhost:8000/auth/login \
 The response is the session ID. If you already have an Instagram `sessionid`
 cookie, use `POST /auth/login/by/sessionid` instead.
 
+To use a proxy from the start, pass it during login:
+
+```bash
+SESSIONID=$(curl -fsS -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=<USERNAME>&password=<PASSWORD>&proxy=http://user:pass@host:port")
+```
+
+To change runtime client options after login:
+
+```bash
+curl -fsS -X PATCH http://localhost:8000/auth/settings \
+  -H "X-Session-ID: $SESSIONID" \
+  -d "proxy=http://user:pass@new-host:port&locale=en_US&timezone=10800"
+```
+
 In Swagger UI, click **Authorize** and paste the session id once. For direct
 HTTP calls, send it as `X-Session-ID`:
 

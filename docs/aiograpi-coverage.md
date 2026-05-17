@@ -68,7 +68,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `POST /auth/login/by/sessionid` | `login_by_sessionid` |
 | `PATCH /auth/relogin` | `relogin` |
 | `GET /auth/settings` | `get_settings` |
-| `PATCH /auth/settings` | `expose`, `set_settings` |
+| `PATCH /auth/settings` | `expose`, `set_locale`, `set_proxy`, `set_settings`, `set_timezone_offset` |
 | `GET /auth/timeline/feed` | `get_timeline_feed` |
 | `DELETE /auth/totp` | `totp_disable` |
 | `POST /auth/totp/enable` | `totp_enable` |
@@ -554,11 +554,11 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `set_external_url(self, external_url) -> dict` | `account` | - |
 | `set_ig_u_rur(self, value)` | `private` | - |
 | `set_ig_www_claim(self, value)` | `private` | - |
-| `set_locale(self, locale: str = 'en_US')` | `private` | `POST /auth/login` |
-| `set_proxy(self, dsn: Optional[str])` | `aiograpi` | `POST /auth/login` |
+| `set_locale(self, locale: str = 'en_US')` | `private` | `POST /auth/login`<br>`PATCH /auth/settings` |
+| `set_proxy(self, dsn: Optional[str])` | `aiograpi` | `POST /auth/login`<br>`PATCH /auth/settings` |
 | `set_retry_config(self, request_timeout: Union[int, float, NoneType] = None, public_request_retries_count: int = None, public_request_retries_timeout: Union[int, float] = None, session_retry_total: int = None, session_retry_backoff_factor: Union[int, float] = None, session_retry_statuses: list = None, public_transport: Optional[str] = None, public_transport_impersonate: Optional[str] = None) -> bool` | `auth` | - |
 | `set_settings(self, settings: Dict) -> bool` | `auth` | `PATCH /auth/settings` |
-| `set_timezone_offset(self, seconds: int = 0)` | `private` | `POST /auth/login` |
+| `set_timezone_offset(self, seconds: int = 0)` | `private` | `POST /auth/login`<br>`PATCH /auth/settings` |
 | `set_user_agent(self, user_agent: str = '', reset: bool = False) -> bool` | `auth` | - |
 | `set_uuids(self, uuids: Dict = None) -> bool` | `auth` | - |
 | `share_code_from_url(self, url: str) -> str` | `share` | - |

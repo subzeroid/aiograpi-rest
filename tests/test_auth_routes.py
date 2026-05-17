@@ -294,6 +294,48 @@ async def test_settings_set_with_existing_sessionid_reuses_client(fake_storage):
 
 
 @pytest.mark.asyncio
+async def test_settings_set_can_patch_runtime_client_options(fake_storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.patch(
+            "/auth/settings",
+            data={
+                "sessionid": "sid",
+                "proxy": "http://proxy.example:8080",
+                "locale": "en_US",
+                "timezone": "10800",
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.json() == "sid"
+    assert fake_storage.created.settings == {"authorization_data": {"sessionid": "sid"}}
+    assert fake_storage.created.proxy == "http://proxy.example:8080"
+    assert fake_storage.created.locale == "en_US"
+    assert fake_storage.created.timezone == "10800"
+    assert fake_storage.saved == [fake_storage.created]
+
+
+@pytest.mark.asyncio
+async def test_settings_set_requires_settings_for_new_session(fake_storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.patch("/auth/settings", data={"proxy": "http://proxy.example:8080"})
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "settings is required when importing a new session"
+    assert fake_storage.saved == []
+
+
+@pytest.mark.asyncio
+async def test_settings_set_requires_a_change_for_existing_session(fake_storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.patch("/auth/settings", data={"sessionid": "sid"})
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "settings, proxy, locale, or timezone is required"
+    assert fake_storage.saved == []
+
+
+@pytest.mark.asyncio
 async def test_timeline_feed_awaits_aiograpi(fake_storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/auth/timeline/feed", params={"sessionid": "sid"})

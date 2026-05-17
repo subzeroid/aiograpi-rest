@@ -15,6 +15,21 @@ Session-creation routes:
 Session-aware routes still accept legacy `sessionid` values from query
 parameters, form data, or a `sessionid` cookie for backwards compatibility.
 
+### Session Client Options
+
+`POST /auth/login` accepts optional `proxy`, `locale`, and `timezone` form
+fields. The service persists the proxy separately from `aiograpi` settings
+because `Client.get_settings()` does not include proxy transport state.
+
+Use `PATCH /auth/settings` to update an existing session after login. Send the
+session through `X-Session-ID` or the legacy `sessionid` form field, then pass
+any of:
+
+- `settings`: a JSON string from `aiograpi.Client.get_settings()`.
+- `proxy`: proxy URL for all restored clients. Pass an empty value to clear it.
+- `locale`: locale such as `en_US`.
+- `timezone`: timezone offset in seconds, such as `10800`.
+
 ### Two-Factor Login
 
 If `POST /auth/login` returns `TwoFactorRequired`, retry the same endpoint with

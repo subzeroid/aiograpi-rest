@@ -61,6 +61,14 @@ SESSIONID=$(curl -fsS -X POST http://localhost:8000/auth/login \
 If you already have an Instagram `sessionid` cookie, import it with
 `POST /auth/login/by/sessionid` instead of logging in with username/password.
 
+Proxy, locale, and timezone can be set during login or patched later:
+
+```bash
+curl -fsS -X PATCH http://localhost:8000/auth/settings \
+  -H "X-Session-ID: $SESSIONID" \
+  -d "proxy=http://user:pass@host:port&locale=en_US&timezone=10800"
+```
+
 Open http://localhost:8000/docs for the live OpenAPI / Swagger UI. Click
 **Authorize**, paste the returned session id once, and call protected routes
 without adding `sessionid` to each request.

@@ -91,7 +91,25 @@ async def settings_get(sessionid: str = Depends(get_sessionid),
 
 
 @router.patch("/settings")
-async def settings_set(settings: str = Form(...),
+async def settings_set(settings: Optional[str] = Form(
+                           None,
+                           description=(
+                               "JSON string from aiograpi Client.get_settings(). "
+                               "Required when importing settings without an existing session."
+                           ),
+                       ),
+                       proxy: Optional[str] = Form(
+                           None,
+                           description="Optional proxy URL to apply to the saved session. Pass an empty value to clear it.",
+                       ),
+                       locale: Optional[str] = Form(
+                           None,
+                           description="Optional locale such as en_US.",
+                       ),
+                       timezone: Optional[str] = Form(
+                           None,
+                           description="Optional timezone offset in seconds, for example 10800.",
+                       ),
                        sessionid: str = Depends(get_optional_sessionid),
                        clients: ClientStorage = Depends(get_clients)) -> str:
     """Set client's settings
@@ -99,9 +117,20 @@ async def settings_set(settings: str = Form(...),
     if sessionid != "":
         cl = await clients.get(sessionid)
     else:
+        if settings is None:
+            raise HTTPException(status_code=422, detail="settings is required when importing a new session")
         cl = clients.client()
-    cl.set_settings(json.loads(settings))
-    await cl.expose()
+    if settings is not None:
+        cl.set_settings(json.loads(settings))
+        await cl.expose()
+    elif proxy is None and locale is None and timezone is None:
+        raise HTTPException(status_code=422, detail="settings, proxy, locale, or timezone is required")
+    if proxy is not None:
+        cl.set_proxy(proxy or None)
+    if locale:
+        cl.set_locale(locale)
+    if timezone:
+        cl.set_timezone_offset(timezone)
     clients.set(cl)
     return cl.sessionid
 
