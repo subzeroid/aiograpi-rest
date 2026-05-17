@@ -42,6 +42,11 @@ session through `PATCH /auth/settings`.
 If Instagram says the username does not belong to an account, the API returns
 HTTP 401 with a hint to check the username and retry `POST /auth/login`.
 
+If Instagram returns `FeedbackRequired`, `PleaseWaitFewMinutes`, or
+`RateLimitError`, the API returns HTTP 429. These errors usually mean Instagram
+is throttling the account or action; pause automation, reduce request rate, and
+check account and proxy health before retrying.
+
 ## Route Conventions
 
 - `GET` routes read or download data.

@@ -2,6 +2,7 @@ import tomllib
 from importlib.metadata import PackageNotFoundError
 from pathlib import Path
 
+import aiograpi.exceptions as aiograpi_exceptions
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -515,6 +516,43 @@ async def test_exception_handler_wraps_errors_in_envelope(monkeypatch):
     body = response.json()
     assert body["detail"] == "kapow"
     assert body["exc_type"] == "RuntimeError"
+
+
+@pytest.mark.parametrize(
+    "exc",
+    [
+        aiograpi_exceptions.FeedbackRequired("feedback_required"),
+        aiograpi_exceptions.PleaseWaitFewMinutes("Please wait a few minutes before you try again."),
+        aiograpi_exceptions.RateLimitError("rate limit exceeded"),
+    ],
+)
+@pytest.mark.asyncio
+async def test_exception_handler_maps_instagram_throttling_errors(monkeypatch, exc):
+    from dependencies import get_clients
+
+    class BoomStorage:
+        async def get(self, sessionid):
+            raise exc
+
+        def close(self):
+            pass
+
+    app.dependency_overrides[get_clients] = lambda: BoomStorage()
+    transport = ASGITransport(app=app, raise_app_exceptions=False)
+    try:
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            response = await ac.get("/auth/timeline/feed", params={"sessionid": "x"})
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 429
+    body = response.json()
+    assert body["detail"] == str(exc)
+    assert body["exc_type"] == type(exc).__name__
+    assert body["hint"] == (
+        "Instagram is throttling this account/action. Pause automation, reduce request rate, "
+        "check account and proxy health, then retry later."
+    )
 
 
 @pytest.mark.asyncio
