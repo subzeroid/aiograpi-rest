@@ -760,7 +760,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>PATCH /auth/settings</code></td>
-<td><code>expose</code>, <code>set_settings</code></td>
+<td><code>expose</code>, <code>set_locale</code>, <code>set_proxy</code>, <code>set_settings</code>, <code>set_timezone_offset</code></td>
 </tr>
 <tr>
 <td><code>GET /auth/timeline/feed</code></td>
@@ -3067,12 +3067,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>set_locale(self, locale: str = 'en_US')</code></td>
 <td><code>private</code></td>
-<td><code>POST /auth/login</code></td>
+<td><code>POST /auth/login</code><br><code>PATCH /auth/settings</code></td>
 </tr>
 <tr>
 <td><code>set_proxy(self, dsn: Optional[str])</code></td>
 <td><code>aiograpi</code></td>
-<td><code>POST /auth/login</code></td>
+<td><code>POST /auth/login</code><br><code>PATCH /auth/settings</code></td>
 </tr>
 <tr>
 <td><code>set_retry_config(self, request_timeout: Union[int, float, NoneType] = None, public_request_retries_count: int = None, public_request_retries_timeout: Union[int, float] = None, session_retry_total: int = None, session_retry_backoff_factor: Union[int, float] = None, session_retry_statuses: list = None, public_transport: Optional[str] = None, public_transport_impersonate: Optional[str] = None) -&gt; bool</code></td>
@@ -3087,7 +3087,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>set_timezone_offset(self, seconds: int = 0)</code></td>
 <td><code>private</code></td>
-<td><code>POST /auth/login</code></td>
+<td><code>POST /auth/login</code><br><code>PATCH /auth/settings</code></td>
 </tr>
 <tr>
 <td><code>set_user_agent(self, user_agent: str = '', reset: bool = False) -&gt; bool</code></td>

@@ -348,6 +348,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#session-client-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session Client Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#two-factor-login" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -492,6 +503,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#session-client-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session Client Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#two-factor-login" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -595,6 +617,19 @@ Swagger UI exposes this through the green <strong>Authorize</strong> button.</p>
 </ul>
 <p>Session-aware routes still accept legacy <code>sessionid</code> values from query
 parameters, form data, or a <code>sessionid</code> cookie for backwards compatibility.</p>
+<h3 id="session-client-options">Session Client Options</h3>
+<p><code>POST /auth/login</code> accepts optional <code>proxy</code>, <code>locale</code>, and <code>timezone</code> form
+fields. The service persists the proxy separately from <code>aiograpi</code> settings
+because <code>Client.get_settings()</code> does not include proxy transport state.</p>
+<p>Use <code>PATCH /auth/settings</code> to update an existing session after login. Send the
+session through <code>X-Session-ID</code> or the legacy <code>sessionid</code> form field, then pass
+any of:</p>
+<ul>
+<li><code>settings</code>: a JSON string from <code>aiograpi.Client.get_settings()</code>.</li>
+<li><code>proxy</code>: proxy URL for all restored clients. Pass an empty value to clear it.</li>
+<li><code>locale</code>: locale such as <code>en_US</code>.</li>
+<li><code>timezone</code>: timezone offset in seconds, such as <code>10800</code>.</li>
+</ul>
 <h3 id="two-factor-login">Two-Factor Login</h3>
 <p>If <code>POST /auth/login</code> returns <code>TwoFactorRequired</code>, retry the same endpoint with
 the same <code>username</code> and <code>password</code> plus <code>verification_code</code>.</p>

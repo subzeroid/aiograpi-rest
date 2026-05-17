@@ -526,6 +526,16 @@ uvicorn<span class="w"> </span>main:app<span class="w"> </span>--host<span class
 </code></pre></div>
 <p>The response is the session ID. If you already have an Instagram <code>sessionid</code>
 cookie, use <code>POST /auth/login/by/sessionid</code> instead.</p>
+<p>To use a proxy from the start, pass it during login:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">SESSIONID</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-fsS<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/auth/login<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/x-www-form-urlencoded&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;username=&lt;USERNAME&gt;&amp;password=&lt;PASSWORD&gt;&amp;proxy=http://user:pass@host:port&quot;</span><span class="k">)</span>
+</code></pre></div>
+<p>To change runtime client options after login:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-fsS<span class="w"> </span>-X<span class="w"> </span>PATCH<span class="w"> </span>http://localhost:8000/auth/settings<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;X-Session-ID: </span><span class="nv">$SESSIONID</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;proxy=http://user:pass@new-host:port&amp;locale=en_US&amp;timezone=10800&quot;</span>
+</code></pre></div>
 <p>In Swagger UI, click <strong>Authorize</strong> and paste the session id once. For direct
 HTTP calls, send it as <code>X-Session-ID</code>:</p>
 <div class="highlight"><pre><span></span><code>curl<span class="w"> </span><span class="s2">&quot;http://localhost:8000/user/info/by/username?username=instagram&quot;</span><span class="w"> </span><span class="se">\</span>
