@@ -1,12 +1,18 @@
 # Getting Started
 
-## Run With Docker Compose
+## Run With Docker
+
+```bash
+docker run --rm -p 8000:8000 subzeroid/aiograpi-rest
+```
+
+Open <http://localhost:8000/docs> for Swagger UI.
+
+For local development from a checkout:
 
 ```bash
 docker compose up api
 ```
-
-Open <http://localhost:8000/docs> for Swagger UI.
 
 ## Run Locally
 
@@ -21,17 +27,23 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ## Create A Session
 
 ```bash
-curl -X POST http://localhost:8000/auth/login \
+SESSIONID=$(curl -fsS -X POST http://localhost:8000/auth/login \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "username=<USERNAME>&password=<PASSWORD>"
+  -d "username=<USERNAME>&password=<PASSWORD>")
 ```
 
-The response is the session ID. In Swagger UI, click **Authorize** and paste it
-once. For direct HTTP calls, send it as `X-Session-ID`:
+The response is the session ID. If you already have an Instagram `sessionid`
+cookie, use `POST /auth/login/by/sessionid` instead.
+
+In Swagger UI, click **Authorize** and paste the session id once. For direct
+HTTP calls, send it as `X-Session-ID`:
 
 ```bash
 curl "http://localhost:8000/user/info/by/username?username=instagram" \
-  -H "X-Session-ID: <SESSIONID>"
+  -H "X-Session-ID: $SESSIONID"
+
+curl "http://localhost:8000/user/about?user_id=25025320" \
+  -H "X-Session-ID: $SESSIONID"
 ```
 
 Older clients may still pass `sessionid` in query parameters or form data, but

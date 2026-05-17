@@ -191,6 +191,33 @@ def test_release_workflow_verifies_published_artifacts():
     assert "http://127.0.0.1:18080/build" in run_commands
 
 
+def test_live_tests_workflow_runs_nightly_against_real_session_flow():
+    workflow = yaml.load((ROOT / ".github" / "workflows" / "live-tests.yml").read_text(), Loader=yaml.BaseLoader)
+
+    assert workflow["name"] == "Live Tests"
+    assert workflow["env"]["FORCE_JAVASCRIPT_ACTIONS_TO_NODE24"] == "true"
+    assert workflow["on"]["workflow_dispatch"] == {}
+    assert workflow["on"]["schedule"] == [{"cron": "17 3 * * *"}]
+
+    job = workflow["jobs"]["live"]
+    assert job["if"] == "github.repository == 'subzeroid/aiograpi-rest'"
+    assert job["timeout-minutes"] == "30"
+    assert job["env"]["TEST_ACCOUNTS_URL"] == "${{ secrets.TEST_ACCOUNTS_URL }}"
+    assert job["env"]["TEST_ACCOUNTS_COUNT"] == "25"
+    assert job["env"]["LIVE_API_BASE_URL"] == "http://127.0.0.1:8000"
+
+    steps = job["steps"]
+    assert any(step.get("uses") == "actions/checkout@v6.0.2" for step in steps)
+    assert any(step.get("uses") == "actions/setup-python@v6.2.0" for step in steps)
+
+    run_commands = "\n".join(step.get("run", "") for step in steps)
+    assert "docker compose up -d api" in run_commands
+    assert "curl -fsS http://127.0.0.1:8000/health" in run_commands
+    assert "pytest tests/live -m live -o addopts='' -v" in run_commands
+    assert "::notice::TEST_ACCOUNTS_URL is not configured; skipping live tests." in run_commands
+    assert "docker compose logs api" in run_commands
+
+
 def test_workflows_opt_into_node24_actions():
     for path in sorted((ROOT / ".github" / "workflows").glob("*.yml")):
         workflow = yaml.load(path.read_text(), Loader=yaml.BaseLoader)
@@ -248,9 +275,21 @@ def test_readme_documents_rename_reason():
     assert "Renamed from `instagrapi-rest` to `aiograpi-rest` in v1.0.0" in readme
     assert "`aiograpi-rest` starts its own semver line at `1.0.0`" in readme
     assert "the service is now powered by `aiograpi`" in readme
-    assert "docker run -d -p 8000:8000 subzeroid/aiograpi-rest" in readme
+    assert "docker run --rm -p 8000:8000 subzeroid/aiograpi-rest" in readme
     assert "docker run -p 8000:8000 ghcr.io/subzeroid/aiograpi-rest" in readme
     assert "PyPI and GitHub Release artifacts are published from the same tag workflow" in readme
+
+
+def test_quickstart_documents_real_session_flow():
+    readme = (ROOT / "README.md").read_text()
+    getting_started = (ROOT / "docs" / "getting-started.md").read_text()
+    for document in (readme, getting_started):
+        assert "docker run --rm -p 8000:8000 subzeroid/aiograpi-rest" in document
+        assert "SESSIONID=$(curl -fsS -X POST http://localhost:8000/auth/login" in document
+        assert "POST /auth/login/by/sessionid" in document
+        assert "Authorize" in document
+        assert 'curl "http://localhost:8000/user/about?user_id=25025320"' in document
+        assert '-H "X-Session-ID: $SESSIONID"' in document
 
 
 def test_github_docs_are_configured():

@@ -14,7 +14,8 @@ from storages import ClientStorage
 pytestmark = pytest.mark.live
 
 
-def fetch_accounts(url, count=10):
+def fetch_accounts(url, count=None):
+    count = count or int(os.environ.get("TEST_ACCOUNTS_COUNT", "25"))
     sep = "&" if "?" in url else "?"
     req = urllib.request.Request(
         url + sep + f"count={count}",

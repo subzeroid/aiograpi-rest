@@ -47,26 +47,33 @@ before the public API became widely used; use `DELETE /media/like`,
 `DELETE /user/follow`, and `DELETE /media/archive`.
 
 ```bash
-docker run -d -p 8000:8000 subzeroid/aiograpi-rest
+docker run --rm -p 8000:8000 subzeroid/aiograpi-rest
 ```
 
-Open http://localhost:8000/docs for the live OpenAPI / Swagger UI. Paste the
-session id into the **Authorize** dialog once; protected routes use the
-`X-Session-ID` header.
-
-Get a session id (replace `<USERNAME>`/`<PASSWORD>`):
+Get a session id:
 
 ```bash
-curl -X POST http://localhost:8000/auth/login \
+SESSIONID=$(curl -fsS -X POST http://localhost:8000/auth/login \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "username=<USERNAME>&password=<PASSWORD>"
+  -d "username=<USERNAME>&password=<PASSWORD>")
 ```
 
-Fetch a public profile:
+If you already have an Instagram `sessionid` cookie, import it with
+`POST /auth/login/by/sessionid` instead of logging in with username/password.
+
+Open http://localhost:8000/docs for the live OpenAPI / Swagger UI. Click
+**Authorize**, paste the returned session id once, and call protected routes
+without adding `sessionid` to each request.
+
+Fetch Instagram's public profile and about data over the same authorized
+session:
 
 ```bash
 curl "http://localhost:8000/user/info/by/username?username=instagram" \
-  -H "X-Session-ID: <SESSIONID>"
+  -H "X-Session-ID: $SESSIONID"
+
+curl "http://localhost:8000/user/about?user_id=25025320" \
+  -H "X-Session-ID: $SESSIONID"
 ```
 
 Legacy `sessionid` query/form parameters are still accepted for existing
@@ -165,6 +172,12 @@ Run the prebuilt Docker image:
 
 ```
 docker run -p 8000:8000 subzeroid/aiograpi-rest
+```
+
+For a foreground one-off run that exits cleanly with Ctrl-C:
+
+```
+docker run --rm -p 8000:8000 subzeroid/aiograpi-rest
 ```
 
 Images are published automatically from GitHub releases and semver tags to
@@ -333,6 +346,11 @@ Optional live smoke tests against real Instagram accounts are gated by the `TEST
 ```
 TEST_ACCOUNTS_URL="https://example.com/accounts" python3.13 -m pytest tests/live -m live -o addopts='' -v
 ```
+
+GitHub Actions also has a scheduled **Live Tests** workflow that runs nightly
+and can be launched manually. It starts the Docker Compose API service, creates
+a real session from `TEST_ACCOUNTS_URL`, sends it through `X-Session-ID`, and
+checks `/user/about`.
 
 Generate and validate docs:
 

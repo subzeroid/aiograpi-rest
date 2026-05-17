@@ -1,0 +1,67 @@
+name: Live Tests
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "17 3 * * *"
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  live:
+    if: github.repository == 'subzeroid/aiograpi-rest'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TEST_ACCOUNTS_URL: ${{ secrets.TEST_ACCOUNTS_URL }}
+      TEST_ACCOUNTS_COUNT: "25"
+      LIVE_API_BASE_URL: http://127.0.0.1:8000
+
+    steps:
+    - uses: actions/checkout@v6.0.2
+
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v6.2.0
+      with:
+        python-version: "3.13"
+
+    - name: Install test dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ".[test]"
+
+    - name: Skip when live accounts are not configured
+      run: |
+        if [ -z "$TEST_ACCOUNTS_URL" ]; then
+          echo "::notice::TEST_ACCOUNTS_URL is not configured; skipping live tests."
+          exit 0
+        fi
+
+    - name: Start API service
+      if: env.TEST_ACCOUNTS_URL != ''
+      run: |
+        docker compose up -d api
+        for _ in $(seq 1 60); do
+          if curl -fsS http://127.0.0.1:8000/health; then
+            exit 0
+          fi
+          sleep 2
+        done
+        docker compose logs api
+        exit 1
+
+    - name: Run live smoke tests
+      if: env.TEST_ACCOUNTS_URL != ''
+      run: |
+        pytest tests/live -m live -o addopts='' -v
+
+    - name: Show API logs on failure
+      if: failure() && env.TEST_ACCOUNTS_URL != ''
+      run: |
+        docker compose logs api
+
+    - name: Stop API service
+      if: always() && env.TEST_ACCOUNTS_URL != ''
+      run: |
+        docker compose down -v
