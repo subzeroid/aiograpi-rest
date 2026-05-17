@@ -58,23 +58,12 @@ async def media_info(sessionid: str = Depends(get_sessionid),
     return await cl.media_info(pk, use_cache)
 
 
-@router.get("/user/medias", response_model=List[Media])
+@router.get("/user/medias", response_model=MediaPage)
 async def user_medias(sessionid: str = Depends(get_sessionid),
-                      user_id: int = Query(...),
+                      user_id: str = Query(...),
                       amount: Optional[int] = Query(50),
-                      clients: ClientStorage = Depends(get_clients)) -> List[Media]:
-    """Get a user's media
-    """
-    cl = await clients.get(sessionid)
-    return await cl.user_medias(user_id, amount)
-
-
-@router.get("/user/medias/paginated", response_model=MediaPage)
-async def user_medias_paginated(sessionid: str = Depends(get_sessionid),
-                                user_id: str = Query(...),
-                                amount: Optional[int] = Query(50),
-                                end_cursor: Optional[str] = Query(""),
-                                clients: ClientStorage = Depends(get_clients)) -> MediaPage:
+                      end_cursor: Optional[str] = Query(""),
+                      clients: ClientStorage = Depends(get_clients)) -> MediaPage:
     """Get a user's media page with the next pagination cursor
     """
     cl = await clients.get(sessionid)

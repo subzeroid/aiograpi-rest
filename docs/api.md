@@ -35,10 +35,9 @@ be passed directly into OpenAPI client generators.
 
 ## Pagination
 
-`GET /media/user/medias` returns a plain list for simple reads.
-`GET /media/user/medias/paginated` returns an object with `items` and
-`end_cursor`; pass the returned `end_cursor` into the next request to continue
-from the previous page.
+`GET /media/user/medias` returns an object with `items` and `end_cursor`; pass
+the returned `end_cursor` into the next request to continue from the previous
+page.
 
 ## System Endpoints
 
