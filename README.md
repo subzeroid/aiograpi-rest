@@ -104,6 +104,20 @@ curl -X POST "http://localhost:8000/story/upload/by/url" \
   --data-urlencode 'mentions=[{"user":{"pk":"25025320"}}]'
 ```
 
+Feed upload metadata works the same way. On `/photo/upload`, `/video/upload`,
+`/clip/upload`, `/igtv/upload`, and `/album/upload`, pass `usertags` as
+JSON-encoded `Usertag` objects and `location` as one JSON-encoded `Location`
+object. Empty metadata fields are ignored.
+
+```bash
+curl -X POST "http://localhost:8000/photo/upload" \
+  -H "X-Session-ID: $SESSIONID" \
+  -F "file=@photo.jpeg;type=image/jpeg" \
+  -F "caption=hello" \
+  --form-string 'location={"pk":"1","name":"Place","lat":10.0,"lng":20.0}' \
+  --form-string 'usertags=[{"user":{"pk":"25025320"},"x":0.5,"y":0.5}]'
+```
+
 Legacy `sessionid` query/form parameters are still accepted for existing
 clients, but new integrations should use `X-Session-ID`.
 

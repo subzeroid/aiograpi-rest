@@ -1,14 +1,19 @@
-import json
 from pathlib import Path
 from typing import List, Optional
 
 import requests
-from aiograpi.types import Location, Media, Usertag
+from aiograpi.types import Media
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 from fastapi.responses import FileResponse
 
 from dependencies import ClientStorage, get_clients, get_sessionid
-from helpers import igtv_upload_post
+from helpers import (
+    LOCATION_FORM_DESCRIPTION,
+    USERTAGS_FORM_DESCRIPTION,
+    igtv_upload_post,
+    parse_upload_location,
+    parse_upload_usertags,
+)
 
 router = APIRouter(
     prefix="/igtv",
@@ -56,20 +61,17 @@ async def igtv_upload(sessionid: str = Depends(get_sessionid),
                        title: str = Form(...),
                        caption: str = Form(...),
                        thumbnail: Optional[UploadFile] = File(None),
-                       usertags: Optional[List[str]] = Form([]),
-                       location: Optional[Location] = Form(None),
+                       usertags: Optional[List[str]] = Form([], description=USERTAGS_FORM_DESCRIPTION),
+                       location: Optional[str] = Form(None, description=LOCATION_FORM_DESCRIPTION),
                        clients: ClientStorage = Depends(get_clients)
                        ) -> Media:
     """Upload photo and configure to feed
     """
     cl = await clients.get(sessionid)
 
-    usernames_tags = []
-    for usertag in usertags:
-        usertag_json = json.loads(usertag)
-        usernames_tags.append(Usertag(user=usertag_json['user'], x=usertag_json['x'], y=usertag_json['y']))
-
     content = await file.read()
+    usernames_tags = parse_upload_usertags(usertags)
+    parsed_location = parse_upload_location(location)
     if thumbnail is not None:
         thumb = await thumbnail.read()
         return await igtv_upload_post(
@@ -77,12 +79,12 @@ async def igtv_upload(sessionid: str = Depends(get_sessionid),
             caption=caption,
             thumbnail=thumb,
             usertags=usernames_tags,
-            location=location)
+            location=parsed_location)
     return await igtv_upload_post(
         cl, content, title=title,
         caption=caption,
         usertags=usernames_tags,
-        location=location)
+        location=parsed_location)
 
 @router.post("/upload/by/url", response_model=Media)
 async def igtv_upload(sessionid: str = Depends(get_sessionid),
@@ -90,20 +92,17 @@ async def igtv_upload(sessionid: str = Depends(get_sessionid),
                        title: str = Form(...),
                        caption: str = Form(...),
                        thumbnail: Optional[UploadFile] = File(None),
-                       usertags: Optional[List[str]] = Form([]),
-                       location: Optional[Location] = Form(None),
+                       usertags: Optional[List[str]] = Form([], description=USERTAGS_FORM_DESCRIPTION),
+                       location: Optional[str] = Form(None, description=LOCATION_FORM_DESCRIPTION),
                        clients: ClientStorage = Depends(get_clients)
                        ) -> Media:
     """Upload photo by URL and configure to feed
     """
     cl = await clients.get(sessionid)
 
-    usernames_tags = []
-    for usertag in usertags:
-        usertag_json = json.loads(usertag)
-        usernames_tags.append(Usertag(user=usertag_json['user'], x=usertag_json['x'], y=usertag_json['y']))
-
     content = requests.get(url).content
+    usernames_tags = parse_upload_usertags(usertags)
+    parsed_location = parse_upload_location(location)
     if thumbnail is not None:
         thumb = await thumbnail.read()
         return await igtv_upload_post(
@@ -111,9 +110,9 @@ async def igtv_upload(sessionid: str = Depends(get_sessionid),
             caption=caption,
             thumbnail=thumb,
             usertags=usernames_tags,
-            location=location)
+            location=parsed_location)
     return await igtv_upload_post(
         cl, content, title=title,
         caption=caption,
         usertags=usernames_tags,
-        location=location)
+        location=parsed_location)

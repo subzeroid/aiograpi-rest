@@ -581,6 +581,29 @@ async def test_story_upload_openapi_documents_json_encoded_form_mentions():
 
 
 @pytest.mark.asyncio
+async def test_upload_openapi_documents_json_encoded_form_usertags_and_location():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/openapi.json")
+
+    assert response.status_code == 200
+    schemas = response.json()["components"]["schemas"]
+    for schema_name in (
+        "PhotoUploadRequest",
+        "PhotoUploadByUrlRequest",
+        "VideoUploadRequest",
+        "VideoUploadByUrlRequest",
+        "ClipUploadRequest",
+        "ClipUploadByUrlRequest",
+        "IgtvUploadRequest",
+        "IgtvUploadByUrlRequest",
+        "AlbumUploadRequest",
+    ):
+        schema = schemas[schema_name]
+        assert schema["properties"]["usertags"]["anyOf"][0]["items"] == {"type": "string"}
+        assert schema["properties"]["location"]["anyOf"][0] == {"type": "string"}
+
+
+@pytest.mark.asyncio
 async def test_authorized_routes_accept_sessionid_header(monkeypatch):
     from dependencies import get_clients
 

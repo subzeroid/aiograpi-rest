@@ -1,10 +1,61 @@
+import json
 import os
 import tempfile
 
 from aiograpi.exceptions import PhotoConfigureStoryError, VideoConfigureStoryError
 from aiograpi.story import StoryBuilder
+from aiograpi.types import Location, Usertag
+from fastapi import HTTPException
+from pydantic import ValidationError
 
 STORY_CONFIGURE_WITHOUT_MEDIA = "configure succeeded without media payload"
+USERTAGS_FORM_DESCRIPTION = (
+    "Repeat this form field with a JSON-encoded Usertag object, "
+    "or pass one JSON array of Usertag objects. Leave empty to omit."
+)
+LOCATION_FORM_DESCRIPTION = "JSON-encoded Location object. Leave empty to omit."
+
+
+def _is_blank_form_value(value):
+    return value is None or (isinstance(value, str) and not value.strip())
+
+
+def _invalid_json_form_field(field_name: str, exc: Exception):
+    raise HTTPException(
+        status_code=422,
+        detail=f"Invalid JSON object for form field '{field_name}'",
+    ) from exc
+
+
+def parse_json_form_models(values, model, field_name: str):
+    parsed = []
+    for raw_value in values or []:
+        if _is_blank_form_value(raw_value):
+            continue
+        try:
+            payload = json.loads(raw_value)
+            items = payload if isinstance(payload, list) else [payload]
+            parsed.extend(model.model_validate(item) for item in items)
+        except (json.JSONDecodeError, TypeError, ValueError, ValidationError) as exc:
+            _invalid_json_form_field(field_name, exc)
+    return parsed
+
+
+def parse_json_form_model(value, model, field_name: str):
+    if _is_blank_form_value(value):
+        return None
+    try:
+        return model.model_validate(json.loads(value))
+    except (json.JSONDecodeError, TypeError, ValueError, ValidationError) as exc:
+        _invalid_json_form_field(field_name, exc)
+
+
+def parse_upload_usertags(usertags):
+    return parse_json_form_models(usertags, Usertag, "usertags")
+
+
+def parse_upload_location(location):
+    return parse_json_form_model(location, Location, "location")
 
 
 def _write_temp_file(directory, content, suffix):

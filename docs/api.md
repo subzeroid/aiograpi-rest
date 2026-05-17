@@ -90,6 +90,12 @@ For mentions, locations, and hashtags, omitted `x`, `y`, `width`, `height`, or
 `rotation` values default to a centered story position before the request is
 sent to `aiograpi`.
 
+Feed upload metadata uses JSON-encoded form strings too. The upload endpoints
+for photo, video, clip/Reels, IGTV, and album/carousel accept `usertags` as one
+JSON array or repeated JSON-encoded `Usertag` values, and `location` as one
+JSON-encoded `Location` object. Leave these fields empty or omit them when no
+metadata is needed.
+
 ## System Endpoints
 
 - `GET /health` returns `{"status":"ok"}` for liveness.

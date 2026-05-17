@@ -1,12 +1,17 @@
-import json
 from pathlib import Path
 from typing import List, Optional
 
-from aiograpi.types import Location, Media, Usertag
+from aiograpi.types import Media
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 
 from dependencies import ClientStorage, get_clients, get_sessionid
-from helpers import album_upload_post
+from helpers import (
+    LOCATION_FORM_DESCRIPTION,
+    USERTAGS_FORM_DESCRIPTION,
+    album_upload_post,
+    parse_upload_location,
+    parse_upload_usertags,
+)
 
 router = APIRouter(
     prefix="/album",
@@ -43,20 +48,15 @@ async def album_download_by_urls(sessionid: str = Depends(get_sessionid),
 async def album_upload(sessionid: str = Depends(get_sessionid),
                        files: List[UploadFile] = File(...),
                        caption: str = Form(...),
-                       usertags: Optional[List[str]] = Form([]),
-                       location: Optional[Location] = Form(None),
+                       usertags: Optional[List[str]] = Form([], description=USERTAGS_FORM_DESCRIPTION),
+                       location: Optional[str] = Form(None, description=LOCATION_FORM_DESCRIPTION),
                        clients: ClientStorage = Depends(get_clients)
                        ) -> Media:
     """Upload album to feed
     """
     cl = await clients.get(sessionid)
 
-    usernames_tags = []
-    for usertag in usertags:
-        usertag_json = json.loads(usertag)
-        usernames_tags.append(Usertag(user=usertag_json['user'], x=usertag_json['x'], y=usertag_json['y']))
-
     return await album_upload_post(
         cl, files, caption=caption,
-        usertags=usernames_tags,
-        location=location)
+        usertags=parse_upload_usertags(usertags),
+        location=parse_upload_location(location))

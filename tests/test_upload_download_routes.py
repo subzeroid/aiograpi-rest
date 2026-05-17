@@ -246,6 +246,65 @@ async def test_photo_upload_uses_helper(storage):
 
 
 @pytest.mark.asyncio
+async def test_photo_upload_ignores_blank_optional_usertags_and_location(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/photo/upload",
+            data={"sessionid": "sid", "caption": "hi", "usertags": "", "location": ""},
+            files={"file": ("a.jpg", b"img-bytes", "image/jpeg")},
+        )
+    assert response.status_code == 200
+    call = next(call for call in storage.client.calls if call[0] == "photo_upload")
+    assert call[2]["usertags"] == []
+    assert call[2]["location"] is None
+
+
+@pytest.mark.asyncio
+async def test_photo_upload_accepts_json_array_usertags_and_json_location(storage):
+    usertags = json.dumps(
+        [
+            {"user": {"pk": 1, "username": "u", "full_name": "f"}, "x": 0.5, "y": 0.5},
+            {"user": {"pk": 2, "username": "v", "full_name": "g"}, "x": 0.2, "y": 0.8},
+        ]
+    )
+    location = json.dumps({"pk": 1, "name": "Place", "lat": 10.0, "lng": 20.0})
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/photo/upload",
+            data={"sessionid": "sid", "caption": "hi", "usertags": usertags, "location": location},
+            files={"file": ("a.jpg", b"img-bytes", "image/jpeg")},
+        )
+    assert response.status_code == 200
+    call = next(call for call in storage.client.calls if call[0] == "photo_upload")
+    assert [tag.user.pk for tag in call[2]["usertags"]] == ["1", "2"]
+    assert call[2]["location"].name == "Place"
+
+
+@pytest.mark.asyncio
+async def test_photo_upload_rejects_invalid_usertags_json(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/photo/upload",
+            data={"sessionid": "sid", "caption": "hi", "usertags": "{bad-json"},
+            files={"file": ("a.jpg", b"img-bytes", "image/jpeg")},
+        )
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Invalid JSON object for form field 'usertags'"
+
+
+@pytest.mark.asyncio
+async def test_photo_upload_rejects_invalid_location_json(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/photo/upload",
+            data={"sessionid": "sid", "caption": "hi", "location": "{bad-json"},
+            files={"file": ("a.jpg", b"img-bytes", "image/jpeg")},
+        )
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Invalid JSON object for form field 'location'"
+
+
+@pytest.mark.asyncio
 async def test_photo_upload_by_url_uses_helper(storage, fake_requests):
     usertag = json.dumps({"user": {"pk": 1, "username": "u", "full_name": "f"}, "x": 0.5, "y": 0.5})
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
