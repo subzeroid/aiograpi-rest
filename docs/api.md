@@ -48,6 +48,10 @@ be passed directly into OpenAPI client generators.
 the returned `end_cursor` into the next request to continue from the previous
 page.
 
+`GET /user/followers` and `GET /user/following` return an object with `items`
+and `next_cursor`; pass the returned `next_cursor` as `cursor` on the next
+request.
+
 ## System Endpoints
 
 - `GET /health` returns `{"status":"ok"}` for liveness.

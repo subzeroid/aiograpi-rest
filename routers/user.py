@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 from aiograpi.extractors import json_value
 from aiograpi.types import About, Highlight, Relationship, User, UserShort
 from fastapi import APIRouter, Depends, Form, Query
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from dependencies import ClientStorage, get_clients, get_sessionid
 
@@ -13,6 +13,11 @@ router = APIRouter(
     tags=["User"],
     responses={404: {"description": "Not found"}},
 )
+
+
+class UserShortPage(BaseModel):
+    items: List[UserShort]
+    next_cursor: str
 
 
 def _normalize_about(value: Any) -> About:
@@ -52,28 +57,30 @@ def _extract_about_from_last_json(data: Dict) -> About:
     return _normalize_about(payload)
 
 
-@router.get("/followers", response_model=Dict[int, UserShort])
+@router.get("/followers", response_model=UserShortPage)
 async def user_followers(sessionid: str = Depends(get_sessionid),
                          user_id: str = Query(...),
-                         use_cache: Optional[bool] = Query(True),
-                         amount: Optional[int] = Query(0),
-                         clients: ClientStorage = Depends(get_clients)) -> Dict[int, UserShort]:
-    """Get user's followers
+                         amount: int = Query(50, ge=1, le=200),
+                         cursor: str = Query(""),
+                         clients: ClientStorage = Depends(get_clients)) -> UserShortPage:
+    """Get a page of user's followers
     """
     cl = await clients.get(sessionid)
-    return await cl.user_followers(user_id, amount)
+    items, next_cursor = await cl.user_followers_v1_chunk(user_id, amount, cursor or "")
+    return UserShortPage(items=items, next_cursor=next_cursor or "")
 
 
-@router.get("/following", response_model=Dict[int, UserShort])
+@router.get("/following", response_model=UserShortPage)
 async def user_following(sessionid: str = Depends(get_sessionid),
                          user_id: str = Query(...),
-                         use_cache: Optional[bool] = Query(True),
-                         amount: Optional[int] = Query(0),
-                         clients: ClientStorage = Depends(get_clients)) -> Dict[int, UserShort]:
-    """Get user's followers information
+                         amount: int = Query(50, ge=1, le=200),
+                         cursor: str = Query(""),
+                         clients: ClientStorage = Depends(get_clients)) -> UserShortPage:
+    """Get a page of user's following
     """
     cl = await clients.get(sessionid)
-    return await cl.user_following(user_id, amount)
+    items, next_cursor = await cl.user_following_v1_chunk(user_id, amount, cursor or "")
+    return UserShortPage(items=items, next_cursor=next_cursor or "")
 
 
 @router.get("/info", response_model=User)

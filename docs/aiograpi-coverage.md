@@ -162,8 +162,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `POST /user/follow` | `user_follow` |
 | `GET /user/follow/requests` | `user_follow_requests` |
 | `DELETE /user/follower` | `user_remove_follower` |
-| `GET /user/followers` | `user_followers` |
-| `GET /user/following` | `user_following` |
+| `GET /user/followers` | `user_followers_v1_chunk` |
+| `GET /user/following` | `user_following_v1_chunk` |
 | `GET /user/friendship` | `user_friendship_v1` |
 | `GET /user/highlights` | `user_highlights` |
 | `GET /user/id/from/username` | `user_id_from_username` |
@@ -605,16 +605,16 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `user_follow_requests_approve(self, user_ids: List[str]) -> Dict[str, bool]` | `user` | - |
 | `user_follow_requests_chunk(self, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - |
 | `user_follow_requests_decline(self, user_ids: List[str]) -> Dict[str, bool]` | `user` | - |
-| `user_followers(self, user_id: str, amount: int = 0) -> Dict[str, aiograpi.types.UserShort]` | `user` | `GET /user/followers` |
+| `user_followers(self, user_id: str, amount: int = 0) -> Dict[str, aiograpi.types.UserShort]` | `user` | - |
 | `user_followers_gql(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
 | `user_followers_gql_chunk(self, user_id: str, max_amount: int = 0, end_cursor: str = None) -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - |
 | `user_followers_v1(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `user_followers_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - |
-| `user_following(self, user_id: str, amount: int = 0) -> Dict[str, aiograpi.types.UserShort]` | `user` | `GET /user/following` |
+| `user_followers_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /user/followers` |
+| `user_following(self, user_id: str, amount: int = 0) -> Dict[str, aiograpi.types.UserShort]` | `user` | - |
 | `user_following_gql(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
 | `user_following_gql_chunk(self, user_id: str, max_amount: int = 0, end_cursor: str = None) -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - |
 | `user_following_v1(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `user_following_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - |
+| `user_following_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /user/following` |
 | `user_friendship_v1(self, user_id: str) -> aiograpi.types.Relationship` | `user` | `GET /user/friendship` |
 | `user_friendships_v1(self, user_ids: List[str]) -> List[aiograpi.types.RelationshipShort]` | `user` | - |
 | `user_guides_v1(self, user_id: int) -> List[aiograpi.types.Guide]` | `user` | - |

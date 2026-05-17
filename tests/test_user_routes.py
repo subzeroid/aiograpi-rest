@@ -28,13 +28,13 @@ class FakeClient:
     def __init__(self):
         self.calls = []
 
-    async def user_followers(self, user_id, amount=0):
-        self.calls.append(("user_followers", user_id, amount))
-        return {1: _user_short(1), 2: _user_short(2)}
+    async def user_followers_v1_chunk(self, user_id, max_amount=0, max_id=""):
+        self.calls.append(("user_followers_v1_chunk", user_id, max_amount, max_id))
+        return [_user_short(1), _user_short(2)], "next-followers"
 
-    async def user_following(self, user_id, amount=0):
-        self.calls.append(("user_following", user_id, amount))
-        return {3: _user_short(3)}
+    async def user_following_v1_chunk(self, user_id, max_amount=0, max_id=""):
+        self.calls.append(("user_following_v1_chunk", user_id, max_amount, max_id))
+        return [_user_short(3)], "next-following"
 
     async def user_info(self, user_id):
         self.calls.append(("user_info", user_id))
@@ -111,27 +111,29 @@ def storage():
 
 
 @pytest.mark.asyncio
-async def test_user_followers_returns_dict(storage):
+async def test_user_followers_returns_paginated_items(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
             "/user/followers",
-            params={"sessionid": "sid", "user_id": "1", "amount": "5"},
+            params={"sessionid": "sid", "user_id": "1", "amount": "5", "cursor": "cursor"},
         )
     assert response.status_code == 200
-    assert "1" in response.json()
-    assert ("user_followers", "1", 5) in storage.client_instance.calls
+    assert response.json()["items"][0]["pk"] == "1"
+    assert response.json()["next_cursor"] == "next-followers"
+    assert ("user_followers_v1_chunk", "1", 5, "cursor") in storage.client_instance.calls
 
 
 @pytest.mark.asyncio
-async def test_user_following_returns_dict(storage):
+async def test_user_following_returns_paginated_items(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
             "/user/following",
             params={"sessionid": "sid", "user_id": "1", "use_cache": "false"},
         )
     assert response.status_code == 200
-    assert "3" in response.json()
-    assert ("user_following", "1", 0) in storage.client_instance.calls
+    assert response.json()["items"][0]["pk"] == "3"
+    assert response.json()["next_cursor"] == "next-following"
+    assert ("user_following_v1_chunk", "1", 50, "") in storage.client_instance.calls
 
 
 @pytest.mark.asyncio
