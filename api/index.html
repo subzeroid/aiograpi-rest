@@ -369,6 +369,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pagination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pagination
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#system-endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -474,6 +485,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pagination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pagination
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#system-endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -534,6 +556,11 @@ parameters, form data, or a <code>sessionid</code> cookie for backwards compatib
 </ul>
 <p>The schema uses client-friendly operation IDs and request schema names so it can
 be passed directly into OpenAPI client generators.</p>
+<h2 id="pagination">Pagination</h2>
+<p><code>GET /media/user/medias</code> returns a plain list for simple reads.
+<code>GET /media/user/medias/paginated</code> returns an object with <code>items</code> and
+<code>end_cursor</code>; pass the returned <code>end_cursor</code> into the next request to continue
+from the previous page.</p>
 <h2 id="system-endpoints">System Endpoints</h2>
 <ul>
 <li><code>GET /health</code> returns <code>{"status":"ok"}</code> for liveness.</li>
