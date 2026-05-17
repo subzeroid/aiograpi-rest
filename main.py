@@ -490,6 +490,9 @@ async def handle_exception(request, exc: Exception):
     elif isinstance(exc, aiograpi_exceptions.ChallengeRequired):
         status_code = 403
         body["hint"] = "Resolve the Instagram challenge, then retry login or import a saved session."
+    elif isinstance(exc, aiograpi_exceptions.UnknownError) and "The username you entered" in str(exc):
+        status_code = 401
+        body["hint"] = "Check the Instagram username and retry POST /auth/login."
     return JSONResponse(body, status_code=status_code)
 
 

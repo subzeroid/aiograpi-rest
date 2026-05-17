@@ -24,6 +24,9 @@ If it returns `ChallengeRequired`, resolve the Instagram challenge in the
 account/session context first, then retry login or import a known-good saved
 session through `PATCH /auth/settings`.
 
+If Instagram says the username does not belong to an account, the API returns
+HTTP 401 with a hint to check the username and retry `POST /auth/login`.
+
 ## Route Conventions
 
 - `GET` routes read or download data.

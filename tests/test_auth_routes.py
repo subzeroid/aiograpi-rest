@@ -199,6 +199,33 @@ async def test_login_challenge_required_returns_actionable_403(fake_storage):
 
 
 @pytest.mark.asyncio
+async def test_login_unknown_username_returns_actionable_401(fake_storage):
+    async def unknown_username(username, password, verification_code=""):
+        fake_storage.created.calls.append(("login", username, password, verification_code))
+        raise aiograpi_exceptions.UnknownError(
+            "The username you entered doesn't appear to belong to an account. "
+            "Please check your username and try again."
+        )
+
+    fake_storage.created.login = unknown_username
+    transport = ASGITransport(app=app, raise_app_exceptions=False)
+
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.post("/auth/login", data={"username": "missing", "password": "p"})
+
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": (
+            "The username you entered doesn't appear to belong to an account. "
+            "Please check your username and try again."
+        ),
+        "exc_type": "UnknownError",
+        "hint": "Check the Instagram username and retry POST /auth/login.",
+    }
+    assert fake_storage.saved == []
+
+
+@pytest.mark.asyncio
 async def test_login_by_sessionid_persists_session(fake_storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.post("/auth/login/by/sessionid", data={"sessionid": "sid"})
