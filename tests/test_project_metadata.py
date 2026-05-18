@@ -408,9 +408,9 @@ def test_live_tests_cover_published_image_and_paginated_read_lists():
     assert "pytest tests/live/test_live_http_smoke.py -m live -o addopts='' -v" in run_commands
 
     for endpoint in (
-        "/media/user/medias",
-        "/media/user/clips",
-        "/media/user/videos",
+        "/user/medias",
+        "/user/clips",
+        "/user/videos",
         "/user/followers",
         "/user/following",
         "/hashtag/medias/top",
@@ -423,7 +423,7 @@ def test_live_tests_cover_published_image_and_paginated_read_lists():
     ):
         assert endpoint in live_smoke
 
-    for endpoint in ("/media/user/medias", "/hashtag/medias/top", "/direct/inbox"):
+    for endpoint in ("/user/medias", "/hashtag/medias/top", "/direct/inbox"):
         assert endpoint in http_smoke
 
     assert "published Docker image" in readme

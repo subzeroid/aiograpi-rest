@@ -91,7 +91,14 @@ Large read lists are paginated with the same response shape:
 ```bash
 curl "http://localhost:8000/user/followers?user_id=25025320&amount=50" \
   -H "X-Session-ID: $SESSIONID"
+
+curl "http://localhost:8000/user/medias?username=instagram&amount=12" \
+  -H "X-Session-ID: $SESSIONID"
 ```
+
+User media collection routes such as `/user/medias`, `/user/clips`,
+`/user/videos`, and `/user/tagged/medias` accept either `user_id` or
+`username`.
 
 Story upload decoration fields are form fields. For mentions, pass JSON as a
 form value. If `x`, `y`, `width`, `height`, or `rotation` are omitted for a

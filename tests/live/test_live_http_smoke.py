@@ -113,7 +113,7 @@ def _create_session(base_url, account):
 
 def _assert_published_http_pagination(base_url, headers, public_user_id):
     for path in (
-        f"/media/user/medias?user_id={public_user_id}&amount=2",
+        f"/user/medias?user_id={public_user_id}&amount=2",
         "/hashtag/medias/top?name=instagram&amount=2",
         "/direct/inbox?thread_message_limit=1",
     ):

@@ -75,6 +75,10 @@ class FakePaginationClient:
     def __init__(self):
         self.calls = []
 
+    async def user_id_from_username(self, username):
+        self.calls.append(("user_id_from_username", username))
+        return 25025320
+
     async def user_medias_paginated(self, user_id, amount=0, end_cursor=""):
         self.calls.append(("user_medias_paginated", user_id, amount, end_cursor))
         return [_media_payload(1)], "next-user-medias"
@@ -163,10 +167,10 @@ async def _get(path, params):
 @pytest.mark.asyncio
 async def test_media_read_list_routes_return_items_and_next_cursor(storage):
     routes = [
-        ("/media/user/medias", {"user_id": "10", "amount": "7", "cursor": "m1"}, "next-user-medias"),
-        ("/media/usertag/medias", {"user_id": "10", "amount": "8", "cursor": "t1"}, "next-usertag-medias"),
-        ("/media/user/clips", {"user_id": "10", "amount": "9", "cursor": "c1"}, "next-user-clips"),
-        ("/media/user/videos", {"user_id": "10", "amount": "10", "cursor": "v1"}, "next-user-videos"),
+        ("/user/medias", {"user_id": "10", "amount": "7", "cursor": "m1"}, "next-user-medias"),
+        ("/user/tagged/medias", {"user_id": "10", "amount": "8", "cursor": "t1"}, "next-usertag-medias"),
+        ("/user/clips", {"user_id": "10", "amount": "9", "cursor": "c1"}, "next-user-clips"),
+        ("/user/videos", {"user_id": "10", "amount": "10", "cursor": "v1"}, "next-user-videos"),
     ]
 
     for path, params, next_cursor in routes:
@@ -180,6 +184,51 @@ async def test_media_read_list_routes_return_items_and_next_cursor(storage):
     assert ("usertag_medias_paginated", "10", 8, "t1") in storage.client.calls
     assert ("user_clips_paginated_v1", "10", 9, "c1") in storage.client.calls
     assert ("user_videos_paginated_v1", "10", 10, "v1") in storage.client.calls
+
+
+@pytest.mark.asyncio
+async def test_user_media_read_list_routes_resolve_username(storage):
+    routes = [
+        ("/user/medias", {"username": "instagram", "amount": "7"}, "user_medias_paginated"),
+        ("/user/tagged/medias", {"username": "instagram", "amount": "8"}, "usertag_medias_paginated"),
+        ("/user/clips", {"username": "instagram", "amount": "9"}, "user_clips_paginated_v1"),
+        ("/user/videos", {"username": "instagram", "amount": "10"}, "user_videos_paginated_v1"),
+    ]
+
+    for path, params, method_name in routes:
+        response = await _get(path, params)
+        assert response.status_code == 200
+        assert response.json()["items"]
+        assert any(call[0] == method_name and call[1] == "25025320" for call in storage.client.calls)
+
+    assert storage.client.calls.count(("user_id_from_username", "instagram")) == 4
+
+
+@pytest.mark.asyncio
+async def test_legacy_media_user_paths_resolve_username_in_user_id(storage):
+    checks = [
+        ("/media/user/medias", "user_medias_paginated"),
+        ("/media/user/clips", "user_clips_paginated_v1"),
+        ("/media/user/videos", "user_videos_paginated_v1"),
+    ]
+
+    for path, method_name in checks:
+        response = await _get(path, {"user_id": "iarijitbiswas", "amount": "2"})
+        assert response.status_code == 200
+        assert response.json()["items"]
+        assert ("user_id_from_username", "iarijitbiswas") in storage.client.calls
+        assert any(call[0] == method_name and call[1] == "25025320" and call[2] == 2 for call in storage.client.calls)
+
+
+@pytest.mark.asyncio
+async def test_user_media_read_list_routes_require_one_user_identifier(storage):
+    missing = await _get("/user/medias", {"amount": "2"})
+    both = await _get("/user/medias", {"user_id": "10", "username": "instagram", "amount": "2"})
+
+    assert missing.status_code == 422
+    assert missing.json()["detail"] == "Provide user_id or username"
+    assert both.status_code == 422
+    assert both.json()["detail"] == "Provide either user_id or username, not both"
 
 
 @pytest.mark.asyncio
@@ -230,10 +279,10 @@ async def test_openapi_read_list_routes_use_page_schemas_and_cursor_parameter():
     assert response.status_code == 200
     schema = response.json()
     expected_refs = {
-        "/media/user/medias": "MediaPage",
-        "/media/usertag/medias": "MediaPage",
-        "/media/user/clips": "MediaPage",
-        "/media/user/videos": "MediaPage",
+        "/user/medias": "MediaPage",
+        "/user/tagged/medias": "MediaPage",
+        "/user/clips": "MediaPage",
+        "/user/videos": "MediaPage",
         "/user/followers": "UserShortPage",
         "/user/following": "UserShortPage",
         "/user/follow/requests": "UserShortPage",
@@ -253,3 +302,8 @@ async def test_openapi_read_list_routes_use_page_schemas_and_cursor_parameter():
         parameter_names = {parameter["name"] for parameter in operation.get("parameters", [])}
         assert "cursor" in parameter_names
         assert "end_cursor" not in parameter_names
+
+    assert "/media/user/medias" not in schema["paths"]
+    assert "/media/usertag/medias" not in schema["paths"]
+    assert "/media/user/clips" not in schema["paths"]
+    assert "/media/user/videos" not in schema["paths"]

@@ -163,7 +163,7 @@ async def try_settings_import_paginated_read_lists(account, tmp_path):
 
         media_page = _assert_paginated_page(
             await api.get(
-                "/media/user/medias",
+                "/user/medias",
                 params={"user_id": public_user_id, "amount": 2},
                 headers=headers,
             )
@@ -184,8 +184,8 @@ async def try_settings_import_paginated_read_lists(account, tmp_path):
         )
 
         for path, params in (
-            ("/media/user/clips", {"user_id": public_user_id, "amount": 2}),
-            ("/media/user/videos", {"user_id": public_user_id, "amount": 2}),
+            ("/user/clips", {"user_id": public_user_id, "amount": 2}),
+            ("/user/videos", {"user_id": public_user_id, "amount": 2}),
             ("/user/followers", {"user_id": account_user_id, "amount": 2}),
             ("/user/following", {"user_id": account_user_id, "amount": 2}),
             ("/user/follow/requests", {"amount": 2}),

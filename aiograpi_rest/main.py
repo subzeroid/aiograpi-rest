@@ -135,6 +135,10 @@ OPERATION_SUMMARIES = {
     "getMediaUsertagMedias": "List paginated tagged media",
     "getMediaUserClips": "List paginated user Reels",
     "getMediaUserVideos": "List paginated user videos",
+    "getUserMedias": "List paginated user media",
+    "getUserTaggedMedias": "List paginated tagged media",
+    "getUserClips": "List paginated user Reels",
+    "getUserVideos": "List paginated user videos",
     "deleteMedia": "Delete media",
     "patchMedia": "Edit media caption",
     "getMediaUser": "Get media author",
@@ -403,6 +407,7 @@ app = FastAPI(
 app.include_router(auth.router)
 app.include_router(account.router)
 app.include_router(media.router)
+app.include_router(media.user_router)
 app.include_router(direct.router)
 app.include_router(hashtag.router)
 app.include_router(location.router)

@@ -45,8 +45,37 @@ def test_source_analyzer_ignores_non_route_decorators():
     assert analyzer._route_from_decorator(ast.parse("other.get('/x')").body[0].value) is None
     assert analyzer._route_from_decorator(ast.parse("router.websocket('/x')").body[0].value) is None
     assert analyzer._route_from_decorator(ast.parse("router.get()").body[0].value) is None
+    analyzer._router_prefixes["router"] = ""
+    assert analyzer._route_from_decorator(ast.parse("router.get()").body[0].value) is None
     assert analyzer._route_from_decorator(ast.parse("router.get(path)").body[0].value) is None
     assert coverage_script._call_name(ast.parse("factory['x']()").body[0].value) is None
+
+
+def test_source_analyzer_tracks_prefixes_per_router_variable():
+    analyzer = SourceAnalyzer({"login"})
+    source = """
+from fastapi import APIRouter
+
+router = APIRouter(prefix="/media")
+user_router = APIRouter(prefix="/user")
+
+@router.get("/info")
+async def media_info():
+    pass
+
+@user_router.get("/medias")
+async def user_medias():
+    pass
+
+@router.get("/hidden", include_in_schema=False)
+async def hidden_alias():
+    pass
+"""
+    analyzer.visit(ast.parse(source))
+
+    assert ("GET", "/media/info", "media_info") in analyzer.routes
+    assert ("GET", "/user/medias", "user_medias") in analyzer.routes
+    assert ("GET", "/media/hidden", "hidden_alias") not in analyzer.routes
 
 
 def test_client_methods_falls_back_when_signature_is_unavailable(monkeypatch):

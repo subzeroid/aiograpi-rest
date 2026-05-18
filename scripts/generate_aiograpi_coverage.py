@@ -47,13 +47,17 @@ class SourceAnalyzer(ast.NodeVisitor):
         self.function_calls: dict[str, set[str]] = defaultdict(set)
         self.routes: list[tuple[str, str, str]] = []
         self._current_function: str | None = None
-        self._router_prefix = ""
+        self._router_prefixes: dict[str, str] = {}
 
     def visit_Assign(self, node: ast.Assign) -> None:
         if isinstance(node.value, ast.Call) and _call_name(node.value) == "APIRouter":
+            prefix = ""
             for keyword in node.value.keywords:
                 if keyword.arg == "prefix" and isinstance(keyword.value, ast.Constant):
-                    self._router_prefix = str(keyword.value.value)
+                    prefix = str(keyword.value.value)
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    self._router_prefixes[target.id] = prefix
         self.generic_visit(node)
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
@@ -87,12 +91,19 @@ class SourceAnalyzer(ast.NodeVisitor):
         func = decorator.func
         if not isinstance(func, ast.Attribute) or not isinstance(func.value, ast.Name):
             return None
-        if func.value.id != "router" or func.attr not in {"delete", "get", "patch", "post", "put"}:
+        if func.value.id not in self._router_prefixes or func.attr not in {"delete", "get", "patch", "post", "put"}:
+            return None
+        if any(
+            keyword.arg == "include_in_schema"
+            and isinstance(keyword.value, ast.Constant)
+            and keyword.value.value is False
+            for keyword in decorator.keywords
+        ):
             return None
         if not decorator.args or not isinstance(decorator.args[0], ast.Constant):
             return None
         suffix = str(decorator.args[0].value)
-        return func.attr.upper(), f"{self._router_prefix}{suffix}"
+        return func.attr.upper(), f"{self._router_prefixes[func.value.id]}{suffix}"
 
 
 def _call_name(node: ast.Call) -> str | None:

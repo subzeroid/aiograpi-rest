@@ -82,15 +82,19 @@ from the previous page. This shape is used for:
 - `GET /hashtag/medias/top`
 - `GET /location/medias/recent`
 - `GET /location/medias/top`
-- `GET /media/user/clips`
-- `GET /media/user/medias`
-- `GET /media/user/videos`
-- `GET /media/usertag/medias`
 - `GET /story/archive`
 - `GET /story/viewers`
+- `GET /user/clips`
 - `GET /user/follow/requests`
 - `GET /user/followers`
 - `GET /user/following`
+- `GET /user/medias`
+- `GET /user/tagged/medias`
+- `GET /user/videos`
+
+User media collection routes accept either `user_id` for numeric Instagram
+user PKs or `username` for usernames. If a legacy client passes a username in
+`user_id`, the service resolves it before calling `aiograpi`.
 
 ## Form JSON Fields
 

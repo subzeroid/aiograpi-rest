@@ -285,10 +285,6 @@ async def test_openapi_uses_rest_http_methods():
         "/media/save": {"delete", "post"},
         "/media/seen": {"patch"},
         "/media/user": {"get"},
-        "/media/user/clips": {"get"},
-        "/media/user/medias": {"get"},
-        "/media/user/videos": {"get"},
-        "/media/usertag/medias": {"get"},
         "/note": {"delete", "post"},
         "/notes": {"get"},
         "/notifications": {"get"},
@@ -312,6 +308,7 @@ async def test_openapi_uses_rest_http_methods():
         "/story/viewers": {"get"},
         "/user/about": {"get"},
         "/user/block": {"delete", "post"},
+        "/user/clips": {"get"},
         "/user/follow/requests": {"get"},
         "/user/followers": {"get"},
         "/user/following": {"get"},
@@ -320,12 +317,15 @@ async def test_openapi_uses_rest_http_methods():
         "/user/id/from/username": {"get"},
         "/user/info": {"get"},
         "/user/info/by/username": {"get"},
+        "/user/medias": {"get"},
         "/user/mute/posts": {"delete", "post"},
         "/user/mute/stories": {"delete", "post"},
         "/user/follower": {"delete"},
         "/user/follow": {"delete", "post"},
         "/user/search": {"get"},
+        "/user/tagged/medias": {"get"},
         "/user/username/from/id": {"get"},
+        "/user/videos": {"get"},
         "/video/download": {"get"},
         "/video/download/by/url": {"get"},
         "/video/upload": {"post"},
@@ -459,7 +459,7 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/auth/login/by/sessionid"]["post"]["summary"] == "Create a session from an existing session ID"
     assert paths["/auth/settings"]["get"]["summary"] == "Get saved auth settings"
     assert paths["/auth/settings"]["patch"]["summary"] == "Save auth settings"
-    assert paths["/media/user/medias"]["get"]["summary"] == "List paginated user media"
+    assert paths["/user/medias"]["get"]["summary"] == "List paginated user media"
     assert paths["/user/info/by/username"]["get"]["summary"] == "Get user profile by username"
     assert paths["/story/upload/by/url"]["post"]["summary"] == "Upload a story from a URL"
     assert paths["/clip/upload/by/url"]["post"]["summary"] == "Upload a Reel from a URL"
