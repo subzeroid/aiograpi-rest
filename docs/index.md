@@ -18,7 +18,8 @@ boundary.
 - Media comments, likes, saves, pins, archive, photo, video, Reel, carousel
   album, story, highlight, note, Direct, notification, IGTV, and insights routes.
 - OpenAPI documentation at `/docs` and raw schema at `/openapi.json`.
-- Typed client generation guide for Swift, Go, TypeScript, and Python.
+- Typed client generation guide for Swift, Go, TypeScript, Python, PHP, Rust,
+  Kotlin, Scala, C#, C++, and other OpenAPI Generator targets.
 - Service health endpoints: `/health`, `/ready`, `/metrics`, `/build`, and `/deps`.
 - Python package layout under `aiograpi_rest/`, with Docker and local uvicorn
   entrypoints using `aiograpi_rest.main:app`.

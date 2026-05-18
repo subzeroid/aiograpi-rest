@@ -32,6 +32,23 @@ npx --yes @openapitools/openapi-generator-cli version
 The npm wrapper may create `openapitools.json` in your current directory. Keep
 it in your application repository if you want repeatable generator output.
 
+For repeated generation, define this helper once in your shell:
+
+```bash
+generate_aiograpi_rest_client() {
+  local generator="$1"
+  local output="$2"
+  shift 2
+
+  npx --yes @openapitools/openapi-generator-cli generate \
+    -i "$AIOGRAPI_REST_OPENAPI_URL" \
+    -g "$generator" \
+    -o "generated-clients/$output" \
+    --skip-validate-spec \
+    "$@"
+}
+```
+
 ## TypeScript
 
 ```bash
@@ -75,6 +92,116 @@ npx --yes @openapitools/openapi-generator-cli generate \
   --skip-validate-spec \
   --additional-properties=projectName=AiograpiRestClient
 ```
+
+## More Languages
+
+The generator names below were checked against OpenAPI Generator CLI 7.22.0.
+Run them after defining `generate_aiograpi_rest_client` above.
+
+```bash
+# C++
+generate_aiograpi_rest_client cpp-restsdk cpp-restsdk
+
+# C# / .NET
+generate_aiograpi_rest_client csharp csharp \
+  --additional-properties=packageName=AiograpiRest.Client
+
+# F# and Visual Basic can consume the generated C#/.NET package.
+generate_aiograpi_rest_client csharp dotnet \
+  --additional-properties=packageName=AiograpiRest.Client
+
+# Erlang
+generate_aiograpi_rest_client erlang-client erlang
+
+# Elixir
+generate_aiograpi_rest_client elixir elixir
+
+# Nim
+generate_aiograpi_rest_client nim nim
+
+# Haskell
+generate_aiograpi_rest_client haskell-http-client haskell
+
+# Clojure
+generate_aiograpi_rest_client clojure clojure
+
+# Julia
+generate_aiograpi_rest_client julia-client julia
+
+# R
+generate_aiograpi_rest_client r r
+
+# Kotlin
+generate_aiograpi_rest_client kotlin kotlin \
+  --additional-properties=packageName=com.aiograpirest.client
+
+# Scala
+generate_aiograpi_rest_client scala-sttp4 scala-sttp4
+
+# OCaml
+generate_aiograpi_rest_client ocaml ocaml
+
+# Crystal
+generate_aiograpi_rest_client crystal crystal
+
+# Rust
+generate_aiograpi_rest_client rust rust \
+  --additional-properties=packageName=aiograpi_rest_client
+
+# Objective-C
+generate_aiograpi_rest_client objc objc
+
+# Perl
+generate_aiograpi_rest_client perl perl
+
+# Lua
+generate_aiograpi_rest_client lua lua
+
+# PHP
+generate_aiograpi_rest_client php php \
+  --additional-properties=invokerPackage=AiograpiRestClient
+
+# Java
+generate_aiograpi_rest_client java java \
+  --additional-properties=apiPackage=com.aiograpirest.client.api,modelPackage=com.aiograpirest.client.model
+
+# JavaScript
+generate_aiograpi_rest_client javascript javascript
+
+# Ruby
+generate_aiograpi_rest_client ruby ruby
+
+# Dart
+generate_aiograpi_rest_client dart dart
+
+# C
+generate_aiograpi_rest_client c c
+
+# Bash
+generate_aiograpi_rest_client bash bash
+
+# PowerShell
+generate_aiograpi_rest_client powershell powershell
+
+# Postman collection
+generate_aiograpi_rest_client postman-collection postman
+```
+
+C++ has several generator variants. `cpp-restsdk` is a reasonable default, but
+OpenAPI Generator also exposes `cpp-qt-client`, `cpp-oatpp-client`, `cpp-tiny`,
+and platform-specific options.
+
+## Languages Without Dedicated Client Generators
+
+OpenAPI Generator CLI 7.22.0 does not include dedicated general-purpose client
+generators for D, Common Lisp, Pascal, or Visual Basic.
+
+Practical options:
+
+- Use raw HTTP with the `/openapi.json` schema as reference.
+- Generate a `postman-collection` artifact for manual exploration.
+- For Visual Basic or F#, generate the C#/.NET client and consume that package.
+- Try another OpenAPI generator if your language ecosystem has a better fit.
 
 ## Authentication
 

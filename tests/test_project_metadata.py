@@ -76,6 +76,25 @@ def test_markdown_files_match_current_project_identity():
     assert "not generated SDKs" in combined
     assert "typescript-fetch" in combined
     assert "swift5" in combined
+    assert "cpp-restsdk" in combined
+    assert "csharp" in combined
+    assert "erlang-client" in combined
+    assert "elixir" in combined
+    assert "nim" in combined
+    assert "haskell-http-client" in combined
+    assert "clojure" in combined
+    assert "julia-client" in combined
+    assert "kotlin" in combined
+    assert "scala-sttp4" in combined
+    assert "ocaml" in combined
+    assert "crystal" in combined
+    assert "rust" in combined
+    assert "objc" in combined
+    assert "perl" in combined
+    assert "lua" in combined
+    assert "php" in combined
+    assert "postman-collection" in combined
+    assert "D, Common Lisp, Pascal, or Visual Basic" in combined
     assert "X-Session-ID" in combined
     assert "aiograpi_rest.main:app" in combined
     assert "client-generation.md" in (ROOT / "mkdocs.yml").read_text()

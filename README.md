@@ -349,7 +349,7 @@ npx --yes @openapitools/openapi-generator-cli generate \
 ```
 
 `--skip-validate-spec` is sometimes needed for transient validator errors.
-See [Client Generation](docs/client-generation.md) for Swift, Go, TypeScript, and Python commands.
+See [Client Generation](docs/client-generation.md) for Swift, Go, TypeScript, Python, PHP, Rust, Kotlin, Scala, C#, C++, and other OpenAPI Generator targets.
 
 ## Operating in production
 
