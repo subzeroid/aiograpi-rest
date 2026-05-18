@@ -116,6 +116,27 @@ def test_swift_example_uses_current_rest_session_flow():
     assert "pk_from_code" not in swift_client
 
 
+def test_go_example_uses_current_rest_session_flow():
+    go_client = (ROOT / "golang" / "client.go").read_text()
+    go_mod = (ROOT / "golang" / "go.mod").read_text()
+
+    assert "AIOGRAPI_REST_BASE_URL" in go_client
+    assert "AIOGRAPI_REST_SESSIONID" in go_client
+    assert "AIOGRAPI_REST_USERNAME" in go_client
+    assert "AIOGRAPI_REST_PASSWORD" in go_client
+    assert "AIOGRAPI_REST_USER_ID" in go_client
+    assert "X-Session-ID" in go_client
+    assert '"/health"' in go_client
+    assert '"/deps"' in go_client
+    assert '"/auth/login"' in go_client
+    assert '"/user/about"' in go_client
+    assert "sessionid" not in go_client
+    assert "pkFromCode" not in go_client
+    assert "github.com/go-resty/resty" not in go_client
+    assert "github.com/go-resty/resty" not in go_mod
+    assert not (ROOT / "golang" / "go.sum").exists()
+
+
 def test_license_has_current_owner_and_year_range():
     license_text = (ROOT / "LICENSE").read_text()
     assert "MIT License" in license_text

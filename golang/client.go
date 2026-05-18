@@ -3,343 +3,186 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
-	"log"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"os"
-	"path/filepath"
-	"strconv"
 	"strings"
-
-	"github.com/go-resty/resty/v2"
 )
 
-const BaseUrl = "http://localhost:8000"
-
-var client *resty.Client
-
-func init() {
-	client = resty.New()
-	client.SetHostURL(BaseUrl)
-	client.SetContentLength(true)
+type APIClient struct {
+	baseURL   *url.URL
+	client    *http.Client
+	sessionID string
 }
 
-func getDeps() string {
-	resp, err := client.R().Get("/deps")
-	if err != nil {
-		log.Println(err)
-	}
-	return resp.String()
+type HTTPResult struct {
+	StatusCode int
+	Body       []byte
 }
 
-func pkFromCode(code string) string {
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"code": code,
-		}).
-		Get("/media/pk/from/code")
+func NewAPIClient(baseURL string, sessionID string) (*APIClient, error) {
+	parsed, err := url.Parse(strings.TrimRight(baseURL, "/"))
 	if err != nil {
-		log.Println(err)
+		return nil, fmt.Errorf("invalid AIOGRAPI_REST_BASE_URL: %w", err)
 	}
-	return resp.String()
+	if parsed.Scheme == "" || parsed.Host == "" {
+		return nil, fmt.Errorf("invalid AIOGRAPI_REST_BASE_URL: %q", baseURL)
+	}
+
+	return &APIClient{
+		baseURL:   parsed,
+		client:    http.DefaultClient,
+		sessionID: sessionID,
+	}, nil
 }
 
-func pkFromUrl(url string) string {
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"url": url,
-		}).
-		Get("/media/pk/from/url")
-	if err != nil {
-		log.Println(err)
-	}
-	return resp.String()
+func (c *APIClient) Get(path string, query url.Values) (*HTTPResult, error) {
+	return c.request(http.MethodGet, path, query, nil, "")
 }
 
-func id_from_username(sessionid, username string) string {
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"sessionid": sessionid,
-			"username":  username,
-		}).Get("/user/id/from/username")
-	if err != nil {
-		log.Println(err)
-	}
-	return resp.String()
-}
-
-func login(username, password string) string {
-	resp, err := client.R().
-		SetFormData(map[string]string{
-			"username": username,
-			"password": password,
-		}).Post("/auth/login")
-	if err != nil {
-		log.Println(err)
-	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return ""
-	}
-	return resp.String()
-}
-
-func relogin(sessionid string) {
-	resp, err := client.R().
-		SetFormData(map[string]string{
-			"sessionid": sessionid,
-		}).Patch("/auth/relogin")
-	if err != nil {
-		log.Println(err)
-	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-	}
-}
-
-func photo_download(sessionid, media_pk, folder string) string {
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"sessionid":  sessionid,
-			"media_pk":   media_pk,
-			"folder":     folder,
-			"returnFile": "false",
-		}).Get("/photo/download")
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return ""
-	}
-	return resp.String()
-}
-
-func video_download(sessionid, media_pk, folder string) string {
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"sessionid":  sessionid,
-			"media_pk":   media_pk,
-			"folder":     folder,
-			"returnFile": "false",
-		}).Get("/video/download")
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return ""
-	}
-	return resp.String()
-}
-
-func getSettings(sessionid string) string {
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"sessionid": sessionid,
-		}).Get("/auth/settings")
-	if err != nil {
-		log.Println(err)
-	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return "{}"
-	}
-	return resp.String()
-}
-
-func setSettings(sessionid, settings string) string {
-	resp, err := client.R().
-		SetFormData(map[string]string{
-			"sessionid": sessionid,
-			"settings":  settings,
-		}).Patch("/auth/settings")
-	if err != nil {
-		log.Println(err)
-	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return "{}"
-	}
-	return resp.String()
-}
-
-func loadSettings(file string) string {
-	if _, err := os.Stat(file); err != nil {
-		if os.IsNotExist(err) {
-			return "{}"
-		}
-	}
-	content, err := ioutil.ReadFile(file)
-	if err != nil {
-		log.Println(err)
-		return "{}"
-	}
-	return string(content)
-}
-
-func saveSettings(file string, settings string) {
-	fd, err := os.Create(file)
-	defer fd.Close()
-	_, err = fd.WriteString(settings)
-	if err != nil {
-		log.Println(err)
-	}
-}
-
-func user_stories(sessionid, id string, amount int) []string {
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"sessionid": sessionid,
-			"user_id":   id,
-			"amount":    strconv.Itoa(amount),
-		}).Get("/story/user/stories")
-	if err != nil {
-		log.Println(err)
-		return []string{}
-	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return []string{}
-	}
-
-	log.Println(resp.String())
-
-	var (
-		stories []map[string]interface{}
-		result  []string
+func (c *APIClient) PostForm(path string, form url.Values) (*HTTPResult, error) {
+	return c.request(
+		http.MethodPost,
+		path,
+		nil,
+		strings.NewReader(form.Encode()),
+		"application/x-www-form-urlencoded",
 	)
-
-	json.Unmarshal([]byte(resp.String()), &stories)
-	for _, v := range stories {
-		result = append(result, strings.SplitN(v["id"].(string), "_", 2)[0])
-	}
-	return result
 }
 
-func igtv_download(sessionid, media_pk, folder string) string {
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"sessionid":  sessionid,
-			"media_pk":   media_pk,
-			"folder":     folder,
-			"returnFile": "false",
-		}).Get("/igtv/download")
+func (c *APIClient) request(method string, path string, query url.Values, body io.Reader, contentType string) (*HTTPResult, error) {
+	endpoint := c.baseURL.ResolveReference(&url.URL{Path: "/" + strings.TrimLeft(path, "/")})
+	if query != nil {
+		endpoint.RawQuery = query.Encode()
+	}
+
+	req, err := http.NewRequest(method, endpoint.String(), body)
 	if err != nil {
-		log.Println(err)
-		return ""
+		return nil, err
 	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return ""
+	req.Header.Set("Accept", "application/json")
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
 	}
-	return resp.String()
+	if c.sessionID != "" {
+		req.Header.Set("X-Session-ID", c.sessionID)
+	}
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return &HTTPResult{StatusCode: resp.StatusCode, Body: data}, nil
 }
 
-func story_download(sessionid, story_pk, folder string) string {
-	resp, err := client.R().
-		SetQueryParams(map[string]string{
-			"sessionid":  sessionid,
-			"story_pk":   story_pk,
-			"folder":     folder,
-			"returnFile": "false",
-		}).Get("/story/download")
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return ""
-	}
-	return resp.String()
+func env(name string) string {
+	return strings.TrimSpace(os.Getenv(name))
 }
 
-func album_upload(sessionid string, files []string, caption string) string {
-	r := client.R()
-	for _, path := range files {
-		path = strings.Trim(path, "\" ")
-		filedata, _ := ioutil.ReadFile(path)
-		r = r.SetFileReader("files", filepath.Base(path), bytes.NewReader(filedata))
+func envDefault(name string, fallback string) string {
+	if value := env(name); value != "" {
+		return value
 	}
-
-	resp, err := r.SetFormData(map[string]string{
-		"sessionid": sessionid,
-		"caption":   caption,
-	}).Post("/album/upload")
-
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return ""
-	}
-	return resp.String()
+	return fallback
 }
 
-func storyUpload(sessionid, filephoto string) string {
-	resp, err := client.R().
-		SetFile("file", strings.Trim(filephoto, "\" ")).
-		SetFormData(map[string]string{
-			"sessionid": sessionid,
-		}).Post("/story/upload")
+func printResult(title string, result *HTTPResult) {
+	fmt.Printf("\n%s [HTTP %d]\n%s\n", title, result.StatusCode, prettyJSON(result.Body))
+}
 
+func prettyJSON(data []byte) string {
+	var value any
+	if err := json.Unmarshal(data, &value); err != nil {
+		return string(data)
+	}
+
+	rendered, err := json.MarshalIndent(value, "", "  ")
 	if err != nil {
-		log.Println(err)
-		return ""
+		return string(data)
 	}
-	if resp.StatusCode() != 200 {
-		log.Println(resp.String())
-		return ""
+	return string(bytes.TrimSpace(rendered))
+}
+
+func decodeLogin(body []byte) (string, error) {
+	var value string
+	if err := json.Unmarshal(body, &value); err != nil {
+		return "", err
 	}
-	return resp.String()
+	if value == "" || value == "false" {
+		return "", errors.New("login did not return a usable session")
+	}
+	return value, nil
 }
 
 func main() {
-	log.Println("Dependencies: ", getDeps())
-	log.Println("pkFromCode: B1LbfVPlwIA -> ", pkFromCode("B1LbfVPlwIA"))
-	settings := loadSettings("./settings.json")
-	sessionid := ""
-	if settings != "{}" {
-		sessionid = setSettings("", settings)
-	} else {
-		sessionid = login("example", "test")
+	api, err := NewAPIClient(
+		envDefault("AIOGRAPI_REST_BASE_URL", "http://localhost:8000"),
+		env("AIOGRAPI_REST_SESSIONID"),
+	)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
-	if sessionid != "" {
-		log.Println("SESSIONID: ", sessionid)
-		settings = getSettings(sessionid)
-		if settings != "{}" {
-			log.Println(settings)
-			saveSettings("./settings.json", settings)
+
+	health, err := api.Get("/health", nil)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	printResult("Health", health)
+
+	deps, err := api.Get("/deps", nil)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	printResult("Dependencies", deps)
+
+	if api.sessionID == "" && env("AIOGRAPI_REST_USERNAME") != "" && env("AIOGRAPI_REST_PASSWORD") != "" {
+		form := url.Values{}
+		form.Set("username", env("AIOGRAPI_REST_USERNAME"))
+		form.Set("password", env("AIOGRAPI_REST_PASSWORD"))
+		if verificationCode := env("AIOGRAPI_REST_VERIFICATION_CODE"); verificationCode != "" {
+			form.Set("verification_code", verificationCode)
 		}
-	} else {
-		log.Fatal("Login error!")
+
+		login, err := api.PostForm("/auth/login", form)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		printResult("Login", login)
+		if login.StatusCode >= 200 && login.StatusCode < 300 {
+			api.sessionID, err = decodeLogin(login.Body)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
+			fmt.Println("\nLogin stored the returned session for this process.")
+		}
 	}
 
-	photo := photo_download(sessionid, pkFromUrl("https://www.instagram.com/p/COQebHWhRUg/"), "")
-	log.Println("photo_download:", photo)
-
-	photoStory := storyUpload(sessionid, photo)
-	log.Println("storyUpload:", photoStory)
-
-	video := video_download(sessionid, pkFromUrl("https://www.instagram.com/p/CGgDsi7JQdS/"), "")
-	log.Println("video_download:", video)
-
-	igtv := igtv_download(sessionid, pkFromUrl("https://www.instagram.com/p/CRHO6N6HLvQ/"), "")
-	log.Println("igtv_download:", igtv)
-
-	stories := user_stories(sessionid, id_from_username(sessionid, "therock"), 1)
-	log.Println(stories)
-
-	if len(stories) > 0 {
-		story := story_download(sessionid, stories[0], "")
-		log.Println("story_download:", story)
+	if api.sessionID == "" {
+		fmt.Println("\nSet AIOGRAPI_REST_SESSIONID or AIOGRAPI_REST_USERNAME/AIOGRAPI_REST_PASSWORD to call /user/about.")
+		return
 	}
 
-	result := album_upload(sessionid, []string{photo, video}, "hello world")
-	log.Println(result)
-
+	query := url.Values{}
+	query.Set("user_id", envDefault("AIOGRAPI_REST_USER_ID", "25025320"))
+	about, err := api.Get("/user/about", query)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	printResult("User About", about)
 }
