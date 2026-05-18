@@ -363,6 +363,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#openapi-303-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenAPI 3.0.3 compatibility
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#start-the-api" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -534,6 +545,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#openapi-303-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenAPI 3.0.3 compatibility
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#start-the-api" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -670,6 +692,15 @@ maintaining hand-written SDKs for every language.</p>
 <p>The generated client is only as stable as the OpenAPI schema it was generated
 from. Regenerate it when you upgrade <code>aiograpi-rest</code>, especially after endpoint,
 request body, response model, or auth changes.</p>
+<h2 id="openapi-303-compatibility">OpenAPI 3.0.3 compatibility</h2>
+<p><code>aiograpi-rest</code> publishes OpenAPI 3.0.3 for generator compatibility. FastAPI and
+Pydantic can emit OpenAPI 3.1-style nullable schemas internally, but the exported
+schema is normalized back to 3.0.3-compatible <code>nullable: true</code> fields before it
+is served from <code>/openapi.json</code> or attached to a release.</p>
+<p>Request and response schemas are also renamed to stable operation-based names
+such as <code>AuthLoginRequest</code> and <code>AuthLoginResponse</code>. This keeps generated SDKs
+from exposing framework-generated names like <code>Body_*</code> or inline <code>Response *</code>
+models.</p>
 <h2 id="start-the-api">Start The API</h2>
 <p>Run the same server version that your application will call:</p>
 <div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>subzeroid/aiograpi-rest
