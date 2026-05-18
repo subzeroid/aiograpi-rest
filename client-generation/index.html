@@ -418,6 +418,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#more-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        More Languages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#languages-without-dedicated-client-generators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Languages Without Dedicated Client Generators
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -556,6 +578,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#more-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        More Languages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#languages-without-dedicated-client-generators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Languages Without Dedicated Client Generators
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -617,6 +661,20 @@ mkdir<span class="w"> </span>-p<span class="w"> </span>generated-clients
 </code></pre></div>
 <p>The npm wrapper may create <code>openapitools.json</code> in your current directory. Keep
 it in your application repository if you want repeatable generator output.</p>
+<p>For repeated generation, define this helper once in your shell:</p>
+<div class="highlight"><pre><span></span><code>generate_aiograpi_rest_client<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">generator</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">output</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$2</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="nb">shift</span><span class="w"> </span><span class="m">2</span>
+
+<span class="w">  </span>npx<span class="w"> </span>--yes<span class="w"> </span>@openapitools/openapi-generator-cli<span class="w"> </span>generate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-i<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AIOGRAPI_REST_OPENAPI_URL</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-g<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$generator</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-o<span class="w"> </span><span class="s2">&quot;generated-clients/</span><span class="nv">$output</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--skip-validate-spec<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span>
+<span class="o">}</span>
+</code></pre></div>
 <h2 id="typescript">TypeScript</h2>
 <div class="highlight"><pre><span></span><code>npx<span class="w"> </span>--yes<span class="w"> </span>@openapitools/openapi-generator-cli<span class="w"> </span>generate<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-i<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AIOGRAPI_REST_OPENAPI_URL</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
@@ -649,6 +707,109 @@ it in your application repository if you want repeatable generator output.</p>
 <span class="w">  </span>--skip-validate-spec<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--additional-properties<span class="o">=</span><span class="nv">projectName</span><span class="o">=</span>AiograpiRestClient
 </code></pre></div>
+<h2 id="more-languages">More Languages</h2>
+<p>The generator names below were checked against OpenAPI Generator CLI 7.22.0.
+Run them after defining <code>generate_aiograpi_rest_client</code> above.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># C++</span>
+generate_aiograpi_rest_client<span class="w"> </span>cpp-restsdk<span class="w"> </span>cpp-restsdk
+
+<span class="c1"># C# / .NET</span>
+generate_aiograpi_rest_client<span class="w"> </span>csharp<span class="w"> </span>csharp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--additional-properties<span class="o">=</span><span class="nv">packageName</span><span class="o">=</span>AiograpiRest.Client
+
+<span class="c1"># F# and Visual Basic can consume the generated C#/.NET package.</span>
+generate_aiograpi_rest_client<span class="w"> </span>csharp<span class="w"> </span>dotnet<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--additional-properties<span class="o">=</span><span class="nv">packageName</span><span class="o">=</span>AiograpiRest.Client
+
+<span class="c1"># Erlang</span>
+generate_aiograpi_rest_client<span class="w"> </span>erlang-client<span class="w"> </span>erlang
+
+<span class="c1"># Elixir</span>
+generate_aiograpi_rest_client<span class="w"> </span>elixir<span class="w"> </span>elixir
+
+<span class="c1"># Nim</span>
+generate_aiograpi_rest_client<span class="w"> </span>nim<span class="w"> </span>nim
+
+<span class="c1"># Haskell</span>
+generate_aiograpi_rest_client<span class="w"> </span>haskell-http-client<span class="w"> </span>haskell
+
+<span class="c1"># Clojure</span>
+generate_aiograpi_rest_client<span class="w"> </span>clojure<span class="w"> </span>clojure
+
+<span class="c1"># Julia</span>
+generate_aiograpi_rest_client<span class="w"> </span>julia-client<span class="w"> </span>julia
+
+<span class="c1"># R</span>
+generate_aiograpi_rest_client<span class="w"> </span>r<span class="w"> </span>r
+
+<span class="c1"># Kotlin</span>
+generate_aiograpi_rest_client<span class="w"> </span>kotlin<span class="w"> </span>kotlin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--additional-properties<span class="o">=</span><span class="nv">packageName</span><span class="o">=</span>com.aiograpirest.client
+
+<span class="c1"># Scala</span>
+generate_aiograpi_rest_client<span class="w"> </span>scala-sttp4<span class="w"> </span>scala-sttp4
+
+<span class="c1"># OCaml</span>
+generate_aiograpi_rest_client<span class="w"> </span>ocaml<span class="w"> </span>ocaml
+
+<span class="c1"># Crystal</span>
+generate_aiograpi_rest_client<span class="w"> </span>crystal<span class="w"> </span>crystal
+
+<span class="c1"># Rust</span>
+generate_aiograpi_rest_client<span class="w"> </span>rust<span class="w"> </span>rust<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--additional-properties<span class="o">=</span><span class="nv">packageName</span><span class="o">=</span>aiograpi_rest_client
+
+<span class="c1"># Objective-C</span>
+generate_aiograpi_rest_client<span class="w"> </span>objc<span class="w"> </span>objc
+
+<span class="c1"># Perl</span>
+generate_aiograpi_rest_client<span class="w"> </span>perl<span class="w"> </span>perl
+
+<span class="c1"># Lua</span>
+generate_aiograpi_rest_client<span class="w"> </span>lua<span class="w"> </span>lua
+
+<span class="c1"># PHP</span>
+generate_aiograpi_rest_client<span class="w"> </span>php<span class="w"> </span>php<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--additional-properties<span class="o">=</span><span class="nv">invokerPackage</span><span class="o">=</span>AiograpiRestClient
+
+<span class="c1"># Java</span>
+generate_aiograpi_rest_client<span class="w"> </span>java<span class="w"> </span>java<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--additional-properties<span class="o">=</span><span class="nv">apiPackage</span><span class="o">=</span>com.aiograpirest.client.api,modelPackage<span class="o">=</span>com.aiograpirest.client.model
+
+<span class="c1"># JavaScript</span>
+generate_aiograpi_rest_client<span class="w"> </span>javascript<span class="w"> </span>javascript
+
+<span class="c1"># Ruby</span>
+generate_aiograpi_rest_client<span class="w"> </span>ruby<span class="w"> </span>ruby
+
+<span class="c1"># Dart</span>
+generate_aiograpi_rest_client<span class="w"> </span>dart<span class="w"> </span>dart
+
+<span class="c1"># C</span>
+generate_aiograpi_rest_client<span class="w"> </span>c<span class="w"> </span>c
+
+<span class="c1"># Bash</span>
+generate_aiograpi_rest_client<span class="w"> </span>bash<span class="w"> </span>bash
+
+<span class="c1"># PowerShell</span>
+generate_aiograpi_rest_client<span class="w"> </span>powershell<span class="w"> </span>powershell
+
+<span class="c1"># Postman collection</span>
+generate_aiograpi_rest_client<span class="w"> </span>postman-collection<span class="w"> </span>postman
+</code></pre></div>
+<p>C++ has several generator variants. <code>cpp-restsdk</code> is a reasonable default, but
+OpenAPI Generator also exposes <code>cpp-qt-client</code>, <code>cpp-oatpp-client</code>, <code>cpp-tiny</code>,
+and platform-specific options.</p>
+<h2 id="languages-without-dedicated-client-generators">Languages Without Dedicated Client Generators</h2>
+<p>OpenAPI Generator CLI 7.22.0 does not include dedicated general-purpose client
+generators for D, Common Lisp, Pascal, or Visual Basic.</p>
+<p>Practical options:</p>
+<ul>
+<li>Use raw HTTP with the <code>/openapi.json</code> schema as reference.</li>
+<li>Generate a <code>postman-collection</code> artifact for manual exploration.</li>
+<li>For Visual Basic or F#, generate the C#/.NET client and consume that package.</li>
+<li>Try another OpenAPI generator if your language ecosystem has a better fit.</li>
+</ul>
 <h2 id="authentication">Authentication</h2>
 <p>Generated clients should send the saved aiograpi-rest session in the
 <code>X-Session-ID</code> header. Create it with <code>POST /auth/login</code> or
