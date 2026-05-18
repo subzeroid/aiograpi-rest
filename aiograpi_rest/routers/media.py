@@ -5,8 +5,8 @@ from aiograpi.types import Comment, Media, UserShort
 from fastapi import APIRouter, Depends, Form, Query
 from pydantic import BaseModel
 
-from dependencies import ClientStorage, get_clients, get_sessionid
-from helpers import (
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.helpers import (
     LOCATION_FORM_DESCRIPTION,
     USERTAGS_FORM_DESCRIPTION,
     parse_upload_location,

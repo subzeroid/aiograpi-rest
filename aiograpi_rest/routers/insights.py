@@ -3,7 +3,7 @@ from typing import Dict, List
 from aiograpi.mixins.insights import DATA_ORDERING, POST_TYPE, TIME_FRAME
 from fastapi import APIRouter, Depends, Query
 
-from dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 
 router = APIRouter(
     prefix="/insights",

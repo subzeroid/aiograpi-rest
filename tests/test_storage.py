@@ -3,7 +3,7 @@ import json
 import pytest
 from tinydb import Query
 
-from storages import ClientStorage
+from aiograpi_rest.storages import ClientStorage
 
 
 class FakeClient:
@@ -130,8 +130,8 @@ def test_close_is_a_no_op(tmp_path):
 
 
 def test_get_clients_dependency_yields_storage(monkeypatch, tmp_path):
-    import storages
-    from dependencies import get_clients
+    import aiograpi_rest.storages as storages
+    from aiograpi_rest.dependencies import get_clients
 
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(storages, "Client", FakeClient)

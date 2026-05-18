@@ -6,8 +6,8 @@ import aiograpi.exceptions as aiograpi_exceptions
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-import main
-from main import app
+import aiograpi_rest.main as main
+from aiograpi_rest.main import app
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -495,7 +495,7 @@ async def test_deps_returns_none_when_package_missing(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_exception_handler_wraps_errors_in_envelope(monkeypatch):
-    from dependencies import get_clients
+    from aiograpi_rest.dependencies import get_clients
 
     class BoomStorage:
         async def get(self, sessionid):
@@ -528,7 +528,7 @@ async def test_exception_handler_wraps_errors_in_envelope(monkeypatch):
 )
 @pytest.mark.asyncio
 async def test_exception_handler_maps_instagram_throttling_errors(monkeypatch, exc):
-    from dependencies import get_clients
+    from aiograpi_rest.dependencies import get_clients
 
     class BoomStorage:
         async def get(self, sessionid):
@@ -606,7 +606,7 @@ async def test_upload_openapi_documents_json_encoded_form_usertags_and_location(
 
 @pytest.mark.asyncio
 async def test_authorized_routes_accept_sessionid_header(monkeypatch):
-    from dependencies import get_clients
+    from aiograpi_rest.dependencies import get_clients
 
     class HeaderStorage:
         def __init__(self):
@@ -639,7 +639,7 @@ async def test_authorized_routes_accept_sessionid_header(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_authorized_routes_accept_sessionid_cookie(monkeypatch):
-    from dependencies import get_clients
+    from aiograpi_rest.dependencies import get_clients
 
     class CookieStorage:
         def __init__(self):

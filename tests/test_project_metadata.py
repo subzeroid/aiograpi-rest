@@ -36,18 +36,34 @@ def test_pyproject_replaces_requirements_txt():
     assert pyproject["project"]["urls"]["Repository"] == "https://github.com/subzeroid/aiograpi-rest"
 
 
+def test_fastapi_project_uses_package_layout():
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text())
+    assert "py-modules" not in pyproject["tool"]["setuptools"]
+    assert pyproject["tool"]["setuptools"]["packages"]["find"]["include"] == ["aiograpi_rest*"]
+    assert (ROOT / "aiograpi_rest" / "main.py").exists()
+    assert (ROOT / "aiograpi_rest" / "routers" / "auth.py").exists()
+    assert not (ROOT / "main.py").exists()
+    assert not (ROOT / "routers").exists()
+
+
+def test_repository_does_not_track_legacy_platform_artifacts():
+    for path in ("Procfile", "app.json", "runtime.txt", "logo.png"):
+        assert not (ROOT / path).exists()
+    assert not (ROOT / "docs" / "superpowers").exists()
+
+
 def test_app_version_is_single_sourced_from_pyproject():
-    import main
+    import aiograpi_rest.main as main
 
     version = project_version()
     assert main.APP_VERSION == version
     assert main._app_version() == version
-    assert 'APP_VERSION = "' not in (ROOT / "main.py").read_text()
+    assert 'APP_VERSION = "' not in (ROOT / "aiograpi_rest" / "main.py").read_text()
     assert "Current API version: `" not in (ROOT / "README.md").read_text()
 
 
 def test_project_version_can_be_read_from_explicit_pyproject(tmp_path):
-    import main
+    import aiograpi_rest.main as main
 
     pyproject = tmp_path / "pyproject.toml"
     pyproject.write_text('[project]\nname = "aiograpi-rest"\nversion = "9.8.7"\n')
@@ -57,7 +73,7 @@ def test_project_version_can_be_read_from_explicit_pyproject(tmp_path):
 
 
 def test_app_version_falls_back_to_distribution_metadata(monkeypatch):
-    import main
+    import aiograpi_rest.main as main
 
     monkeypatch.setattr(main, "_project_version", lambda: None)
     monkeypatch.setattr(main, "package_version", lambda name: "9.9.9")
@@ -66,7 +82,7 @@ def test_app_version_falls_back_to_distribution_metadata(monkeypatch):
 
 
 def test_app_version_returns_unknown_when_metadata_is_missing(monkeypatch):
-    import main
+    import aiograpi_rest.main as main
 
     def missing_version(name):
         raise PackageNotFoundError(name)
@@ -91,6 +107,7 @@ def test_dockerfile_uses_python_313_and_pyproject_install():
     assert "ARG BUILD_TIME=" in dockerfile
     assert "ENV GIT_SHA=${GIT_SHA}" in dockerfile
     assert "ENV BUILD_TIME=${BUILD_TIME}" in dockerfile
+    assert 'CMD ["uvicorn", "aiograpi_rest.main:app"' in dockerfile
     assert "org.opencontainers.image.source=\"https://github.com/subzeroid/aiograpi-rest\"" in dockerfile
     assert "chown -R aiograpi:aiograpi /app" in dockerfile
     assert "USER aiograpi" in dockerfile
@@ -263,13 +280,6 @@ def test_export_openapi_script_requires_output_argument():
 
     with pytest.raises(SystemExit, match="Usage: export_openapi.py OUTPUT"):
         export_openapi.main([])
-
-
-def test_app_manifest_uses_aiograpi_rest_identity():
-    manifest = json.loads((ROOT / "app.json").read_text())
-    assert manifest["name"] == "aiograpi-rest"
-    assert manifest["repository"] == "https://github.com/subzeroid/aiograpi-rest"
-    assert "aiograpi-rest" in manifest["keywords"]
 
 
 def test_readme_documents_rename_reason():

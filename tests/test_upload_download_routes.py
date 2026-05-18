@@ -5,14 +5,14 @@ from pathlib import Path
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-import helpers
-import routers.clip as clip_router
-import routers.igtv as igtv_router
-import routers.photo as photo_router
-import routers.story as story_router
-import routers.video as video_router
-from dependencies import get_clients
-from main import app
+import aiograpi_rest.helpers as helpers
+import aiograpi_rest.routers.clip as clip_router
+import aiograpi_rest.routers.igtv as igtv_router
+import aiograpi_rest.routers.photo as photo_router
+import aiograpi_rest.routers.story as story_router
+import aiograpi_rest.routers.video as video_router
+from aiograpi_rest.dependencies import get_clients
+from aiograpi_rest.main import app
 
 
 def _user_short():

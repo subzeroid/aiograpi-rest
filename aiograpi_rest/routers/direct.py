@@ -3,7 +3,7 @@ from typing import List, Optional
 from aiograpi.types import DirectMessage, DirectThread
 from fastapi import APIRouter, Depends, Form, HTTPException, Query
 
-from dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 
 router = APIRouter(
     prefix="/direct",

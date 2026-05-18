@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 from fastapi import APIRouter, Depends, Form, HTTPException
 
-from dependencies import ClientStorage, get_clients, get_optional_sessionid, get_sessionid
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_optional_sessionid, get_sessionid
 
 router = APIRouter(
     prefix="/auth",

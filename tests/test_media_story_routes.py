@@ -4,10 +4,10 @@ from pathlib import Path
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-import routers.media as media_router
-import routers.story as story_router
-from dependencies import get_clients
-from main import app
+import aiograpi_rest.routers.media as media_router
+import aiograpi_rest.routers.story as story_router
+from aiograpi_rest.dependencies import get_clients
+from aiograpi_rest.main import app
 
 
 def _user_short(pk=1):

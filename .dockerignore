@@ -15,11 +15,9 @@
 /docs
 /examples
 /golang
-/instagrapi_rest.egg-info
 /site
 /swift
 /tests
 /CODE_OF_CONDUCT.md
 /LICENSE
-/logo.png
 *.py[cod]

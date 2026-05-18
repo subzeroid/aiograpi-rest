@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aiograpi-rest"
-version = "3.2.3"
+version = "3.3.0"
 description = "RESTful API service for aiograpi"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -37,11 +37,8 @@ docs = [
   "mkdocs-material>=9.6,<10",
 ]
 
-[tool.setuptools]
-py-modules = ["main", "dependencies", "helpers", "storages"]
-
 [tool.setuptools.packages.find]
-include = ["routers*"]
+include = ["aiograpi_rest*"]
 exclude = ["tests*", "golang*", "swift*", "docs*", "examples*"]
 
 [tool.pytest.ini_options]

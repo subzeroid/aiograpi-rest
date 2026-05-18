@@ -21,7 +21,7 @@ python3.13 -m venv .venv
 . .venv/bin/activate
 python3.13 -m pip install -U pip
 python3.13 -m pip install -e ".[test,docs]"
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn aiograpi_rest.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ## Create A Session

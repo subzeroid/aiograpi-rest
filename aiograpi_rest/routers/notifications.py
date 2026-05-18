@@ -2,7 +2,7 @@ from typing import Dict, List
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Query
 
-from dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 
 router = APIRouter(
     prefix="/notifications",

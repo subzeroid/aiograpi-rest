@@ -6,7 +6,7 @@ from aiograpi.types import About, Highlight, Relationship, User, UserShort
 from fastapi import APIRouter, Depends, Form, Query
 from pydantic import BaseModel, ValidationError
 
-from dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 
 router = APIRouter(
     prefix="/user",

@@ -3,7 +3,7 @@ from typing import List
 from aiograpi.types import Note
 from fastapi import APIRouter, Depends, Form, Query
 
-from dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 
 router = APIRouter(
     tags=["Note"],

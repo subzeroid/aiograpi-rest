@@ -4,8 +4,6 @@ site_url: https://subzeroid.github.io/aiograpi-rest/
 repo_name: subzeroid/aiograpi-rest
 edit_uri: edit/main/docs/
 docs_dir: docs
-exclude_docs: |
-  superpowers/**
 nav:
   - Overview: index.md
   - Getting Started: getting-started.md

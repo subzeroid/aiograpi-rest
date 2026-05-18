@@ -4,8 +4,8 @@ from typing import List, Optional
 from aiograpi.types import Media
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 
-from dependencies import ClientStorage, get_clients, get_sessionid
-from helpers import (
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.helpers import (
     LOCATION_FORM_DESCRIPTION,
     USERTAGS_FORM_DESCRIPTION,
     album_upload_post,

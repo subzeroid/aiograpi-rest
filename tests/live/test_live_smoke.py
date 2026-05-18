@@ -11,9 +11,9 @@ from aiograpi import Client
 from httpx import ASGITransport, AsyncClient
 from PIL import Image
 
-from dependencies import get_clients
-from main import app
-from storages import ClientStorage
+from aiograpi_rest.dependencies import get_clients
+from aiograpi_rest.main import app
+from aiograpi_rest.storages import ClientStorage
 
 pytestmark = pytest.mark.live
 

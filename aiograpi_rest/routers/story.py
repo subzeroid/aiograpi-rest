@@ -18,8 +18,8 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Upload
 from fastapi.responses import FileResponse
 from pydantic import AnyHttpUrl, ValidationError
 
-from dependencies import ClientStorage, get_clients, get_sessionid
-from helpers import photo_upload_story_as_photo, photo_upload_story_as_video, video_upload_story
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.helpers import photo_upload_story_as_photo, photo_upload_story_as_video, video_upload_story
 
 router = APIRouter(
     prefix="/story",

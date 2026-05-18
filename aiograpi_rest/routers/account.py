@@ -5,7 +5,7 @@ from typing import Optional
 from aiograpi.types import Account, UserShort
 from fastapi import APIRouter, Depends, File, Form, UploadFile
 
-from dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 
 router = APIRouter(
     prefix="/account",

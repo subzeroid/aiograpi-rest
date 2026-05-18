@@ -1,8 +1,8 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from dependencies import get_clients
-from main import app
+from aiograpi_rest.dependencies import get_clients
+from aiograpi_rest.main import app
 
 
 def _user_payload(pk="1", username="instagram"):
@@ -242,7 +242,7 @@ async def test_user_about_falls_back_when_aiograpi_rejects_bool_country(storage)
 
 
 def test_extract_about_from_last_json_covers_bloks_fields():
-    from routers.user import _extract_about_from_last_json
+    from aiograpi_rest.routers.user import _extract_about_from_last_json
 
     about = _extract_about_from_last_json(
         {

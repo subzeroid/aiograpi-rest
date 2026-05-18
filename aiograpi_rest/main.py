@@ -15,7 +15,7 @@ from fastapi.openapi.utils import get_openapi
 from fastapi.routing import APIRoute
 from starlette.responses import JSONResponse, RedirectResponse, Response
 
-from routers import (
+from aiograpi_rest.routers import (
     account,
     album,
     auth,
@@ -34,16 +34,23 @@ from routers import (
     user,
     video,
 )
-from storages import ClientStorage
+from aiograpi_rest.storages import ClientStorage
 
 APP_PACKAGE_NAME = "aiograpi-rest"
 
 
 def _project_version(pyproject_path: Path | None = None) -> str | None:
-    path = pyproject_path or Path(__file__).with_name("pyproject.toml")
-    if not path.exists():
-        return None
-    return tomllib.loads(path.read_text())["project"]["version"]
+    if pyproject_path is not None:
+        paths = [pyproject_path]
+    else:
+        paths = [
+            Path(__file__).with_name("pyproject.toml"),
+            Path(__file__).resolve().parents[1] / "pyproject.toml",
+        ]
+    for path in paths:
+        if path.exists():
+            return tomllib.loads(path.read_text())["project"]["version"]
+    return None
 
 
 def _app_version() -> str:

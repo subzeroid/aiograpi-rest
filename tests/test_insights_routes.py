@@ -1,8 +1,8 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from dependencies import get_clients
-from main import app
+from aiograpi_rest.dependencies import get_clients
+from aiograpi_rest.main import app
 
 
 class FakeClient:

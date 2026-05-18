@@ -3,7 +3,7 @@ from typing import List, Optional
 from aiograpi.types import Location, Media
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 
 router = APIRouter(
     prefix="/location",

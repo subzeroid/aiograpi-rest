@@ -3,7 +3,7 @@ from typing import Generator, Optional
 from fastapi import HTTPException, Request, Security
 from fastapi.security import APIKeyHeader
 
-from storages import ClientStorage
+from aiograpi_rest.storages import ClientStorage
 
 sessionid_header = APIKeyHeader(
     name="X-Session-ID",

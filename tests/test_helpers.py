@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pytest
 from aiograpi.exceptions import PhotoConfigureStoryError, VideoConfigureStoryError
 
-import helpers
+import aiograpi_rest.helpers as helpers
 
 
 class FakeUploadFile:

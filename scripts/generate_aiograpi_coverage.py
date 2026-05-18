@@ -13,9 +13,9 @@ from aiograpi import Client
 ROOT = Path(__file__).resolve().parents[1]
 DOC_PATH = ROOT / "docs" / "aiograpi-coverage.md"
 SOURCE_PATHS = [
-    *sorted((ROOT / "routers").glob("*.py")),
-    ROOT / "helpers.py",
-    ROOT / "storages.py",
+    *sorted((ROOT / "aiograpi_rest" / "routers").glob("*.py")),
+    ROOT / "aiograpi_rest" / "helpers.py",
+    ROOT / "aiograpi_rest" / "storages.py",
 ]
 
 

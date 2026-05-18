@@ -2,7 +2,7 @@ import json
 import sys
 from pathlib import Path
 
-from main import app
+from aiograpi_rest.main import app
 
 
 def export_openapi(output_path: str | Path) -> Path:

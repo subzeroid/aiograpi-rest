@@ -23,6 +23,7 @@ ENV AIOGRAPI_REST_DB_PATH=/data/db.json
 
 WORKDIR /app
 COPY pyproject.toml README.md /app/
+COPY aiograpi_rest /app/aiograpi_rest
 RUN pip install .
 COPY . /app/
 RUN groupadd --gid 10001 aiograpi \
@@ -30,7 +31,7 @@ RUN groupadd --gid 10001 aiograpi \
     && mkdir -p /data \
     && chown -R aiograpi:aiograpi /app /data
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "aiograpi_rest.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 FROM app AS test
 
