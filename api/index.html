@@ -678,11 +678,11 @@ JSON-encoded object per value, or pass a single JSON array of objects.
 For mentions, locations, and hashtags, omitted <code>x</code>, <code>y</code>, <code>width</code>, <code>height</code>, or
 <code>rotation</code> values default to a centered story position before the request is
 sent to <code>aiograpi</code>.</p>
-<p>Feed upload metadata uses JSON-encoded form strings too. The upload endpoints
-for photo, video, clip/Reels, IGTV, and album/carousel accept <code>usertags</code> as one
-JSON array or repeated JSON-encoded <code>Usertag</code> values, and <code>location</code> as one
-JSON-encoded <code>Location</code> object. Leave these fields empty or omit them when no
-metadata is needed.</p>
+<p>Feed upload and edit metadata uses JSON-encoded form strings too. The upload
+endpoints for photo, video, clip/Reels, IGTV, album/carousel, and the media
+edit endpoint accept <code>usertags</code> as one JSON array or repeated JSON-encoded
+<code>Usertag</code> values, and <code>location</code> as one JSON-encoded <code>Location</code> object. Leave
+these fields empty or omit them when no metadata is needed.</p>
 <h2 id="system-endpoints">System Endpoints</h2>
 <ul>
 <li><code>GET /health</code> returns <code>{"status":"ok"}</code> for liveness.</li>
