@@ -182,7 +182,7 @@ user = JSON.parse(Net::HTTP.start(uri.hostname, uri.port) { |http| http.request(
 
 **Swift** (full example: [`swift/client.swift`](swift/client.swift)).
 
-For typed client generation in C++, C#, F#, D, Erlang, Elixir, Nim, Haskell, Lisp, Clojure, Julia, R, Kotlin, Scala, OCaml, Crystal, Rust, Objective-C, Visual Basic, .NET, Pascal, Perl, Lua and others, see the [Generating client code](#generating-client-code) section below.
+For typed client generation in C++, C#, F#, D, Erlang, Elixir, Nim, Haskell, Lisp, Clojure, Julia, R, Kotlin, Scala, OCaml, Crystal, Rust, Objective-C, Visual Basic, .NET, Pascal, Perl, Lua and others, see [Client Generation](docs/client-generation.md).
 
 ## Features
 
@@ -338,13 +338,18 @@ curl -X 'POST' \
 
 ## Generating client code
 
-The service exposes an OpenAPI spec at `/openapi.json`. Use [`@openapitools/openapi-generator-cli`](https://www.npmjs.com/package/@openapitools/openapi-generator-cli) to generate a typed client in any supported language:
+The service exposes an OpenAPI spec at `/openapi.json`. Use [`@openapitools/openapi-generator-cli`](https://www.npmjs.com/package/@openapitools/openapi-generator-cli) to generate a typed client in any supported language.
 
 ```
-openapi-generator-cli generate -g <language> -i http://localhost:8000/openapi.json --skip-validate-spec
+npx --yes @openapitools/openapi-generator-cli generate \
+  -g <language> \
+  -i http://localhost:8000/openapi.json \
+  -o generated-clients/<language> \
+  --skip-validate-spec
 ```
 
 `--skip-validate-spec` is sometimes needed for transient validator errors.
+See [Client Generation](docs/client-generation.md) for Swift, Go, TypeScript, and Python commands.
 
 ## Operating in production
 

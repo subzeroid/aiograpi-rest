@@ -8,6 +8,7 @@ nav:
   - Overview: index.md
   - Getting Started: getting-started.md
   - API Guide: api.md
+  - Client Generation: client-generation.md
   - aiograpi Coverage: aiograpi-coverage.md
 theme:
   name: material

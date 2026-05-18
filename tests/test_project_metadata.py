@@ -58,6 +58,7 @@ def test_markdown_files_match_current_project_identity():
         ROOT / "docs" / "index.md",
         ROOT / "docs" / "getting-started.md",
         ROOT / "docs" / "api.md",
+        ROOT / "docs" / "client-generation.md",
         ROOT / "golang" / "README.md",
         ROOT / "swift" / "README.md",
         ROOT / ".github" / "ISSUE_TEMPLATE" / "bug_report.md",
@@ -73,7 +74,27 @@ def test_markdown_files_match_current_project_identity():
     assert "required for photo upload" not in combined
     assert "minimal example clients" in combined
     assert "not generated SDKs" in combined
+    assert "typescript-fetch" in combined
+    assert "swift5" in combined
+    assert "X-Session-ID" in combined
     assert "aiograpi_rest.main:app" in combined
+    assert "client-generation.md" in (ROOT / "mkdocs.yml").read_text()
+
+
+def test_swift_example_uses_current_rest_session_flow():
+    swift_client = (ROOT / "swift" / "client.swift").read_text()
+
+    assert "AIOGRAPI_REST_BASE_URL" in swift_client
+    assert "AIOGRAPI_REST_SESSIONID" in swift_client
+    assert "AIOGRAPI_REST_USERNAME" in swift_client
+    assert "AIOGRAPI_REST_PASSWORD" in swift_client
+    assert "AIOGRAPI_REST_USER_ID" in swift_client
+    assert "X-Session-ID" in swift_client
+    assert '"/health"' in swift_client
+    assert '"/deps"' in swift_client
+    assert '"/auth/login"' in swift_client
+    assert '"/user/about"' in swift_client
+    assert "pk_from_code" not in swift_client
 
 
 def test_license_has_current_owner_and_year_range():
