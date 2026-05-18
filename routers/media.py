@@ -1,11 +1,17 @@
 from typing import Dict, List, Optional
 
 from aiograpi import Client
-from aiograpi.types import Comment, Location, Media, UserShort, Usertag
+from aiograpi.types import Comment, Media, UserShort
 from fastapi import APIRouter, Depends, Form, Query
 from pydantic import BaseModel
 
 from dependencies import ClientStorage, get_clients, get_sessionid
+from helpers import (
+    LOCATION_FORM_DESCRIPTION,
+    USERTAGS_FORM_DESCRIPTION,
+    parse_upload_location,
+    parse_upload_usertags,
+)
 
 router = APIRouter(
     prefix="/media",
@@ -97,13 +103,19 @@ async def media_edit(sessionid: str = Depends(get_sessionid),
                      media_id: str = Form(...),
                      caption: str = Form(...),
                      title: Optional[str] = Form(""),
-                     usertags: Optional[List[Usertag]] = Form([]),
-                     location: Optional[Location] = Form(None),
+                     usertags: Optional[List[str]] = Form([], description=USERTAGS_FORM_DESCRIPTION),
+                     location: Optional[str] = Form(None, description=LOCATION_FORM_DESCRIPTION),
                      clients: ClientStorage = Depends(get_clients)) -> Dict:
     """Edit caption for media
     """
     cl = await clients.get(sessionid)
-    return await cl.media_edit(media_id, caption, title, usertags, location)
+    return await cl.media_edit(
+        media_id,
+        caption,
+        title,
+        parse_upload_usertags(usertags),
+        parse_upload_location(location),
+    )
 
 
 @router.get("/user", response_model=UserShort)

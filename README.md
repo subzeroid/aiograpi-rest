@@ -104,10 +104,11 @@ curl -X POST "http://localhost:8000/story/upload/by/url" \
   --data-urlencode 'mentions=[{"user":{"pk":"25025320"}}]'
 ```
 
-Feed upload metadata works the same way. On `/photo/upload`, `/video/upload`,
-`/clip/upload`, `/igtv/upload`, and `/album/upload`, pass `usertags` as
-JSON-encoded `Usertag` objects and `location` as one JSON-encoded `Location`
-object. Empty metadata fields are ignored.
+Feed upload and edit metadata works the same way. On `/photo/upload`,
+`/video/upload`, `/clip/upload`, `/igtv/upload`, `/album/upload`, and
+`PATCH /media`, pass `usertags` as JSON-encoded `Usertag` objects and
+`location` as one JSON-encoded `Location` object. Empty metadata fields are
+ignored.
 
 ```bash
 curl -X POST "http://localhost:8000/photo/upload" \

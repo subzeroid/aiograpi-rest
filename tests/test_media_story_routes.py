@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -67,7 +68,7 @@ class FakeMediaClient:
         return True
 
     async def media_edit(self, media_id, caption, title, usertags, location):
-        self.calls.append(("media_edit", media_id, caption, title))
+        self.calls.append(("media_edit", media_id, caption, title, usertags, location))
         return {"caption": caption, "title": title}
 
     async def media_user(self, media_pk):
@@ -277,6 +278,83 @@ async def test_media_edit_returns_dict(storage):
         )
     assert response.status_code == 200
     assert response.json() == {"caption": "hello", "title": "title"}
+
+
+@pytest.mark.asyncio
+async def test_media_edit_ignores_blank_optional_usertags_and_location(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.patch(
+            "/media",
+            data={
+                "sessionid": "sid",
+                "media_id": "m1",
+                "caption": "hello",
+                "usertags": "",
+                "location": "",
+            },
+        )
+    assert response.status_code == 200
+    call = next(call for call in storage.client.calls if call[0] == "media_edit")
+    assert call[4] == []
+    assert call[5] is None
+
+
+@pytest.mark.asyncio
+async def test_media_edit_accepts_json_array_usertags_and_json_location(storage):
+    usertags = json.dumps(
+        [
+            {"user": {"pk": 1, "username": "u", "full_name": "f"}, "x": 0.5, "y": 0.5},
+            {"user": {"pk": 2, "username": "v", "full_name": "g"}, "x": 0.2, "y": 0.8},
+        ]
+    )
+    location = json.dumps({"pk": 1, "name": "Place", "lat": 10.0, "lng": 20.0})
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.patch(
+            "/media",
+            data={
+                "sessionid": "sid",
+                "media_id": "m1",
+                "caption": "hello",
+                "usertags": usertags,
+                "location": location,
+            },
+        )
+    assert response.status_code == 200
+    call = next(call for call in storage.client.calls if call[0] == "media_edit")
+    assert [tag.user.pk for tag in call[4]] == ["1", "2"]
+    assert call[5].name == "Place"
+
+
+@pytest.mark.asyncio
+async def test_media_edit_rejects_invalid_usertags_json(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.patch(
+            "/media",
+            data={
+                "sessionid": "sid",
+                "media_id": "m1",
+                "caption": "hello",
+                "usertags": "{bad-json",
+            },
+        )
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Invalid JSON object for form field 'usertags'"
+
+
+@pytest.mark.asyncio
+async def test_media_edit_rejects_invalid_location_json(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.patch(
+            "/media",
+            data={
+                "sessionid": "sid",
+                "media_id": "m1",
+                "caption": "hello",
+                "location": "{bad-json",
+            },
+        )
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Invalid JSON object for form field 'location'"
 
 
 @pytest.mark.asyncio

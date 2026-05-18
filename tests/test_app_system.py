@@ -597,6 +597,7 @@ async def test_upload_openapi_documents_json_encoded_form_usertags_and_location(
         "IgtvUploadRequest",
         "IgtvUploadByUrlRequest",
         "AlbumUploadRequest",
+        "MediaRequest",
     ):
         schema = schemas[schema_name]
         assert schema["properties"]["usertags"]["anyOf"][0]["items"] == {"type": "string"}
