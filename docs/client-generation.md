@@ -8,6 +8,18 @@ The generated client is only as stable as the OpenAPI schema it was generated
 from. Regenerate it when you upgrade `aiograpi-rest`, especially after endpoint,
 request body, response model, or auth changes.
 
+## OpenAPI 3.0.3 compatibility
+
+`aiograpi-rest` publishes OpenAPI 3.0.3 for generator compatibility. FastAPI and
+Pydantic can emit OpenAPI 3.1-style nullable schemas internally, but the exported
+schema is normalized back to 3.0.3-compatible `nullable: true` fields before it
+is served from `/openapi.json` or attached to a release.
+
+Request and response schemas are also renamed to stable operation-based names
+such as `AuthLoginRequest` and `AuthLoginResponse`. This keeps generated SDKs
+from exposing framework-generated names like `Body_*` or inline `Response *`
+models.
+
 ## Start The API
 
 Run the same server version that your application will call:

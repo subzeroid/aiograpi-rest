@@ -85,6 +85,7 @@ DEPENDENCY_PACKAGES = (
     "aiofiles",
     "python-multipart",
 )
+OPENAPI_VERSION = "3.0.3"
 OPENAPI_DESCRIPTION = """
 RESTful HTTP service for `aiograpi`, the async Instagram Private API wrapper.
 
@@ -282,6 +283,13 @@ def _request_schema_name(body_schema_name: str) -> str:
     return f"{_to_pascal(words)}Request"
 
 
+def _operation_schema_name(operation_id: str, suffix: str) -> str:
+    words = _operation_id_words(operation_id)
+    if words and words[0] in _HTTP_METHOD_PREFIXES:
+        words = words[1:]
+    return f"{_to_pascal(words)}{suffix}"
+
+
 def _replace_schema_refs(value: Any, ref_replacements: dict[str, str]) -> None:
     if isinstance(value, dict):
         ref = value.get("$ref")
@@ -307,6 +315,76 @@ def _rename_generated_body_schemas(openapi_schema: dict[str, Any]) -> None:
     _replace_schema_refs(openapi_schema, ref_replacements)
 
 
+def _extract_inline_response_schemas(openapi_schema: dict[str, Any]) -> None:
+    schemas = openapi_schema.setdefault("components", {}).setdefault("schemas", {})
+    for methods in openapi_schema.get("paths", {}).values():
+        for operation in methods.values():
+            if not isinstance(operation, dict):
+                continue
+            operation_id = operation.get("operationId")
+            if not operation_id:
+                continue
+            responses = operation.get("responses", {})
+            for response in responses.values():
+                content = response.get("content", {})
+                for media in content.values():
+                    schema = media.get("schema")
+                    if not isinstance(schema, dict) or "$ref" in schema:
+                        continue
+                    title = str(schema.get("title", ""))
+                    if not title.startswith("Response "):
+                        continue
+                    name = _operation_schema_name(operation_id, "Response")
+                    schemas[name] = {**schema, "title": name}
+                    media["schema"] = {"$ref": f"#/components/schemas/{name}"}
+
+
+def _is_null_schema(schema: Any) -> bool:
+    return isinstance(schema, dict) and schema.get("type") == "null" and len(schema) == 1
+
+
+def _as_nullable_schema(schema: dict[str, Any]) -> dict[str, Any]:
+    if "$ref" in schema:
+        return {"allOf": [schema], "nullable": True}
+    return {**schema, "nullable": True}
+
+
+def _convert_nullable_schemas_to_openapi_30(value: Any) -> None:
+    if isinstance(value, dict):
+        value.pop("contentEncoding", None)
+        value.pop("contentMediaType", None)
+
+        any_of = value.get("anyOf")
+        if isinstance(any_of, list) and any(_is_null_schema(item) for item in any_of):
+            siblings = {key: item for key, item in value.items() if key != "anyOf"}
+            non_null = [item for item in any_of if not _is_null_schema(item)]
+            if len(non_null) == 1 and isinstance(non_null[0], dict):
+                nullable_schema = _as_nullable_schema(non_null[0])
+                value.clear()
+                value.update({**nullable_schema, **siblings, "nullable": True})
+            else:
+                value["anyOf"] = non_null
+                value["nullable"] = True
+
+        schema_type = value.get("type")
+        if isinstance(schema_type, list) and "null" in schema_type:
+            non_null_types = [item for item in schema_type if item != "null"]
+            if len(non_null_types) == 1:
+                value["type"] = non_null_types[0]
+            else:
+                value["type"] = non_null_types
+            value["nullable"] = True
+
+        value.pop("contentEncoding", None)
+        value.pop("contentMediaType", None)
+
+        for child in value.values():
+            _convert_nullable_schemas_to_openapi_30(child)
+    elif isinstance(value, list):
+        for item in value:
+            _convert_nullable_schemas_to_openapi_30(item)
+
+
 def _polish_operation_summaries(openapi_schema: dict[str, Any]) -> None:
     for methods in openapi_schema.get("paths", {}).values():
         for operation in methods.values():
@@ -317,6 +395,7 @@ def _polish_operation_summaries(openapi_schema: dict[str, Any]) -> None:
 
 app = FastAPI(
     generate_unique_id_function=generate_operation_id,
+    openapi_version=OPENAPI_VERSION,
     openapi_tags=OPENAPI_TAGS,
 )
 app.include_router(auth.router)
@@ -532,8 +611,11 @@ def custom_openapi():
         description=OPENAPI_DESCRIPTION,
         routes=app.routes,
         tags=OPENAPI_TAGS,
+        openapi_version=OPENAPI_VERSION,
     )
     _rename_generated_body_schemas(openapi_schema)
+    _extract_inline_response_schemas(openapi_schema)
+    _convert_nullable_schemas_to_openapi_30(openapi_schema)
     _polish_operation_summaries(openapi_schema)
     app.openapi_schema = openapi_schema
     return app.openapi_schema

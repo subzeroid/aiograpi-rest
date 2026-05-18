@@ -1,5 +1,8 @@
 import json
+import os
 import re
+import subprocess
+import sys
 import tomllib
 from importlib.metadata import PackageNotFoundError
 from pathlib import Path
@@ -147,6 +150,10 @@ def test_openapi_client_generation_smoke_check_is_configured():
     for generator in ("python", "typescript-fetch", "go", "swift5"):
         assert generator in script
     assert "--skip-validate-spec" in script
+    assert "AuthLoginResponse" in script
+    assert "AuthLoginBySessionIdResponse" in script
+    assert "ResponsePostauthlogin" in script
+    assert '"validate"' in script
 
     workflow = yaml.load((ROOT / ".github" / "workflows" / "clients.yml").read_text(), Loader=yaml.BaseLoader)
     assert workflow["name"] == "Client Generation"
@@ -407,6 +414,47 @@ def test_export_openapi_script_writes_artifact(tmp_path):
     data = json.loads(output.read_text())
     assert data["info"]["title"] == "aiograpi-rest"
     assert data["info"]["version"] == project_version()
+    assert data["openapi"] == "3.0.3"
+
+
+def test_openapi_schema_uses_generator_friendly_names_and_nullable(tmp_path):
+    from scripts import export_openapi
+
+    data = json.loads(export_openapi.export_openapi(tmp_path / "openapi.json").read_text())
+    schemas = data["components"]["schemas"]
+
+    assert "AuthLoginRequest" in schemas
+    assert "AuthLoginResponse" in schemas
+    assert "AuthLoginBySessionIdResponse" in schemas
+    assert "Response_Postauthlogin" not in schemas
+    assert "Response_Postauthloginbysessionid" not in schemas
+    assert not any(name.startswith("Body_") for name in schemas)
+    assert not any(name.startswith("Response_") for name in schemas)
+
+    login_response = data["paths"]["/auth/login"]["post"]["responses"]["200"]["content"]["application/json"]["schema"]
+    assert login_response == {"$ref": "#/components/schemas/AuthLoginResponse"}
+
+    rendered = json.dumps(data)
+    assert '"type": "null"' not in rendered
+    assert "contentMediaType" not in rendered
+    assert "contentEncoding" not in rendered
+    assert "OpenAPI 3.0.3 compatibility" in (ROOT / "docs" / "client-generation.md").read_text()
+
+
+def test_openapi_normalizers_handle_edge_cases():
+    import aiograpi_rest.main as main
+
+    path_level_parameters = {"components": {"schemas": {}}, "paths": {"/x": {"parameters": [], "get": {"responses": {}}}}}
+    main._extract_inline_response_schemas(path_level_parameters)
+    assert path_level_parameters["components"]["schemas"] == {}
+
+    single_type = {"type": ["string", "null"], "contentMediaType": "text/plain"}
+    main._convert_nullable_schemas_to_openapi_30(single_type)
+    assert single_type == {"type": "string", "nullable": True}
+
+    multiple_types = {"type": ["string", "integer", "null"], "contentEncoding": "base64"}
+    main._convert_nullable_schemas_to_openapi_30(multiple_types)
+    assert multiple_types == {"type": ["string", "integer"], "nullable": True}
 
 
 def test_export_openapi_main_writes_artifact(tmp_path):
@@ -416,6 +464,24 @@ def test_export_openapi_main_writes_artifact(tmp_path):
     export_openapi.main([str(output)])
 
     assert json.loads(output.read_text())["info"]["version"] == project_version()
+
+
+def test_export_openapi_script_runs_as_file(tmp_path):
+    output = tmp_path / "openapi.json"
+    env = os.environ.copy()
+    env.pop("PYTHONPATH", None)
+
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "export_openapi.py"), str(output)],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert json.loads(output.read_text())["openapi"] == "3.0.3"
 
 
 def test_export_openapi_script_requires_output_argument():

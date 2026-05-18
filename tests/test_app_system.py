@@ -576,8 +576,9 @@ async def test_story_upload_openapi_documents_json_encoded_form_mentions():
     assert response.status_code == 200
     schemas = response.json()["components"]["schemas"]
     for schema_name in ("StoryUploadRequest", "StoryUploadByUrlRequest"):
-        mention_items = schemas[schema_name]["properties"]["mentions"]["anyOf"][0]["items"]
-        assert mention_items == {"type": "string"}
+        mentions = schemas[schema_name]["properties"]["mentions"]
+        assert mentions["items"] == {"type": "string"}
+        assert mentions["nullable"] is True
 
 
 @pytest.mark.asyncio
@@ -600,8 +601,12 @@ async def test_upload_openapi_documents_json_encoded_form_usertags_and_location(
         "MediaRequest",
     ):
         schema = schemas[schema_name]
-        assert schema["properties"]["usertags"]["anyOf"][0]["items"] == {"type": "string"}
-        assert schema["properties"]["location"]["anyOf"][0] == {"type": "string"}
+        usertags = schema["properties"]["usertags"]
+        location = schema["properties"]["location"]
+        assert usertags["items"] == {"type": "string"}
+        assert usertags["nullable"] is True
+        assert location["type"] == "string"
+        assert location["nullable"] is True
 
 
 @pytest.mark.asyncio
