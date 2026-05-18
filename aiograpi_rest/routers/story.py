@@ -6,13 +6,11 @@ import requests
 from aiograpi import Client
 from aiograpi.types import (
     Story,
-    StoryArchiveDay,
     StoryHashtag,
     StoryLink,
     StoryLocation,
     StoryMention,
     StorySticker,
-    Viewer,
 )
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
@@ -20,6 +18,7 @@ from pydantic import AnyHttpUrl, ValidationError
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 from aiograpi_rest.helpers import photo_upload_story_as_photo, photo_upload_story_as_video, video_upload_story
+from aiograpi_rest.pagination import StoryArchiveDayPage, ViewerPage
 
 router = APIRouter(
     prefix="/story",
@@ -215,26 +214,36 @@ async def story_unlike(sessionid: str = Depends(get_sessionid),
     return await cl.story_unlike(story_id)
 
 
-@router.get("/viewers", response_model=List[Viewer])
+@router.get("/viewers", response_model=ViewerPage)
 async def story_viewers(sessionid: str = Depends(get_sessionid),
                         story_pk: str = Query(...),
-                        amount: Optional[int] = Query(0),
-                        clients: ClientStorage = Depends(get_clients)) -> List[Viewer]:
-    """Get story viewers
+                        amount: int = Query(50, ge=1, le=200),
+                        cursor: str = Query(""),
+                        clients: ClientStorage = Depends(get_clients)) -> ViewerPage:
+    """Get a page of story viewers
     """
     cl = await clients.get(sessionid)
-    return await cl.story_viewers(story_pk, amount)
+    items, next_cursor = await cl.story_viewers_chunk(story_pk, amount, cursor or "")
+    return ViewerPage(items=items, next_cursor=next_cursor or "")
 
 
-@router.get("/archive", response_model=List[StoryArchiveDay])
+@router.get("/archive", response_model=StoryArchiveDayPage)
 async def story_archive(sessionid: str = Depends(get_sessionid),
-                        amount: Optional[int] = Query(0),
+                        amount: int = Query(50, ge=1, le=200),
+                        cursor: str = Query(""),
                         include_memories: Optional[bool] = Query(True),
-                        clients: ClientStorage = Depends(get_clients)) -> List[StoryArchiveDay]:
-    """Get story archive days
+                        reel_id: str = Query(""),
+                        clients: ClientStorage = Depends(get_clients)) -> StoryArchiveDayPage:
+    """Get a page of story archive days
     """
     cl = await clients.get(sessionid)
-    return await cl.archive_story_days(amount, include_memories)
+    items, next_cursor = await cl.archive_story_days_paginated_v1(
+        amount,
+        cursor or "",
+        include_memories,
+        reel_id,
+    )
+    return StoryArchiveDayPage(items=items, next_cursor=next_cursor or "")
 
 
 @router.get("/pk/from/url")

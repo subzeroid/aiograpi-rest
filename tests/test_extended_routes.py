@@ -209,6 +209,10 @@ class FakeExpandedClient:
         self.calls.append(("direct_threads", amount, selected_filter, box, thread_message_limit))
         return [_direct_thread_payload()]
 
+    async def direct_threads_chunk(self, selected_filter="", box="", thread_message_limit=None, cursor=None):
+        self.calls.append(("direct_threads_chunk", selected_filter, box, thread_message_limit, cursor))
+        return [_direct_thread_payload()], "next-direct"
+
     async def direct_thread(self, thread_id, amount=20):
         self.calls.append(("direct_thread", thread_id, amount))
         return _direct_thread_payload()
@@ -241,6 +245,10 @@ class FakeExpandedClient:
         self.calls.append(("hashtag_medias_recent", name, amount))
         return [_media_payload()]
 
+    async def hashtag_medias_v1_chunk(self, name, max_amount=27, tab_key="", max_id=None):
+        self.calls.append(("hashtag_medias_v1_chunk", name, max_amount, tab_key, max_id))
+        return [_media_payload()], f"next-hashtag-{tab_key}"
+
     async def hashtag_follow(self, hashtag, unfollow=False):
         self.calls.append(("hashtag_follow", hashtag, unfollow))
         return True
@@ -269,6 +277,10 @@ class FakeExpandedClient:
         self.calls.append(("location_medias_recent", location_pk, amount, sleep))
         return [_media_payload()]
 
+    async def location_medias_v1_chunk(self, location_pk, max_amount=63, tab_key="", max_id=None):
+        self.calls.append(("location_medias_v1_chunk", location_pk, max_amount, tab_key, max_id))
+        return [_media_payload()], f"next-location-{tab_key}"
+
     async def search_users(self, query):
         self.calls.append(("search_users", query))
         return [_user_short(1)]
@@ -288,6 +300,10 @@ class FakeExpandedClient:
     async def user_follow_requests(self, amount=0):
         self.calls.append(("user_follow_requests", amount))
         return [_user_short(1)]
+
+    async def user_follow_requests_chunk(self, max_amount=0, max_id=""):
+        self.calls.append(("user_follow_requests_chunk", max_amount, max_id))
+        return [_user_short(1)], "next-follow-requests"
 
     async def user_highlights(self, user_id, amount=0):
         self.calls.append(("user_highlights", user_id, amount))
@@ -321,9 +337,25 @@ class FakeExpandedClient:
         self.calls.append(("story_viewers", story_pk, amount))
         return [{**_user_short(1), "has_liked": True}]
 
+    async def story_viewers_chunk(self, story_pk, max_amount=0, max_id=""):
+        self.calls.append(("story_viewers_chunk", story_pk, max_amount, max_id))
+        return [{**_user_short(1), "has_liked": True}], "next-viewers"
+
     async def archive_story_days(self, amount=0, include_memories=True):
         self.calls.append(("archive_story_days", amount, include_memories))
         return [{"id": "day1", "timestamp": "2026-01-01T00:00:00+00:00", "media_count": 1, "reel_type": "archive"}]
+
+    async def archive_story_days_paginated_v1(
+        self,
+        amount=0,
+        end_cursor="",
+        include_memories=True,
+        reel_id="",
+    ):
+        self.calls.append(("archive_story_days_paginated_v1", amount, end_cursor, include_memories, reel_id))
+        return [
+            {"id": "day1", "timestamp": "2026-01-01T00:00:00+00:00", "media_count": 1, "reel_type": "archive"}
+        ], "next-archive"
 
     async def news_inbox_v1(self, mark_as_seen=False):
         self.calls.append(("news_inbox_v1", mark_as_seen))
@@ -438,7 +470,7 @@ async def test_media_comment_save_pin_routes(storage):
 @pytest.mark.asyncio
 async def test_direct_routes(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        inbox = await ac.get("/direct/inbox", params={"sessionid": "sid", "amount": "1"})
+        inbox = await ac.get("/direct/inbox", params={"sessionid": "sid", "cursor": "direct-cursor"})
         thread = await ac.get("/direct/thread", params={"sessionid": "sid", "thread_id": "100", "amount": "5"})
         created = await ac.post("/direct/thread", data={"sessionid": "sid", "user_ids": ["1", "2"], "title": "Team"})
         message = await ac.post(
@@ -468,6 +500,8 @@ async def test_direct_routes(storage):
     assert deleted.status_code == 200 and seen.status_code == 200
     assert empty.status_code == 422 and both.status_code == 422
     assert single.status_code == 422
+    assert inbox.json()["next_cursor"] == "next-direct"
+    assert ("direct_threads_chunk", "", "", None, "direct-cursor") in storage.client.calls
     assert ("direct_thread_create", [1, 2], "Team") in storage.client.calls
     assert ("direct_message_seen", 100, 1) in storage.client.calls
 
@@ -591,7 +625,9 @@ async def test_highlight_story_note_notification_and_auth_routes(storage):
     ):
         assert response.status_code == 200
     assert settings.json()["setting_values"] == ["off", "following_only", "everyone"]
-    assert ("archive_story_days", 0, False) in storage.client.calls
+    assert viewers.json()["next_cursor"] == "next-viewers"
+    assert archive.json()["next_cursor"] == "next-archive"
+    assert ("archive_story_days_paginated_v1", 50, "", False, "") in storage.client.calls
     assert ("notification_settings", "likes", "off") in storage.client.calls
     assert ("challenge_resolve", {"challenge": {"api_path": "/challenge/1/nonce/"}}) in storage.client.calls
     assert bad_cover.status_code == 422

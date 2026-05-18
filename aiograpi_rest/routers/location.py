@@ -1,9 +1,10 @@
 from typing import List, Optional
 
-from aiograpi.types import Location, Media
+from aiograpi.types import Location
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.pagination import MediaPage
 
 router = APIRouter(
     prefix="/location",
@@ -42,29 +43,31 @@ async def location_info(
     return await cl.location_info(location_pk)
 
 
-@router.get("/medias/top", response_model=List[Media])
+@router.get("/medias/top", response_model=MediaPage)
 async def location_medias_top(
     sessionid: str = Depends(get_sessionid),
     location_pk: int = Query(...),
-    amount: int = Query(27),
-    sleep: float = Query(0.5),
+    amount: int = Query(27, ge=1, le=200),
+    cursor: str = Query(""),
     clients: ClientStorage = Depends(get_clients),
-) -> List[Media]:
-    """Get top location media
+) -> MediaPage:
+    """Get a page of top location media
     """
     cl = await clients.get(sessionid)
-    return await cl.location_medias_top(location_pk, amount, sleep)
+    items, next_cursor = await cl.location_medias_v1_chunk(location_pk, amount, "ranked", cursor or None)
+    return MediaPage(items=items, next_cursor=next_cursor or "")
 
 
-@router.get("/medias/recent", response_model=List[Media])
+@router.get("/medias/recent", response_model=MediaPage)
 async def location_medias_recent(
     sessionid: str = Depends(get_sessionid),
     location_pk: int = Query(...),
-    amount: int = Query(63),
-    sleep: float = Query(0.5),
+    amount: int = Query(63, ge=1, le=200),
+    cursor: str = Query(""),
     clients: ClientStorage = Depends(get_clients),
-) -> List[Media]:
-    """Get recent location media
+) -> MediaPage:
+    """Get a page of recent location media
     """
     cl = await clients.get(sessionid)
-    return await cl.location_medias_recent(location_pk, amount, sleep)
+    items, next_cursor = await cl.location_medias_v1_chunk(location_pk, amount, "recent", cursor or None)
+    return MediaPage(items=items, next_cursor=next_cursor or "")

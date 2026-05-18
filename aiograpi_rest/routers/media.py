@@ -3,7 +3,6 @@ from typing import Dict, List, Optional
 from aiograpi import Client
 from aiograpi.types import Comment, Media, UserShort
 from fastapi import APIRouter, Depends, Form, Query
-from pydantic import BaseModel
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 from aiograpi_rest.helpers import (
@@ -12,17 +11,13 @@ from aiograpi_rest.helpers import (
     parse_upload_location,
     parse_upload_usertags,
 )
+from aiograpi_rest.pagination import MediaPage
 
 router = APIRouter(
     prefix="/media",
     tags=["Media"],
     responses={404: {"description": "Not found"}}
 )
-
-
-class MediaPage(BaseModel):
-    items: List[Media]
-    end_cursor: str
 
 
 @router.get("/id")
@@ -67,25 +62,53 @@ async def media_info(sessionid: str = Depends(get_sessionid),
 @router.get("/user/medias", response_model=MediaPage)
 async def user_medias(sessionid: str = Depends(get_sessionid),
                       user_id: str = Query(...),
-                      amount: Optional[int] = Query(50),
-                      end_cursor: Optional[str] = Query(""),
+                      amount: int = Query(50, ge=1, le=200),
+                      cursor: str = Query(""),
                       clients: ClientStorage = Depends(get_clients)) -> MediaPage:
     """Get a user's media page with the next pagination cursor
     """
     cl = await clients.get(sessionid)
-    items, next_cursor = await cl.user_medias_paginated(user_id, amount, end_cursor or "")
-    return MediaPage(items=items, end_cursor=next_cursor or "")
+    items, next_cursor = await cl.user_medias_paginated(user_id, amount, cursor or "")
+    return MediaPage(items=items, next_cursor=next_cursor or "")
 
 
-@router.get("/usertag/medias", response_model=List[Media])
+@router.get("/usertag/medias", response_model=MediaPage)
 async def usertag_medias(sessionid: str = Depends(get_sessionid),
-                         user_id: int = Query(...),
-                         amount: Optional[int] = Query(50),
-                         clients: ClientStorage = Depends(get_clients)) -> List[Media]:
-    """Get medias where a user is tagged
+                         user_id: str = Query(...),
+                         amount: int = Query(50, ge=1, le=200),
+                         cursor: str = Query(""),
+                         clients: ClientStorage = Depends(get_clients)) -> MediaPage:
+    """Get a page of media where a user is tagged
     """
     cl = await clients.get(sessionid)
-    return await cl.usertag_medias(user_id, amount)
+    items, next_cursor = await cl.usertag_medias_paginated(user_id, amount, cursor or "")
+    return MediaPage(items=items, next_cursor=next_cursor or "")
+
+
+@router.get("/user/clips", response_model=MediaPage)
+async def user_clips(sessionid: str = Depends(get_sessionid),
+                     user_id: str = Query(...),
+                     amount: int = Query(50, ge=1, le=200),
+                     cursor: str = Query(""),
+                     clients: ClientStorage = Depends(get_clients)) -> MediaPage:
+    """Get a user's Reels page with the next pagination cursor
+    """
+    cl = await clients.get(sessionid)
+    items, next_cursor = await cl.user_clips_paginated_v1(user_id, amount, cursor or "")
+    return MediaPage(items=items, next_cursor=next_cursor or "")
+
+
+@router.get("/user/videos", response_model=MediaPage)
+async def user_videos(sessionid: str = Depends(get_sessionid),
+                      user_id: str = Query(...),
+                      amount: int = Query(50, ge=1, le=200),
+                      cursor: str = Query(""),
+                      clients: ClientStorage = Depends(get_clients)) -> MediaPage:
+    """Get a user's video page with the next pagination cursor
+    """
+    cl = await clients.get(sessionid)
+    items, next_cursor = await cl.user_videos_paginated_v1(user_id, amount, cursor or "")
+    return MediaPage(items=items, next_cursor=next_cursor or "")
 
 
 @router.delete("", response_model=bool)

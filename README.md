@@ -84,8 +84,9 @@ curl "http://localhost:8000/user/about?user_id=25025320" \
   -H "X-Session-ID: $SESSIONID"
 ```
 
-Large follower/following lists are paginated. Keep the returned cursor and pass
-it into the next request:
+Large read lists are paginated with the same response shape:
+`{"items":[...],"next_cursor":"..."}`. Keep `next_cursor` and pass it as
+`cursor` on the next request:
 
 ```bash
 curl "http://localhost:8000/user/followers?user_id=25025320&amount=50" \

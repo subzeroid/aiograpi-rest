@@ -15,8 +15,10 @@ boundary.
 - Account profile, privacy, profile picture, and authenticated account info.
 - User profile, follower, following, follow, mute, block, search, friendship,
   follow request, highlight, and about endpoints.
+- Paginated media, user, hashtag, location, story viewer/archive, and Direct
+  inbox list endpoints.
 - Media comments, likes, saves, pins, archive, photo, video, Reel, carousel
-  album, story, highlight, note, Direct, notification, IGTV, and insights routes.
+  album, story, highlight, note, notification, IGTV, and insights routes.
 - OpenAPI documentation at `/docs` and raw schema at `/openapi.json`.
 - Typed client generation guide for Swift, Go, TypeScript, Python, PHP, Rust,
   Kotlin, Scala, C#, C++, and other OpenAPI Generator targets.

@@ -30,12 +30,12 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `fbsearch` | 1 | 16 |
 | `fundraiser` | 0 | 1 |
 | `graphql` | 0 | 8 |
-| `hashtag` | 5 | 18 |
+| `hashtag` | 4 | 18 |
 | `highlight` | 7 | 12 |
 | `igtv` | 3 | 4 |
 | `insights` | 3 | 3 |
-| `location` | 5 | 20 |
-| `media` | 19 | 59 |
+| `location` | 4 | 20 |
+| `media` | 21 | 59 |
 | `multiple_accounts` | 0 | 2 |
 | `note` | 3 | 8 |
 | `notification` | 1 | 27 |
@@ -76,7 +76,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `GET /clip/download/by/url` | `clip_download_by_url` |
 | `POST /clip/upload` | `clip_upload` |
 | `POST /clip/upload/by/url` | `clip_upload` |
-| `GET /direct/inbox` | `direct_threads` |
+| `GET /direct/inbox` | `direct_threads_chunk` |
 | `DELETE /direct/message` | `direct_message_delete` |
 | `POST /direct/message` | `direct_send` |
 | `PATCH /direct/message/seen` | `direct_message_seen` |
@@ -85,8 +85,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `DELETE /hashtag/follow` | `hashtag_unfollow` |
 | `POST /hashtag/follow` | `hashtag_follow` |
 | `GET /hashtag/info` | `hashtag_info` |
-| `GET /hashtag/medias/recent` | `hashtag_medias_recent` |
-| `GET /hashtag/medias/top` | `hashtag_medias_top` |
+| `GET /hashtag/medias/recent` | `hashtag_medias_v1_chunk` |
+| `GET /hashtag/medias/top` | `hashtag_medias_v1_chunk` |
 | `DELETE /highlight` | `highlight_delete` |
 | `PATCH /highlight` | `highlight_edit` |
 | `POST /highlight` | `highlight_create` |
@@ -101,8 +101,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `GET /insights/media` | `insights_media` |
 | `GET /insights/media/feed/all` | `insights_media_feed_all` |
 | `GET /location/info` | `location_info` |
-| `GET /location/medias/recent` | `location_medias_recent` |
-| `GET /location/medias/top` | `location_medias_top` |
+| `GET /location/medias/recent` | `location_medias_v1_chunk` |
+| `GET /location/medias/top` | `location_medias_v1_chunk` |
 | `GET /location/search` | `location_search`, `location_search_name` |
 | `DELETE /media` | `media_delete` |
 | `PATCH /media` | `media_edit` |
@@ -130,8 +130,10 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `POST /media/save` | `media_save` |
 | `PATCH /media/seen` | `media_seen` |
 | `GET /media/user` | `media_user` |
+| `GET /media/user/clips` | `user_clips_paginated_v1` |
 | `GET /media/user/medias` | `user_medias_paginated` |
-| `GET /media/usertag/medias` | `usertag_medias` |
+| `GET /media/user/videos` | `user_videos_paginated_v1` |
+| `GET /media/usertag/medias` | `usertag_medias_paginated` |
 | `DELETE /note` | `delete_note` |
 | `POST /note` | `create_note` |
 | `GET /notes` | `get_notes` |
@@ -143,7 +145,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `POST /photo/upload` | `photo_upload` |
 | `POST /photo/upload/by/url` | `photo_upload` |
 | `DELETE /story` | `story_delete` |
-| `GET /story/archive` | `archive_story_days` |
+| `GET /story/archive` | `archive_story_days_paginated_v1` |
 | `GET /story/download` | `story_download` |
 | `GET /story/download/by/url` | `story_download_by_url` |
 | `GET /story/info` | `story_info` |
@@ -154,13 +156,13 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `POST /story/upload` | `photo_upload_to_story`, `user_stories`, `video_upload_to_story` |
 | `POST /story/upload/by/url` | `photo_upload_to_story`, `user_stories`, `video_upload_to_story` |
 | `GET /story/user/stories` | `user_stories` |
-| `GET /story/viewers` | `story_viewers` |
+| `GET /story/viewers` | `story_viewers_chunk` |
 | `GET /user/about` | `user_about_v1` |
 | `DELETE /user/block` | `user_unblock` |
 | `POST /user/block` | `user_block` |
 | `DELETE /user/follow` | `user_unfollow` |
 | `POST /user/follow` | `user_follow` |
-| `GET /user/follow/requests` | `user_follow_requests` |
+| `GET /user/follow/requests` | `user_follow_requests_chunk` |
 | `DELETE /user/follower` | `user_remove_follower` |
 | `GET /user/followers` | `user_followers_v1_chunk` |
 | `GET /user/following` | `user_following_v1_chunk` |
@@ -203,8 +205,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `archive_medias_v1(self, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
 | `archive_stories(self, amount: int = 0) -> List[aiograpi.types.Story]` | `story` | - |
 | `archive_stories_v1(self, amount: int = 0) -> List[aiograpi.types.Story]` | `story` | - |
-| `archive_story_days(self, amount: int = 0, include_memories: bool = True) -> List[aiograpi.types.StoryArchiveDay]` | `story` | `GET /story/archive` |
-| `archive_story_days_paginated_v1(self, amount: int = 0, end_cursor: str = '', include_memories: bool = True, reel_id: str = '') -> Tuple[List[aiograpi.types.StoryArchiveDay], str]` | `story` | - |
+| `archive_story_days(self, amount: int = 0, include_memories: bool = True) -> List[aiograpi.types.StoryArchiveDay]` | `story` | - |
+| `archive_story_days_paginated_v1(self, amount: int = 0, end_cursor: str = '', include_memories: bool = True, reel_id: str = '') -> Tuple[List[aiograpi.types.StoryArchiveDay], str]` | `story` | `GET /story/archive` |
 | `archive_story_days_v1(self, amount: int = 0, include_memories: bool = True) -> List[aiograpi.types.StoryArchiveDay]` | `story` | - |
 | `bloks_action(self, action: str, data: dict) -> bool` | `bloks` | - |
 | `bloks_change_password(self, password: str, challenge_context: dict) -> bool` | `bloks` | - |
@@ -298,8 +300,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `direct_thread_unmute(self, thread_id: int) -> bool` | `direct` | - |
 | `direct_thread_unmute_video_call(self, thread_id: int) -> bool` | `direct` | - |
 | `direct_thread_update_title(self, thread_id: int, title: str) -> bool` | `direct` | - |
-| `direct_threads(self, amount: int = 20, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None) -> List[aiograpi.types.DirectThread]` | `direct` | `GET /direct/inbox` |
-| `direct_threads_chunk(self, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | - |
+| `direct_threads(self, amount: int = 20, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None) -> List[aiograpi.types.DirectThread]` | `direct` | - |
+| `direct_threads_chunk(self, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | `GET /direct/inbox` |
 | `direct_users_presence(self, user_ids: List[int]) -> Dict` | `direct` | - |
 | `disable_posts_notifications(self, user_id: str) -> bool` | `user` | - |
 | `disable_reels_notifications(self, user_id: str) -> bool` | `user` | - |
@@ -354,15 +356,15 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `hashtag_info_v1(self, name: str) -> aiograpi.types.Hashtag` | `hashtag` | - |
 | `hashtag_medias_a1(self, name: str, amount: int = 27, tab_key: str = '') -> List[aiograpi.types.Media]` | `hashtag` | - |
 | `hashtag_medias_a1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', end_cursor: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `hashtag` | - |
-| `hashtag_medias_recent(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | `GET /hashtag/medias/recent` |
+| `hashtag_medias_recent(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | - |
 | `hashtag_medias_recent_a1(self, name: str, amount: int = 71) -> List[aiograpi.types.Media]` | `hashtag` | - |
 | `hashtag_medias_recent_v1(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | - |
 | `hashtag_medias_reels_v1(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_top(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | `GET /hashtag/medias/top` |
+| `hashtag_medias_top(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | - |
 | `hashtag_medias_top_a1(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | - |
 | `hashtag_medias_top_v1(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | - |
 | `hashtag_medias_v1(self, name: str, amount: int = 27, tab_key: str = '') -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_v1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `hashtag` | - |
+| `hashtag_medias_v1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `hashtag` | `GET /hashtag/medias/recent`<br>`GET /hashtag/medias/top` |
 | `hashtag_related_hashtags(self, name: str) -> List[aiograpi.types.Hashtag]` | `hashtag` | - |
 | `hashtag_unfollow(self, hashtag: str) -> bool` | `hashtag` | `DELETE /hashtag/follow` |
 | `highlight_add_stories(self, highlight_pk: str, added_media_ids: List[str]) -> aiograpi.types.Highlight` | `highlight` | `POST /highlight/stories` |
@@ -396,14 +398,14 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `location_info_v1(self, location_pk: int) -> aiograpi.types.Location` | `location` | - |
 | `location_medias_a1(self, location_pk: int, amount: int = 24, sleep: float = 0.5, tab_key: str = '') -> List[aiograpi.types.Media]` | `location` | - |
 | `location_medias_a1_chunk(self, location_pk: int, max_amount: int = 24, sleep: float = 0.5, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `location` | - |
-| `location_medias_recent(self, location_pk: int, amount: int = 63, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | `GET /location/medias/recent` |
+| `location_medias_recent(self, location_pk: int, amount: int = 63, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - |
 | `location_medias_recent_a1(self, location_pk: int, amount: int = 24, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - |
 | `location_medias_recent_v1(self, location_pk: int, amount: int = 63) -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_top(self, location_pk: int, amount: int = 27, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | `GET /location/medias/top` |
+| `location_medias_top(self, location_pk: int, amount: int = 27, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - |
 | `location_medias_top_a1(self, location_pk: int, amount: int = 9, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - |
 | `location_medias_top_v1(self, location_pk: int, amount: int = 21) -> List[aiograpi.types.Media]` | `location` | - |
 | `location_medias_v1(self, location_pk: int, amount: int = 63, tab_key: str = '') -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_v1_chunk(self, location_pk: int, max_amount: int = 63, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `location` | - |
+| `location_medias_v1_chunk(self, location_pk: int, max_amount: int = 63, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `location` | `GET /location/medias/recent`<br>`GET /location/medias/top` |
 | `location_search(self, lat: float, lng: float) -> List[aiograpi.types.Location]` | `location` | `GET /location/search` |
 | `location_search_name(self, name: str) -> List[aiograpi.types.Location]` | `location` | `GET /location/search` |
 | `location_search_pk(self, location_pk: int) -> aiograpi.types.Location` | `location` | - |
@@ -577,8 +579,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `story_pk_from_url(self, url: str) -> str` | `story` | `GET /story/pk/from/url` |
 | `story_seen(self, story_pks: List[str], skipped_story_pks: List[str] = [])` | `story` | `PATCH /story/seen` |
 | `story_unlike(self, story_id: str) -> bool` | `story` | `DELETE /story/like` |
-| `story_viewers(self, story_pk: str, amount: int = 0) -> List[aiograpi.types.Viewer]` | `story` | `GET /story/viewers` |
-| `story_viewers_chunk(self, story_pk: str, max_amount: int = 0, max_id: str = '') -> tuple[typing.List[aiograpi.types.Viewer], str]` | `story` | - |
+| `story_viewers(self, story_pk: str, amount: int = 0) -> List[aiograpi.types.Viewer]` | `story` | - |
+| `story_viewers_chunk(self, story_pk: str, max_amount: int = 0, max_id: str = '') -> tuple[typing.List[aiograpi.types.Viewer], str]` | `story` | `GET /story/viewers` |
 | `sync_device_features(self, login: bool = False) -> Dict` | `auth` | - |
 | `sync_launcher(self, login: bool = False) -> Dict` | `auth` | - |
 | `top_search(self, query)` | `public` | - |
@@ -596,14 +598,14 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `user_block(self, user_id: str, surface: str = 'profile') -> bool` | `user` | `POST /user/block` |
 | `user_clips(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
 | `user_clips_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_clips_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
+| `user_clips_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /media/user/clips` |
 | `user_clips_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
 | `user_follow(self, user_id: str) -> bool` | `user` | `POST /user/follow` |
 | `user_follow_request_approve(self, user_id: str) -> bool` | `user` | - |
 | `user_follow_request_decline(self, user_id: str) -> bool` | `user` | - |
-| `user_follow_requests(self, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | `GET /user/follow/requests` |
+| `user_follow_requests(self, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
 | `user_follow_requests_approve(self, user_ids: List[str]) -> Dict[str, bool]` | `user` | - |
-| `user_follow_requests_chunk(self, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - |
+| `user_follow_requests_chunk(self, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /user/follow/requests` |
 | `user_follow_requests_decline(self, user_ids: List[str]) -> Dict[str, bool]` | `user` | - |
 | `user_followers(self, user_id: str, amount: int = 0) -> Dict[str, aiograpi.types.UserShort]` | `user` | - |
 | `user_followers_gql(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
@@ -653,16 +655,16 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `user_unblock(self, user_id: str, surface: str = 'profile') -> bool` | `user` | `DELETE /user/block` |
 | `user_unfollow(self, user_id: str) -> bool` | `user` | `DELETE /user/follow` |
 | `user_videos_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_videos_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
+| `user_videos_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /media/user/videos` |
 | `user_videos_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
 | `user_web_profile_info_gql(self, user_id: str) -> dict` | `user` | - |
 | `user_web_profile_info_v1(self, username: str) -> dict` | `user` | - |
 | `username_from_user_id(self, user_id: str) -> str` | `user` | `GET /user/username/from/id` |
 | `username_from_user_id_gql(self, user_id: str) -> str` | `user` | - |
 | `users_stories_gql(self, user_ids: List[str], amount: int = 0) -> List[aiograpi.types.UserShort]` | `story` | - |
-| `usertag_medias(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | `GET /media/usertag/medias` |
+| `usertag_medias(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
 | `usertag_medias_gql(self, user_id: int, amount: int = 0, sleep: int = 2) -> List[aiograpi.types.Media]` | `media` | - |
-| `usertag_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
+| `usertag_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /media/usertag/medias` |
 | `usertag_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
 | `usertag_medias_paginated_v1(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
 | `usertag_medias_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |

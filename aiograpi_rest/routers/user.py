@@ -4,20 +4,16 @@ from typing import Any, Dict, List, Optional
 from aiograpi.extractors import json_value
 from aiograpi.types import About, Highlight, Relationship, User, UserShort
 from fastapi import APIRouter, Depends, Form, Query
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.pagination import UserShortPage
 
 router = APIRouter(
     prefix="/user",
     tags=["User"],
     responses={404: {"description": "Not found"}},
 )
-
-
-class UserShortPage(BaseModel):
-    items: List[UserShort]
-    next_cursor: str
 
 
 def _normalize_about(value: Any) -> About:
@@ -256,14 +252,16 @@ async def user_unblock(sessionid: str = Depends(get_sessionid),
     return await cl.user_unblock(user_id, surface)
 
 
-@router.get("/follow/requests", response_model=List[UserShort])
+@router.get("/follow/requests", response_model=UserShortPage)
 async def user_follow_requests(sessionid: str = Depends(get_sessionid),
-                               amount: Optional[int] = Query(0),
-                               clients: ClientStorage = Depends(get_clients)) -> List[UserShort]:
-    """Get pending follow requests
+                               amount: int = Query(50, ge=1, le=200),
+                               cursor: str = Query(""),
+                               clients: ClientStorage = Depends(get_clients)) -> UserShortPage:
+    """Get a page of pending follow requests
     """
     cl = await clients.get(sessionid)
-    return await cl.user_follow_requests(amount)
+    items, next_cursor = await cl.user_follow_requests_chunk(amount, cursor or "")
+    return UserShortPage(items=items, next_cursor=next_cursor or "")
 
 
 @router.get("/highlights", response_model=List[Highlight])

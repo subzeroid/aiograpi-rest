@@ -73,13 +73,24 @@ be passed directly into OpenAPI client generators.
 
 ## Pagination
 
-`GET /media/user/medias` returns an object with `items` and `end_cursor`; pass
-the returned `end_cursor` into the next request to continue from the previous
-page.
+Paginated read-list routes return an object with `items` and `next_cursor`.
+Pass the returned `next_cursor` as `cursor` on the next request to continue
+from the previous page. This shape is used for:
 
-`GET /user/followers` and `GET /user/following` return an object with `items`
-and `next_cursor`; pass the returned `next_cursor` as `cursor` on the next
-request.
+- `GET /direct/inbox`
+- `GET /hashtag/medias/recent`
+- `GET /hashtag/medias/top`
+- `GET /location/medias/recent`
+- `GET /location/medias/top`
+- `GET /media/user/clips`
+- `GET /media/user/medias`
+- `GET /media/user/videos`
+- `GET /media/usertag/medias`
+- `GET /story/archive`
+- `GET /story/viewers`
+- `GET /user/follow/requests`
+- `GET /user/followers`
+- `GET /user/following`
 
 ## Form JSON Fields
 

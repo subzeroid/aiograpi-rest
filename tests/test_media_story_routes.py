@@ -63,6 +63,10 @@ class FakeMediaClient:
         self.calls.append(("usertag_medias", user_id, amount))
         return [_media_payload(pk=2)]
 
+    async def usertag_medias_paginated(self, user_id, amount, end_cursor=""):
+        self.calls.append(("usertag_medias_paginated", user_id, amount, end_cursor))
+        return [_media_payload(pk=2)], "next-tag-cursor"
+
     async def media_delete(self, media_id):
         self.calls.append(("media_delete", media_id))
         return True
@@ -233,25 +237,27 @@ async def test_user_medias_returns_items_and_cursor(storage):
                 "sessionid": "sid",
                 "user_id": "1",
                 "amount": "10",
-                "end_cursor": "cursor",
+                "cursor": "cursor",
             },
         )
 
     assert response.status_code == 200
     assert response.json()["items"][0]["pk"] == 3
-    assert response.json()["end_cursor"] == "next-cursor"
+    assert response.json()["next_cursor"] == "next-cursor"
     assert ("user_medias_paginated", "1", 10, "cursor") in storage.client.calls
 
 
 @pytest.mark.asyncio
-async def test_usertag_medias_awaits_client(storage):
+async def test_usertag_medias_returns_items_and_cursor(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
             "/media/usertag/medias",
-            params={"sessionid": "sid", "user_id": "1"},
+            params={"sessionid": "sid", "user_id": "1", "cursor": "tag-cursor"},
         )
     assert response.status_code == 200
-    assert ("usertag_medias", 1, 50) in storage.client.calls
+    assert response.json()["items"][0]["pk"] == 2
+    assert response.json()["next_cursor"] == "next-tag-cursor"
+    assert ("usertag_medias_paginated", "1", 50, "tag-cursor") in storage.client.calls
 
 
 @pytest.mark.asyncio

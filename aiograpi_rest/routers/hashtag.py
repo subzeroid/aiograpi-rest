@@ -1,9 +1,8 @@
-from typing import List
-
-from aiograpi.types import Hashtag, Media
+from aiograpi.types import Hashtag
 from fastapi import APIRouter, Depends, Form, Query
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.pagination import MediaPage
 
 router = APIRouter(
     prefix="/hashtag",
@@ -24,30 +23,34 @@ async def hashtag_info(
     return await cl.hashtag_info(name)
 
 
-@router.get("/medias/top", response_model=List[Media])
+@router.get("/medias/top", response_model=MediaPage)
 async def hashtag_medias_top(
     sessionid: str = Depends(get_sessionid),
     name: str = Query(...),
-    amount: int = Query(9),
+    amount: int = Query(9, ge=1, le=200),
+    cursor: str = Query(""),
     clients: ClientStorage = Depends(get_clients),
-) -> List[Media]:
-    """Get top hashtag media
+) -> MediaPage:
+    """Get a page of top hashtag media
     """
     cl = await clients.get(sessionid)
-    return await cl.hashtag_medias_top(name, amount)
+    items, next_cursor = await cl.hashtag_medias_v1_chunk(name, amount, "top", cursor or None)
+    return MediaPage(items=items, next_cursor=next_cursor or "")
 
 
-@router.get("/medias/recent", response_model=List[Media])
+@router.get("/medias/recent", response_model=MediaPage)
 async def hashtag_medias_recent(
     sessionid: str = Depends(get_sessionid),
     name: str = Query(...),
-    amount: int = Query(27),
+    amount: int = Query(27, ge=1, le=200),
+    cursor: str = Query(""),
     clients: ClientStorage = Depends(get_clients),
-) -> List[Media]:
-    """Get recent hashtag media
+) -> MediaPage:
+    """Get a page of recent hashtag media
     """
     cl = await clients.get(sessionid)
-    return await cl.hashtag_medias_recent(name, amount)
+    items, next_cursor = await cl.hashtag_medias_v1_chunk(name, amount, "recent", cursor or None)
+    return MediaPage(items=items, next_cursor=next_cursor or "")
 
 
 @router.post("/follow", response_model=bool)

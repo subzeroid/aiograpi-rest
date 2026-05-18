@@ -4,6 +4,7 @@ from aiograpi.types import DirectMessage, DirectThread
 from fastapi import APIRouter, Depends, Form, HTTPException, Query
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.pagination import DirectThreadPage
 
 router = APIRouter(
     prefix="/direct",
@@ -12,19 +13,25 @@ router = APIRouter(
 )
 
 
-@router.get("/inbox", response_model=List[DirectThread])
+@router.get("/inbox", response_model=DirectThreadPage)
 async def direct_inbox(
     sessionid: str = Depends(get_sessionid),
-    amount: int = Query(20),
     selected_filter: str = Query(""),
     box: str = Query(""),
     thread_message_limit: Optional[int] = Query(None),
+    cursor: str = Query(""),
     clients: ClientStorage = Depends(get_clients),
-) -> List[DirectThread]:
-    """Get direct inbox threads
+) -> DirectThreadPage:
+    """Get a page of direct inbox threads
     """
     cl = await clients.get(sessionid)
-    return await cl.direct_threads(amount, selected_filter, box, thread_message_limit)
+    items, next_cursor = await cl.direct_threads_chunk(
+        selected_filter,
+        box,
+        thread_message_limit,
+        cursor or None,
+    )
+    return DirectThreadPage(items=items, next_cursor=next_cursor or "")
 
 
 @router.get("/thread", response_model=DirectThread)
