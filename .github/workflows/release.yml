@@ -64,6 +64,10 @@ jobs:
         python scripts/export_openapi.py release/openapi.json
         python -m build
 
+    - name: Smoke generate OpenAPI clients
+      run: |
+        python scripts/check_client_generation.py
+
     - name: Publish Python package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
 

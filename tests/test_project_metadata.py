@@ -61,6 +61,7 @@ def test_markdown_files_match_current_project_identity():
         ROOT / "docs" / "client-generation.md",
         ROOT / "golang" / "README.md",
         ROOT / "swift" / "README.md",
+        ROOT / "examples" / "README.md",
         ROOT / ".github" / "ISSUE_TEMPLATE" / "bug_report.md",
         ROOT / ".github" / "ISSUE_TEMPLATE" / "feature_request.md",
     ]
@@ -135,6 +136,57 @@ def test_go_example_uses_current_rest_session_flow():
     assert "github.com/go-resty/resty" not in go_client
     assert "github.com/go-resty/resty" not in go_mod
     assert not (ROOT / "golang" / "go.sum").exists()
+
+
+def test_openapi_client_generation_smoke_check_is_configured():
+    config = json.loads((ROOT / "openapitools.json").read_text())
+    assert config["generator-cli"]["version"] == "7.22.0"
+
+    script = (ROOT / "scripts" / "check_client_generation.py").read_text()
+    assert "scripts/export_openapi.py" in script
+    for generator in ("python", "typescript-fetch", "go", "swift5"):
+        assert generator in script
+    assert "--skip-validate-spec" in script
+
+    workflow = yaml.load((ROOT / ".github" / "workflows" / "clients.yml").read_text(), Loader=yaml.BaseLoader)
+    assert workflow["name"] == "Client Generation"
+    assert workflow["env"]["FORCE_JAVASCRIPT_ACTIONS_TO_NODE24"] == "true"
+    assert workflow["jobs"]["smoke"]["timeout-minutes"] == "20"
+
+    steps = workflow["jobs"]["smoke"]["steps"]
+    assert any(step.get("uses") == "actions/checkout@v6.0.2" for step in steps)
+    assert any(step.get("uses") == "actions/setup-python@v6.2.0" for step in steps)
+    run_commands = "\n".join(step.get("run", "") for step in steps)
+    assert "pip install -e ." in run_commands
+    assert "python scripts/check_client_generation.py" in run_commands
+
+
+def test_quickstart_examples_cover_login_sessionid_and_user_about():
+    examples = {
+        "curl": ROOT / "examples" / "curl" / "user-about.sh",
+        "python": ROOT / "examples" / "python" / "user_about.py",
+        "typescript": ROOT / "examples" / "typescript" / "user-about.ts",
+    }
+    for path in examples.values():
+        assert path.exists(), path
+
+    combined = "\n".join(path.read_text() for path in examples.values())
+    assert "AIOGRAPI_REST_BASE_URL" in combined
+    assert "AIOGRAPI_REST_SESSIONID" in combined
+    assert "AIOGRAPI_REST_USERNAME" in combined
+    assert "AIOGRAPI_REST_PASSWORD" in combined
+    assert "/auth/login" in combined
+    assert "/auth/login/by/sessionid" in combined
+    assert "/user/about" in combined
+    assert "X-Session-ID" in combined
+
+    readme = (ROOT / "README.md").read_text()
+    getting_started = (ROOT / "docs" / "getting-started.md").read_text()
+    client_generation = (ROOT / "docs" / "client-generation.md").read_text()
+    for document in (readme, getting_started, client_generation):
+        assert "examples/curl/user-about.sh" in document
+        assert "examples/python/user_about.py" in document
+        assert "examples/typescript/user-about.ts" in document
 
 
 def test_license_has_current_owner_and_year_range():

@@ -129,6 +129,17 @@ Hub and GHCR, Python packages go to PyPI through Trusted Publisher.
 
 The service is plain HTTP + JSON, so any HTTP client in any language works. Below are the shortest possible call snippets for the most common stacks; minimal example clients live in [`./golang`](golang) and [`./swift`](swift). They are integration examples, not generated SDKs.
 
+Reusable quickstart examples show the full session flow; see
+[`examples/README.md`](examples/README.md) for runnable commands:
+
+- [`examples/curl/user-about.sh`](examples/curl/user-about.sh) for shell/curl
+- [`examples/python/user_about.py`](examples/python/user_about.py) for Python without extra dependencies
+- [`examples/typescript/user-about.ts`](examples/typescript/user-about.ts) for Node.js / TypeScript
+
+Each example accepts `AIOGRAPI_REST_SESSIONID`, can import an Instagram cookie
+through `POST /auth/login/by/sessionid`, can create a new session through
+`POST /auth/login`, then calls `GET /user/about` with `X-Session-ID`.
+
 **Node.js / TypeScript:**
 
 ```js

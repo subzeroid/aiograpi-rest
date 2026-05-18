@@ -21,11 +21,21 @@ To call authenticated endpoints, pass an existing aiograpi-rest session:
 AIOGRAPI_REST_SESSIONID="<SESSIONID>" AIOGRAPI_REST_USER_ID="25025320" ./client.swift
 ```
 
+Or import an existing Instagram `sessionid` cookie through
+`POST /auth/login/by/sessionid`:
+
+```bash
+AIOGRAPI_REST_INSTAGRAM_SESSIONID="<INSTAGRAM_SESSIONID>" ./client.swift
+```
+
 Or let the example create a session first:
 
 ```bash
 AIOGRAPI_REST_USERNAME="<USERNAME>" AIOGRAPI_REST_PASSWORD="<PASSWORD>" ./client.swift
 ```
+
+The example sends the saved aiograpi-rest session as `X-Session-ID` and calls
+`GET /user/about` after login/import succeeds.
 
 ## Compile
 

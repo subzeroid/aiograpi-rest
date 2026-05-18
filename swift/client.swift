@@ -55,6 +55,21 @@ final class APIClient {
         )
     }
 
+    func login(username: String, password: String, verificationCode: String?) throws -> HTTPResult {
+        var fields = [
+            "username": username,
+            "password": password,
+        ]
+        if let verificationCode {
+            fields["verification_code"] = verificationCode
+        }
+        return try postForm("/auth/login", fields: fields)
+    }
+
+    func importInstagramSessionID(_ instagramSessionID: String) throws -> HTTPResult {
+        try postForm("/auth/login/by/sessionid", fields: ["sessionid": instagramSessionID])
+    }
+
     private func request(
         _ method: String,
         path: String,
@@ -162,17 +177,23 @@ do {
     printResult("Dependencies", try client.get("/deps"))
 
     if client.sessionID == nil,
+       let instagramSessionID = env("AIOGRAPI_REST_INSTAGRAM_SESSIONID") {
+        let login = try client.importInstagramSessionID(instagramSessionID)
+        printResult("Import Session", login)
+        client.sessionID = sessionID(from: login.body)
+        if client.sessionID != nil {
+            print("\nImported session stored for this process.")
+        }
+    }
+
+    if client.sessionID == nil,
        let username = env("AIOGRAPI_REST_USERNAME"),
        let password = env("AIOGRAPI_REST_PASSWORD") {
-        var fields = [
-            "username": username,
-            "password": password,
-        ]
-        if let verificationCode = env("AIOGRAPI_REST_VERIFICATION_CODE") {
-            fields["verification_code"] = verificationCode
-        }
-
-        let login = try client.postForm("/auth/login", fields: fields)
+        let login = try client.login(
+            username: username,
+            password: password,
+            verificationCode: env("AIOGRAPI_REST_VERIFICATION_CODE")
+        )
         printResult("Login", login)
         client.sessionID = sessionID(from: login.body)
         if client.sessionID != nil {
@@ -187,7 +208,10 @@ do {
             try client.get("/user/about", queryItems: [URLQueryItem(name: "user_id", value: userID)])
         )
     } else {
-        print("\nSet AIOGRAPI_REST_SESSIONID or AIOGRAPI_REST_USERNAME/AIOGRAPI_REST_PASSWORD to call /user/about.")
+        print(
+            "\nSet AIOGRAPI_REST_SESSIONID, AIOGRAPI_REST_INSTAGRAM_SESSIONID, " +
+            "or AIOGRAPI_REST_USERNAME/AIOGRAPI_REST_PASSWORD to call /user/about."
+        )
     }
 } catch {
     fputs("\(error)\n", stderr)

@@ -84,3 +84,15 @@ curl http://localhost:8000/health
 curl http://localhost:8000/ready
 curl http://localhost:8000/deps
 ```
+
+## Reusable Examples
+
+These repository examples use the same flow as the commands above: read
+`AIOGRAPI_REST_SESSIONID` when you already have an aiograpi-rest session, import
+an Instagram cookie through `POST /auth/login/by/sessionid`, or create a new
+session through `POST /auth/login`, then call `GET /user/about` with
+`X-Session-ID`.
+
+- [examples/curl/user-about.sh](https://github.com/subzeroid/aiograpi-rest/blob/main/examples/curl/user-about.sh)
+- [examples/python/user_about.py](https://github.com/subzeroid/aiograpi-rest/blob/main/examples/python/user_about.py)
+- [examples/typescript/user-about.ts](https://github.com/subzeroid/aiograpi-rest/blob/main/examples/typescript/user-about.ts)

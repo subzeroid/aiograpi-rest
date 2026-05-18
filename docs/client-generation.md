@@ -214,6 +214,21 @@ How to set a default header depends on the generated language target. If the
 generated SDK makes default headers awkward, keep the generated models and wrap
 calls with your normal HTTP client.
 
+For a hand-written session flow before introducing a generated SDK, see:
+
+- [examples/curl/user-about.sh](https://github.com/subzeroid/aiograpi-rest/blob/main/examples/curl/user-about.sh)
+- [examples/python/user_about.py](https://github.com/subzeroid/aiograpi-rest/blob/main/examples/python/user_about.py)
+- [examples/typescript/user-about.ts](https://github.com/subzeroid/aiograpi-rest/blob/main/examples/typescript/user-about.ts)
+
+## CI Smoke Check
+
+The repository runs `scripts/check_client_generation.py` in CI. The script
+exports the current OpenAPI schema with `scripts/export_openapi.py` and
+smoke-generates `python`, `typescript-fetch`, `go`, and `swift5` clients with
+OpenAPI Generator 7.22.0. This does not turn those generated outputs into
+supported SDK packages; it only verifies that the published schema remains
+usable by the main documented generator targets.
+
 ## Repository Policy
 
 The `golang/` and `swift/` directories in this repository are minimal
