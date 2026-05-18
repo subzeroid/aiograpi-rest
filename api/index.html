@@ -692,12 +692,25 @@ check account and proxy health before retrying.</p>
 <p>The schema uses client-friendly operation IDs and request schema names so it can
 be passed directly into OpenAPI client generators.</p>
 <h2 id="pagination">Pagination</h2>
-<p><code>GET /media/user/medias</code> returns an object with <code>items</code> and <code>end_cursor</code>; pass
-the returned <code>end_cursor</code> into the next request to continue from the previous
-page.</p>
-<p><code>GET /user/followers</code> and <code>GET /user/following</code> return an object with <code>items</code>
-and <code>next_cursor</code>; pass the returned <code>next_cursor</code> as <code>cursor</code> on the next
-request.</p>
+<p>Paginated read-list routes return an object with <code>items</code> and <code>next_cursor</code>.
+Pass the returned <code>next_cursor</code> as <code>cursor</code> on the next request to continue
+from the previous page. This shape is used for:</p>
+<ul>
+<li><code>GET /direct/inbox</code></li>
+<li><code>GET /hashtag/medias/recent</code></li>
+<li><code>GET /hashtag/medias/top</code></li>
+<li><code>GET /location/medias/recent</code></li>
+<li><code>GET /location/medias/top</code></li>
+<li><code>GET /media/user/clips</code></li>
+<li><code>GET /media/user/medias</code></li>
+<li><code>GET /media/user/videos</code></li>
+<li><code>GET /media/usertag/medias</code></li>
+<li><code>GET /story/archive</code></li>
+<li><code>GET /story/viewers</code></li>
+<li><code>GET /user/follow/requests</code></li>
+<li><code>GET /user/followers</code></li>
+<li><code>GET /user/following</code></li>
+</ul>
 <h2 id="form-json-fields">Form JSON Fields</h2>
 <p>Story upload decoration fields such as <code>mentions</code>, <code>locations</code>, <code>links</code>,
 <code>hashtags</code>, and <code>stickers</code> are form fields. Repeat the field with one
