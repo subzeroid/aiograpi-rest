@@ -127,7 +127,7 @@ Hub and GHCR, Python packages go to PyPI through Trusted Publisher.
 
 ## Calling it from your language
 
-The service is plain HTTP + JSON, so any HTTP client in any language works. Below are the shortest possible call snippets for the most common stacks; full working clients live in [`./golang`](golang) and [`./swift`](swift).
+The service is plain HTTP + JSON, so any HTTP client in any language works. Below are the shortest possible call snippets for the most common stacks; minimal example clients live in [`./golang`](golang) and [`./swift`](swift). They are integration examples, not generated SDKs.
 
 **Node.js / TypeScript:**
 
@@ -197,19 +197,10 @@ For typed client generation in C++, C#, F#, D, Erlang, Elixir, Nim, Haskell, Lis
 
 ## Installation
 
-Requires Python 3.13 for local installs. Dependencies are declared in `pyproject.toml` (the legacy `requirements.txt` is gone).
-
-Install ImageMagick (required for photo upload):
-
-```
-sudo apt install imagemagick
-```
-
-Then comment the strict policy line in `/etc/ImageMagick-6/policy.xml`:
-
-```xml
-<!--<policy domain="path" rights="none" pattern="@*"/>-->
-```
+Requires Python 3.13 for local installs. Dependencies are declared in
+`pyproject.toml`; the legacy `requirements.txt` is intentionally gone. The
+Docker image is the recommended runtime because it ships the same package layout
+and entrypoint used in CI and release smoke tests.
 
 Run the prebuilt Docker image:
 
@@ -422,6 +413,14 @@ mkdocs build --strict
 ```
 
 ## Development
+
+Runtime code lives under the `aiograpi_rest/` package:
+
+- `aiograpi_rest/main.py` creates the FastAPI app, OpenAPI metadata, and system
+  endpoints.
+- `aiograpi_rest/routers/` contains route modules grouped by Instagram surface.
+- `aiograpi_rest/dependencies.py`, `helpers.py`, and `storages.py` contain
+  shared dependency injection, upload helpers, and session storage.
 
 For debugging with the dev server bound:
 

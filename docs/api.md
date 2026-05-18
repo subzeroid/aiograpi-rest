@@ -90,7 +90,7 @@ For mentions, locations, and hashtags, omitted `x`, `y`, `width`, `height`, or
 `rotation` values default to a centered story position before the request is
 sent to `aiograpi`.
 
-Feed upload and edit metadata uses JSON-encoded form strings too. The upload
+Feed upload and edit metadata use JSON-encoded form strings too. The upload
 endpoints for photo, video, clip/Reels, IGTV, album/carousel, and the media
 edit endpoint accept `usertags` as one JSON array or repeated JSON-encoded
 `Usertag` values, and `location` as one JSON-encoded `Location` object. Leave

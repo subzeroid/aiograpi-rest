@@ -1,9 +1,22 @@
-Examples of working with the aiograpi-rest service
+# aiograpi-rest Go Example
+
+Minimal Go client example for calling an `aiograpi-rest` server over HTTP.
+This is an integration example, not a generated OpenAPI SDK.
+
+Start the API first:
+
+```bash
+docker run --rm -p 8000:8000 subzeroid/aiograpi-rest
+```
 
 ## Build
 
-`go build client.go`
+```bash
+go build client.go
+```
 
 ## Launch
 
-`./client`
+```bash
+./client
+```

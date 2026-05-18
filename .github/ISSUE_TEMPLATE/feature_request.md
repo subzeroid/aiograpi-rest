@@ -1,21 +1,23 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest an aiograpi-rest endpoint or project improvement
 title: ''
 labels: enhancement
 
 ---
 
-### Try Instagrapi SaaS with a free trial https://hikerapi.com/p/5GBWznd3
+**Problem**
+What are you trying to do with `aiograpi-rest` that is hard or impossible today?
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Proposed solution**
+For endpoint requests, include the desired REST shape, for example:
+`GET /resource`, `POST /resource`, `PATCH /resource`, or `DELETE /resource`.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**aiograpi method**
+If this maps to an `aiograpi.Client` method, name it here.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Alternatives considered**
+Mention any workaround you use today.
 
 **Additional context**
-Add any other context or screenshots about the feature request here.
+Links, screenshots, OpenAPI notes, or examples from other APIs.

@@ -52,6 +52,36 @@ def test_repository_does_not_track_legacy_platform_artifacts():
     assert not (ROOT / "docs" / "superpowers").exists()
 
 
+def test_markdown_files_match_current_project_identity():
+    docs = [
+        ROOT / "README.md",
+        ROOT / "docs" / "index.md",
+        ROOT / "docs" / "getting-started.md",
+        ROOT / "docs" / "api.md",
+        ROOT / "golang" / "README.md",
+        ROOT / "swift" / "README.md",
+        ROOT / ".github" / "ISSUE_TEMPLATE" / "bug_report.md",
+        ROOT / ".github" / "ISSUE_TEMPLATE" / "feature_request.md",
+    ]
+    combined = "\n".join(path.read_text() for path in docs)
+    assert "uvicorn main:app" not in combined
+    assert "Instagrapi SaaS" not in combined
+    assert "Python version [e.g. 3.8.3]" not in combined
+    assert "instagrapi version [e.g. 1.9.3" not in combined
+    assert "moveipy version" not in combined
+    assert "imagemagick version" not in combined
+    assert "required for photo upload" not in combined
+    assert "minimal example clients" in combined
+    assert "not generated SDKs" in combined
+    assert "aiograpi_rest.main:app" in combined
+
+
+def test_license_has_current_owner_and_year_range():
+    license_text = (ROOT / "LICENSE").read_text()
+    assert "MIT License" in license_text
+    assert "Copyright (c) 2023-2026 subzeroid" in license_text
+
+
 def test_app_version_is_single_sourced_from_pyproject():
     import aiograpi_rest.main as main
 

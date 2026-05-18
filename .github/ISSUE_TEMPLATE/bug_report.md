@@ -1,34 +1,36 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a reproducible aiograpi-rest bug
 title: "[BUG] "
 labels: bug
 
 ---
 
-### Try Instagrapi SaaS with a free trial https://hikerapi.com/p/5GBWznd3
-
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear description of what failed.
 
-**To Reproduce**
-Provide a piece of code to reproduce the problem.
+**Endpoint**
+Example: `POST /auth/login`, `GET /user/about`, `POST /story/upload`.
 
-**Traceback**
-Show your full traceback so that it is clear where exactly the error occurred.
+**To reproduce**
+Provide the smallest curl command, HTTP request, or client snippet that shows
+the problem. Remove secrets before posting.
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+What response or behavior did you expect?
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Actual behavior**
+Include the HTTP status code and response body.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. Ubuntu 21.04]
- - Python version [e.g. 3.8.3]
- - instagrapi version [e.g. 1.9.3, not "latest"]
- - moveipy version if used
- - imagemagick version if used
+**Environment**
+- aiograpi-rest version:
+- Run mode: Docker image / Docker Compose / local Python
+- Python version, if running locally:
+- Docker image tag, if using Docker:
+- aiograpi version, from `GET /deps`:
+
+**Traceback or logs**
+Paste the relevant server traceback, container logs, or GitHub Actions log.
 
 **Additional context**
-Add any other context about the problem here.
+Screenshots, OpenAPI screenshots, or notes about proxies/challenges can help.

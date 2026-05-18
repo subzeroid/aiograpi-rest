@@ -16,6 +16,8 @@ docker compose up api
 
 ## Run Locally
 
+The FastAPI application lives at `aiograpi_rest.main:app`.
+
 ```bash
 python3.13 -m venv .venv
 . .venv/bin/activate
