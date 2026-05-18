@@ -451,6 +451,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ci-smoke-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI Smoke Check
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#repository-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -604,6 +615,17 @@
     <span class="md-ellipsis">
       
         Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ci-smoke-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI Smoke Check
       
     </span>
   </a>
@@ -818,6 +840,19 @@ subsequent requests.</p>
 <p>How to set a default header depends on the generated language target. If the
 generated SDK makes default headers awkward, keep the generated models and wrap
 calls with your normal HTTP client.</p>
+<p>For a hand-written session flow before introducing a generated SDK, see:</p>
+<ul>
+<li><a href="https://github.com/subzeroid/aiograpi-rest/blob/main/examples/curl/user-about.sh">examples/curl/user-about.sh</a></li>
+<li><a href="https://github.com/subzeroid/aiograpi-rest/blob/main/examples/python/user_about.py">examples/python/user_about.py</a></li>
+<li><a href="https://github.com/subzeroid/aiograpi-rest/blob/main/examples/typescript/user-about.ts">examples/typescript/user-about.ts</a></li>
+</ul>
+<h2 id="ci-smoke-check">CI Smoke Check</h2>
+<p>The repository runs <code>scripts/check_client_generation.py</code> in CI. The script
+exports the current OpenAPI schema with <code>scripts/export_openapi.py</code> and
+smoke-generates <code>python</code>, <code>typescript-fetch</code>, <code>go</code>, and <code>swift5</code> clients with
+OpenAPI Generator 7.22.0. This does not turn those generated outputs into
+supported SDK packages; it only verifies that the published schema remains
+usable by the main documented generator targets.</p>
 <h2 id="repository-policy">Repository Policy</h2>
 <p>The <code>golang/</code> and <code>swift/</code> directories in this repository are minimal
 integration examples, not generated SDKs. Generated clients should usually live

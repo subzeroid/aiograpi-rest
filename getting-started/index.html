@@ -352,6 +352,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#reusable-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reusable Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -511,6 +522,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#reusable-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reusable Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -586,6 +608,17 @@ new integrations should use <code>X-Session-ID</code>.</p>
 curl<span class="w"> </span>http://localhost:8000/ready
 curl<span class="w"> </span>http://localhost:8000/deps
 </code></pre></div>
+<h2 id="reusable-examples">Reusable Examples</h2>
+<p>These repository examples use the same flow as the commands above: read
+<code>AIOGRAPI_REST_SESSIONID</code> when you already have an aiograpi-rest session, import
+an Instagram cookie through <code>POST /auth/login/by/sessionid</code>, or create a new
+session through <code>POST /auth/login</code>, then call <code>GET /user/about</code> with
+<code>X-Session-ID</code>.</p>
+<ul>
+<li><a href="https://github.com/subzeroid/aiograpi-rest/blob/main/examples/curl/user-about.sh">examples/curl/user-about.sh</a></li>
+<li><a href="https://github.com/subzeroid/aiograpi-rest/blob/main/examples/python/user_about.py">examples/python/user_about.py</a></li>
+<li><a href="https://github.com/subzeroid/aiograpi-rest/blob/main/examples/typescript/user-about.ts">examples/typescript/user-about.ts</a></li>
+</ul>
 
 
 
