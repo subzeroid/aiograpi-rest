@@ -17,6 +17,8 @@ jobs:
       TEST_ACCOUNTS_URL: ${{ secrets.TEST_ACCOUNTS_URL }}
       TEST_ACCOUNTS_COUNT: "25"
       LIVE_ACCOUNT_TIMEOUT: "90"
+      LIVE_PAGINATION_ACCOUNTS_COUNT: "5"
+      LIVE_PAGINATION_TIMEOUT: "180"
       LIVE_STORY_ACCOUNTS_COUNT: "5"
       LIVE_STORY_TIMEOUT: "240"
       LIVE_API_BASE_URL: http://127.0.0.1:8000
@@ -68,3 +70,64 @@ jobs:
       if: always() && env.TEST_ACCOUNTS_URL != ''
       run: |
         docker compose down -v
+
+  published-image:
+    if: github.repository == 'subzeroid/aiograpi-rest'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TEST_ACCOUNTS_URL: ${{ secrets.TEST_ACCOUNTS_URL }}
+      TEST_ACCOUNTS_COUNT: "5"
+      LIVE_ACCOUNT_TIMEOUT: "90"
+      LIVE_API_BASE_URL: http://127.0.0.1:8000
+
+    steps:
+    - uses: actions/checkout@v6.0.2
+
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v6.2.0
+      with:
+        python-version: "3.13"
+
+    - name: Install test dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ".[test]"
+
+    - name: Skip when live accounts are not configured
+      run: |
+        if [ -z "$TEST_ACCOUNTS_URL" ]; then
+          echo "::notice::TEST_ACCOUNTS_URL is not configured; skipping live tests."
+          exit 0
+        fi
+
+    - name: Start published Docker image
+      if: env.TEST_ACCOUNTS_URL != ''
+      run: |
+        docker rm -f aiograpi-rest-live >/dev/null 2>&1 || true
+        docker run --pull always -d --name aiograpi-rest-live -p 8000:8000 \
+          -e AIOGRAPI_REST_DB_PATH=/data/db.json \
+          subzeroid/aiograpi-rest:latest
+        for _ in $(seq 1 60); do
+          if curl -fsS http://127.0.0.1:8000/health; then
+            exit 0
+          fi
+          sleep 2
+        done
+        docker logs aiograpi-rest-live
+        exit 1
+
+    - name: Run published image live smoke tests
+      if: env.TEST_ACCOUNTS_URL != ''
+      run: |
+        pytest tests/live/test_live_http_smoke.py -m live -o addopts='' -v
+
+    - name: Show published image logs on failure
+      if: failure() && env.TEST_ACCOUNTS_URL != ''
+      run: |
+        docker logs aiograpi-rest-live
+
+    - name: Stop published Docker image
+      if: always() && env.TEST_ACCOUNTS_URL != ''
+      run: |
+        docker rm -f aiograpi-rest-live >/dev/null 2>&1 || true

@@ -372,6 +372,8 @@ def test_live_tests_workflow_runs_nightly_against_real_session_flow():
     assert job["env"]["TEST_ACCOUNTS_URL"] == "${{ secrets.TEST_ACCOUNTS_URL }}"
     assert job["env"]["TEST_ACCOUNTS_COUNT"] == "25"
     assert job["env"]["LIVE_ACCOUNT_TIMEOUT"] == "90"
+    assert job["env"]["LIVE_PAGINATION_ACCOUNTS_COUNT"] == "5"
+    assert job["env"]["LIVE_PAGINATION_TIMEOUT"] == "180"
     assert job["env"]["LIVE_STORY_ACCOUNTS_COUNT"] == "5"
     assert job["env"]["LIVE_STORY_TIMEOUT"] == "240"
     assert job["env"]["LIVE_API_BASE_URL"] == "http://127.0.0.1:8000"
@@ -386,6 +388,46 @@ def test_live_tests_workflow_runs_nightly_against_real_session_flow():
     assert "pytest tests/live -m live -o addopts='' -v" in run_commands
     assert "::notice::TEST_ACCOUNTS_URL is not configured; skipping live tests." in run_commands
     assert "docker compose logs api" in run_commands
+
+
+def test_live_tests_cover_published_image_and_paginated_read_lists():
+    workflow = yaml.load((ROOT / ".github" / "workflows" / "live-tests.yml").read_text(), Loader=yaml.BaseLoader)
+    live_smoke = (ROOT / "tests" / "live" / "test_live_smoke.py").read_text()
+    http_smoke = (ROOT / "tests" / "live" / "test_live_http_smoke.py").read_text()
+    readme = (ROOT / "README.md").read_text()
+
+    run_commands = "\n".join(
+        step.get("run", "")
+        for job in workflow["jobs"].values()
+        for step in job.get("steps", [])
+    )
+    assert "docker rm -f aiograpi-rest-live >/dev/null 2>&1 || true" in run_commands
+    assert "docker run --pull always" in run_commands
+    assert "subzeroid/aiograpi-rest:latest" in run_commands
+    assert 'TEST_ACCOUNTS_COUNT: "5"' in (ROOT / ".github" / "workflows" / "live-tests.yml").read_text()
+    assert "pytest tests/live/test_live_http_smoke.py -m live -o addopts='' -v" in run_commands
+
+    for endpoint in (
+        "/media/user/medias",
+        "/media/user/clips",
+        "/media/user/videos",
+        "/user/followers",
+        "/user/following",
+        "/hashtag/medias/top",
+        "/hashtag/medias/recent",
+        "/location/medias/top",
+        "/location/medias/recent",
+        "/direct/inbox",
+        "/story/archive",
+        "/story/viewers",
+    ):
+        assert endpoint in live_smoke
+
+    for endpoint in ("/media/user/medias", "/hashtag/medias/top", "/direct/inbox"):
+        assert endpoint in http_smoke
+
+    assert "published Docker image" in readme
+    assert "paginated read-list routes" in readme
 
 
 def test_workflows_opt_into_node24_actions():

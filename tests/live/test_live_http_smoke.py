@@ -40,6 +40,12 @@ def _request_json(base_url, method, path, *, headers=None, data=None):
     return json.loads(payload)
 
 
+def _assert_paginated_page(page, path):
+    assert sorted(page) == ["items", "next_cursor"], f"Unexpected {path} response: {page!r}"
+    assert isinstance(page["items"], list), f"Unexpected {path} items: {page!r}"
+    assert isinstance(page["next_cursor"], str), f"Unexpected {path} next_cursor: {page!r}"
+
+
 def _totp_code(account):
     settings = dict(account.get("client_settings") or account.get("settings") or {})
     totp_seed = settings.get("totp_seed") or account.get("totp_seed")
@@ -105,6 +111,18 @@ def _create_session(base_url, account):
         return _import_settings_via_http(base_url, account)
 
 
+def _assert_published_http_pagination(base_url, headers, public_user_id):
+    for path in (
+        f"/media/user/medias?user_id={public_user_id}&amount=2",
+        "/hashtag/medias/top?name=instagram&amount=2",
+        "/direct/inbox?thread_message_limit=1",
+    ):
+        _assert_paginated_page(
+            _request_json(base_url, "GET", path, headers=headers),
+            path,
+        )
+
+
 def test_live_http_login_authorize_and_user_about_flow():
     accounts_url = os.environ.get("TEST_ACCOUNTS_URL")
     if not accounts_url:
@@ -142,6 +160,7 @@ def test_live_http_login_authorize_and_user_about_flow():
             )
             assert "is_verified" in about
             assert isinstance(about["former_usernames"], str)
+            _assert_published_http_pagination(base_url, headers, user["pk"])
             return
         except Exception as exc:
             errors.append(f"{account.get('username', '?')}: {type(exc).__name__}: {exc}")

@@ -96,6 +96,24 @@ def _assert_downloaded_image(content):
     image.verify()
 
 
+def _assert_paginated_page(response):
+    assert response.status_code == 200, response.text
+    page = response.json()
+    assert sorted(page) == ["items", "next_cursor"]
+    assert isinstance(page["items"], list)
+    assert isinstance(page["next_cursor"], str)
+    return page
+
+
+def _first_location_pk(*pages):
+    for page in pages:
+        for item in page["items"]:
+            location = item.get("location") if isinstance(item, dict) else None
+            if isinstance(location, dict) and location.get("pk"):
+                return location["pk"]
+    return os.environ.get("LIVE_LOCATION_PK", "")
+
+
 async def _import_session_from_account_settings(api, account):
     settings = dict(account.get("client_settings") or account.get("settings") or {})
     settings.pop("totp_seed", None)
@@ -124,6 +142,68 @@ async def _wait_for_story(api, headers, user_id, story_pk):
                 return story
         await asyncio.sleep(5)
     raise AssertionError(f"Uploaded story {story_pk} was not found in /story/user/stories")
+
+
+async def try_settings_import_paginated_read_lists(account, tmp_path):
+    async with rest_api_for_account(account, tmp_path) as api:
+        sessionid = await _import_session_from_account_settings(api, account)
+        headers = {"X-Session-ID": sessionid}
+
+        account_response = await api.get("/account/info", headers=headers)
+        assert account_response.status_code == 200, account_response.text
+        account_user_id = account_response.json()["pk"]
+
+        public_user_response = await api.get(
+            "/user/info/by/username",
+            params={"username": "instagram"},
+            headers=headers,
+        )
+        assert public_user_response.status_code == 200, public_user_response.text
+        public_user_id = public_user_response.json()["pk"]
+
+        media_page = _assert_paginated_page(
+            await api.get(
+                "/media/user/medias",
+                params={"user_id": public_user_id, "amount": 2},
+                headers=headers,
+            )
+        )
+        hashtag_top_page = _assert_paginated_page(
+            await api.get(
+                "/hashtag/medias/top",
+                params={"name": "instagram", "amount": 2},
+                headers=headers,
+            )
+        )
+        hashtag_recent_page = _assert_paginated_page(
+            await api.get(
+                "/hashtag/medias/recent",
+                params={"name": "instagram", "amount": 2},
+                headers=headers,
+            )
+        )
+
+        for path, params in (
+            ("/media/user/clips", {"user_id": public_user_id, "amount": 2}),
+            ("/media/user/videos", {"user_id": public_user_id, "amount": 2}),
+            ("/user/followers", {"user_id": account_user_id, "amount": 2}),
+            ("/user/following", {"user_id": account_user_id, "amount": 2}),
+            ("/user/follow/requests", {"amount": 2}),
+            ("/direct/inbox", {"thread_message_limit": 1}),
+            ("/story/archive", {"amount": 2, "include_memories": False}),
+        ):
+            _assert_paginated_page(await api.get(path, params=params, headers=headers))
+
+        location_pk = _first_location_pk(media_page, hashtag_top_page, hashtag_recent_page)
+        if location_pk:
+            for path in ("/location/medias/top", "/location/medias/recent"):
+                _assert_paginated_page(
+                    await api.get(
+                        path,
+                        params={"location_pk": location_pk, "amount": 2},
+                        headers=headers,
+                    )
+                )
 
 
 async def try_settings_import_story_upload_image(account, tmp_path):
@@ -159,6 +239,13 @@ async def try_settings_import_story_upload_image(account, tmp_path):
             listed_story = await _wait_for_story(api, headers, user_id, story_pk)
             assert str(listed_story["pk"]) == str(story_pk)
 
+            viewers_response = await api.get(
+                "/story/viewers",
+                params={"story_pk": story_pk, "amount": 2},
+                headers=headers,
+            )
+            _assert_paginated_page(viewers_response)
+
             download_response = await api.get(
                 "/story/download",
                 params={"story_pk": story_pk},
@@ -192,6 +279,26 @@ async def test_live_settings_import_user_about_and_rest_header_session(tmp_path)
             errors.append(f"{account.get('username', '?')}: {type(exc).__name__}: {exc}")
 
     pytest.fail("No live test account succeeded: " + " | ".join(errors[:5]))
+
+
+@pytest.mark.asyncio
+async def test_live_paginated_read_lists_return_items_and_next_cursor(tmp_path):
+    url = os.environ.get("TEST_ACCOUNTS_URL")
+    if not url:
+        pytest.skip("TEST_ACCOUNTS_URL not configured")
+
+    count = int(os.environ.get("LIVE_PAGINATION_ACCOUNTS_COUNT", "5"))
+    accounts = fetch_accounts(url, count=count)
+    timeout = int(os.environ.get("LIVE_PAGINATION_TIMEOUT", "180"))
+    errors = []
+    for account in accounts:
+        try:
+            await asyncio.wait_for(try_settings_import_paginated_read_lists(account, tmp_path), timeout=timeout)
+            return
+        except Exception as exc:
+            errors.append(f"{account.get('username', '?')}: {type(exc).__name__}: {exc}")
+
+    pytest.fail("No live pagination account succeeded: " + " | ".join(errors[:5]))
 
 
 @pytest.mark.asyncio
