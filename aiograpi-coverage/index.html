@@ -582,9 +582,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <h2 id="summary">Summary</h2>
 <ul>
 <li>Public <code>aiograpi.Client</code> methods: <strong>500</strong></li>
-<li>Methods reached by REST routes: <strong>154</strong></li>
-<li>Methods not exposed as REST routes: <strong>346</strong></li>
-<li>Candidate REST backlog: <strong>161</strong></li>
+<li>Methods reached by REST routes: <strong>158</strong></li>
+<li>Methods not exposed as REST routes: <strong>342</strong></li>
+<li>Candidate REST backlog: <strong>157</strong></li>
 </ul>
 <h2 id="rest-relevance">REST Relevance</h2>
 <table>
@@ -598,12 +598,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tbody>
 <tr>
 <td><code>exposed</code></td>
-<td style="text-align: right;">154</td>
+<td style="text-align: right;">158</td>
 <td>Already used by public REST routes.</td>
 </tr>
 <tr>
 <td><code>candidate</code></td>
-<td style="text-align: right;">161</td>
+<td style="text-align: right;">157</td>
 <td>Likely useful as a future user-facing REST endpoint.</td>
 </tr>
 <tr>
@@ -705,8 +705,8 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>direct</code></td>
-<td style="text-align: right;">23</td>
-<td style="text-align: right;">22</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">18</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">45</td>
@@ -944,7 +944,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>direct</code></td>
-<td><code>direct_active_presence</code>, <code>direct_answer</code>, <code>direct_media</code>, <code>direct_message_search</code>, <code>direct_message_unsend</code>, <code>direct_pending_inbox</code>, <code>direct_request_approve</code>, <code>direct_requests</code>, <code>direct_send_cutout_sticker</code>, <code>direct_send_file</code>, <code>direct_send_photo</code>, <code>direct_send_seen</code>, <code>direct_send_video</code>, <code>direct_send_voice</code>, <code>direct_spam_chunk</code>, <code>direct_spam_inbox</code>, <code>direct_thread_by_participants</code>, <code>direct_thread_mute</code>, <code>direct_thread_mute_video_call</code>, <code>direct_thread_unmute</code>, <code>direct_thread_unmute_video_call</code>, <code>direct_users_presence</code></td>
+<td><code>direct_active_presence</code>, <code>direct_answer</code>, <code>direct_media</code>, <code>direct_message_search</code>, <code>direct_message_unsend</code>, <code>direct_pending_inbox</code>, <code>direct_request_approve</code>, <code>direct_requests</code>, <code>direct_send_cutout_sticker</code>, <code>direct_send_seen</code>, <code>direct_spam_chunk</code>, <code>direct_spam_inbox</code>, <code>direct_thread_by_participants</code>, <code>direct_thread_mute</code>, <code>direct_thread_mute_video_call</code>, <code>direct_thread_unmute</code>, <code>direct_thread_unmute_video_call</code>, <code>direct_users_presence</code></td>
 </tr>
 <tr>
 <td><code>explore</code></td>
@@ -1118,6 +1118,10 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>clip_upload</code></td>
 </tr>
 <tr>
+<td><code>POST /direct/file</code></td>
+<td><code>direct_send_file</code></td>
+</tr>
+<tr>
 <td><code>GET /direct/inbox</code></td>
 <td><code>direct_threads_chunk</code></td>
 </tr>
@@ -1170,6 +1174,10 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>direct_pending_approve</code></td>
 </tr>
 <tr>
+<td><code>POST /direct/photo</code></td>
+<td><code>direct_send_photo</code></td>
+</tr>
+<tr>
 <td><code>POST /direct/profile</code></td>
 <td><code>direct_profile_share</code></td>
 </tr>
@@ -1204,6 +1212,14 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>GET /direct/threads</code></td>
 <td><code>direct_threads</code></td>
+</tr>
+<tr>
+<td><code>POST /direct/video</code></td>
+<td><code>direct_send_video</code></td>
+</tr>
+<tr>
+<td><code>POST /direct/voice</code></td>
+<td><code>direct_send_voice</code></td>
 </tr>
 <tr>
 <td><code>GET /hashtag</code></td>
@@ -2296,16 +2312,16 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>direct_send_file(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], content_type: str = 'photo') -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /direct/file</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_send_photo(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /direct/photo</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_send_reaction(self, thread_id: int, message_id: int, emoji: str = '❤', client_context: Optional[str] = None, action_source: str = 'double_tap', target_item_type: Optional[str] = None) -&gt; bool</code></td>
@@ -2324,16 +2340,16 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>direct_send_video(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /direct/video</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_send_voice(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], waveform: Optional[List[float]] = None) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /direct/voice</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_spam_chunk(self, cursor: str = None) -&gt; Tuple[List[aiograpi.types.DirectThread], str]</code></td>
