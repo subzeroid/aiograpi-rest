@@ -11,46 +11,85 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 - Public `aiograpi.Client` methods: **500**
 - Methods reached by REST routes: **137**
 - Methods not exposed as REST routes: **363**
+- Candidate REST backlog: **177**
+
+## REST Relevance
+
+| Status | Methods | Meaning |
+|---|---:|---|
+| `exposed` | 137 | Already used by public REST routes. |
+| `candidate` | 177 | Likely useful as a future user-facing REST endpoint. |
+| `duplicate` | 90 | Variant of an already exposed method, such as `_v1`, `_gql`, `_a1`, chunk, or origin helpers. |
+| `internal` | 96 | Low-level auth/request/configuration/signup/challenge helpers that should not be mirrored blindly. |
 
 ## Coverage By Area
 
-| Area | Covered | Total |
-|---|---:|---:|
-| `account` | 6 | 14 |
-| `aiograpi` | 1 | 1 |
-| `album` | 3 | 6 |
-| `auth` | 7 | 34 |
-| `bloks` | 0 | 2 |
-| `challenge` | 1 | 6 |
-| `clip` | 3 | 10 |
-| `collection` | 3 | 9 |
-| `comment` | 6 | 22 |
-| `direct` | 6 | 45 |
-| `explore` | 0 | 3 |
-| `fbsearch` | 9 | 16 |
-| `fundraiser` | 0 | 1 |
-| `graphql` | 0 | 8 |
-| `hashtag` | 6 | 18 |
-| `highlight` | 7 | 12 |
-| `igtv` | 3 | 4 |
-| `insights` | 3 | 3 |
-| `location` | 5 | 20 |
-| `media` | 21 | 59 |
-| `multiple_accounts` | 0 | 2 |
-| `note` | 3 | 8 |
-| `notification` | 1 | 27 |
-| `password` | 0 | 2 |
-| `photo` | 4 | 10 |
-| `private` | 2 | 13 |
-| `public` | 0 | 9 |
-| `share` | 0 | 3 |
-| `signup` | 0 | 15 |
-| `story` | 11 | 21 |
-| `timeline` | 0 | 4 |
-| `totp` | 2 | 4 |
-| `track` | 0 | 5 |
-| `user` | 20 | 74 |
-| `video` | 4 | 10 |
+| Area | Exposed | Candidates | Duplicates | Internal | Total |
+|---|---:|---:|---:|---:|---:|
+| `account` | 6 | 8 | 0 | 0 | 14 |
+| `aiograpi` | 1 | 0 | 0 | 0 | 1 |
+| `album` | 3 | 1 | 0 | 2 | 6 |
+| `auth` | 7 | 0 | 0 | 27 | 34 |
+| `bloks` | 0 | 0 | 0 | 2 | 2 |
+| `challenge` | 1 | 0 | 0 | 5 | 6 |
+| `clip` | 3 | 6 | 0 | 1 | 10 |
+| `collection` | 3 | 4 | 2 | 0 | 9 |
+| `comment` | 6 | 6 | 10 | 0 | 22 |
+| `direct` | 6 | 38 | 1 | 0 | 45 |
+| `explore` | 0 | 3 | 0 | 0 | 3 |
+| `fbsearch` | 9 | 7 | 0 | 0 | 16 |
+| `fundraiser` | 0 | 1 | 0 | 0 | 1 |
+| `graphql` | 0 | 0 | 0 | 8 | 8 |
+| `hashtag` | 6 | 2 | 10 | 0 | 18 |
+| `highlight` | 7 | 3 | 2 | 0 | 12 |
+| `igtv` | 3 | 0 | 0 | 1 | 4 |
+| `insights` | 3 | 0 | 0 | 0 | 3 |
+| `location` | 5 | 6 | 9 | 0 | 20 |
+| `media` | 21 | 10 | 27 | 1 | 59 |
+| `multiple_accounts` | 0 | 2 | 0 | 0 | 2 |
+| `note` | 3 | 5 | 0 | 0 | 8 |
+| `notification` | 1 | 26 | 0 | 0 | 27 |
+| `password` | 0 | 0 | 0 | 2 | 2 |
+| `photo` | 4 | 1 | 1 | 4 | 10 |
+| `private` | 2 | 0 | 0 | 11 | 13 |
+| `public` | 0 | 0 | 0 | 9 | 9 |
+| `share` | 0 | 3 | 0 | 0 | 3 |
+| `signup` | 0 | 0 | 0 | 15 | 15 |
+| `story` | 11 | 3 | 7 | 0 | 21 |
+| `timeline` | 0 | 4 | 0 | 0 | 4 |
+| `totp` | 2 | 2 | 0 | 0 | 4 |
+| `track` | 0 | 5 | 0 | 0 | 5 |
+| `user` | 20 | 30 | 20 | 4 | 74 |
+| `video` | 4 | 1 | 1 | 4 | 10 |
+
+## Candidate Backlog By Area
+
+| Area | Candidate methods |
+|---|---|
+| `account` | `account_security_info`, `account_set_biography`, `change_password`, `remove_bio_links`, `reset_password`, `send_confirm_email`, `send_confirm_phone_number`, `set_external_url` |
+| `album` | `album_upload_with_music` |
+| `clip` | `clip_info_for_creation`, `clip_pin`, `clip_share_to_fb_config`, `clip_trial_eligible`, `clip_unpin`, `clip_upload_as_reel_with_music` |
+| `collection` | `collection_medias`, `collection_medias_by_name`, `collection_pk_by_name`, `collections` |
+| `comment` | `comment_likers_gql`, `comment_pin`, `comment_unpin`, `media_check_offensive_comment`, `media_comment_infos`, `media_stream_comments_v1_chunk` |
+| `direct` | `direct_active_presence`, `direct_answer`, `direct_delete_reaction`, `direct_media`, `direct_media_share`, `direct_message`, `direct_message_like`, `direct_message_search`, `direct_message_unlike`, `direct_message_unsend`, `direct_messages`, `direct_pending_approve`, `direct_pending_chunk`, `direct_pending_inbox`, `direct_profile_share`, `direct_request_approve`, `direct_requests`, `direct_search`, `direct_send_cutout_sticker`, `direct_send_file`, `direct_send_photo`, `direct_send_reaction`, `direct_send_seen`, `direct_send_video`, `direct_send_voice`, `direct_spam_chunk`, `direct_spam_inbox`, `direct_story_share`, `direct_thread_add_users`, `direct_thread_by_participants`, `direct_thread_hide`, `direct_thread_mark_unread`, `direct_thread_mute`, `direct_thread_mute_video_call`, `direct_thread_unmute`, `direct_thread_unmute_video_call`, `direct_thread_update_title`, `direct_users_presence` |
+| `explore` | `explore_page`, `explore_page_media_info`, `report_explore_media` |
+| `fbsearch` | `fbsearch_item`, `fbsearch_suggested_profiles`, `fbsearch_topsearch_flat`, `fbsearch_typeahead_stream`, `fbsearch_typehead`, `web_search_topsearch`, `web_search_topsearch_hashtags` |
+| `fundraiser` | `standalone_fundraiser_info_v1` |
+| `hashtag` | `hashtag_medias_recent`, `hashtag_medias_top` |
+| `highlight` | `highlight_change_cover`, `highlight_change_title`, `highlight_pk_from_url` |
+| `location` | `location_build`, `location_complete`, `location_medias_recent`, `location_medias_top`, `location_search_pk`, `location_story_sticker_id` |
+| `media` | `archive_medias`, `media_code_from_pk`, `media_create_livestream`, `media_end_livestream`, `media_get_livestream_comments`, `media_get_livestream_info`, `media_get_livestream_viewers`, `media_id`, `media_start_livestream`, `media_template_v1` |
+| `multiple_accounts` | `featured_accounts_v1`, `get_account_family_v1` |
+| `note` | `create_music_note`, `get_note_by_user`, `get_note_text_by_user`, `last_seen_update_note`, `notes_music_browser` |
+| `notification` | `notification_announcements`, `notification_comment_likes`, `notification_comments`, `notification_connection`, `notification_direct_group_requests`, `notification_direct_share_activity`, `notification_disable`, `notification_felix_upload_result`, `notification_first_post`, `notification_follow_request_accepted`, `notification_fundraiser_creator`, `notification_fundraiser_supporter`, `notification_like_and_comment_on_photo_user_tagged`, `notification_likes`, `notification_live_broadcast`, `notification_login`, `notification_mute_all`, `notification_new_follower`, `notification_pending_direct_share`, `notification_reminders`, `notification_report_updated`, `notification_rooms`, `notification_tagged_in_bio`, `notification_user_tagged`, `notification_video_call`, `notification_view_count` |
+| `photo` | `photo_upload_with_music` |
+| `share` | `share_code_from_url`, `share_info`, `share_info_by_url` |
+| `story` | `archive_stories`, `sticker_tray`, `users_stories_gql` |
+| `timeline` | `explore_reels`, `friends_reels`, `reels`, `reels_timeline_media` |
+| `totp` | `totp_generate_code`, `totp_generate_seed` |
+| `track` | `music_in_feed_audio_browser`, `track_download_by_url`, `track_info_by_canonical_id`, `track_info_by_id`, `track_stream_info_by_id` |
+| `user` | `chaining`, `close_friend_add`, `close_friend_remove`, `creator_info`, `disable_posts_notifications`, `disable_reels_notifications`, `disable_stories_notifications`, `disable_videos_notifications`, `discover_recommended_accounts_for_category_v1`, `enable_posts_notifications`, `enable_reels_notifications`, `enable_stories_notifications`, `enable_videos_notifications`, `feed_user_stream_item`, `fetch_suggestion_details`, `new_feed_exist`, `user_follow_request_approve`, `user_follow_request_decline`, `user_follow_requests_approve`, `user_follow_requests_decline`, `user_friendships_v1`, `user_id_from_username`, `user_related_profiles_gql`, `user_short_gql`, `user_stream_by_id_flat`, `user_stream_by_id_v1`, `user_stream_by_username_flat`, `user_stream_by_username_v1`, `user_web_profile_info_v1`, `username_from_user_id` |
+| `video` | `video_upload_to_direct` |
 
 ## REST Routes To aiograpi Methods
 
@@ -191,505 +230,505 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 
 ## Full Method Matrix
 
-| aiograpi method | Area | REST endpoint(s) |
-|---|---|---|
-| `account_change_picture(self, path: pathlib._local.Path) -> aiograpi.types.UserShort` | `account` | `PATCH /account/picture` |
-| `account_edit(self, **data: Dict) -> aiograpi.types.Account` | `account` | `PATCH /account` |
-| `account_info(self) -> aiograpi.types.Account` | `account` | `GET /account` |
-| `account_security_info(self) -> dict` | `account` | - |
-| `account_set_biography(self, biography: str) -> bool` | `account` | - |
-| `account_set_private(self) -> bool` | `account` | `PATCH /account/privacy` |
-| `account_set_public(self) -> bool` | `account` | `PATCH /account/privacy` |
-| `accounts_create(self, username: str, password: str, email: str = '', email_code: str = '', phone_number: str = '', phone_code: str = '', full_name: str = '', year: int = None, month: int = None, day: int = None, **kwargs) -> dict` | `signup` | - |
-| `album_configure(self, childs: List, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> Dict` | `album` | - |
-| `album_download(self, media_pk: int, folder: pathlib._local.Path = '', overwrite: bool = True) -> List[pathlib._local.Path]` | `album` | `GET /album/download` |
-| `album_download_by_urls(self, urls: List[str], folder: pathlib._local.Path = '', overwrite: bool = True) -> List[pathlib._local.Path]` | `album` | `GET /album/download/by/urls` |
-| `album_download_origin(self, media_pk: int) -> List[bytes]` | `album` | - |
-| `album_upload(self, paths: List[pathlib._local.Path], caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 3, configure_handler=None, configure_exception=None, to_story=False, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `album` | `POST /album/upload` |
-| `album_upload_with_music(self, paths: List[pathlib._local.Path], caption: str, track: Union[aiograpi.types.Track, Dict], usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 3, configure_handler=None, configure_exception=None, to_story=False, extra_data: Dict[str, str] = {}, audio_asset_start_time: Optional[int] = None, overlap_duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -> aiograpi.types.Media` | `album` | - |
-| `archive_medias(self, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `archive_medias_paginated_v1(self, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `archive_medias_v1(self, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `archive_stories(self, amount: int = 0) -> List[aiograpi.types.Story]` | `story` | - |
-| `archive_stories_v1(self, amount: int = 0) -> List[aiograpi.types.Story]` | `story` | - |
-| `archive_story_days(self, amount: int = 0, include_memories: bool = True) -> List[aiograpi.types.StoryArchiveDay]` | `story` | - |
-| `archive_story_days_paginated_v1(self, amount: int = 0, end_cursor: str = '', include_memories: bool = True, reel_id: str = '') -> Tuple[List[aiograpi.types.StoryArchiveDay], str]` | `story` | `GET /story/archive` |
-| `archive_story_days_v1(self, amount: int = 0, include_memories: bool = True) -> List[aiograpi.types.StoryArchiveDay]` | `story` | - |
-| `bloks_action(self, action: str, data: dict) -> bool` | `bloks` | - |
-| `bloks_change_password(self, password: str, challenge_context: dict) -> bool` | `bloks` | - |
-| `chaining(self, user_id: str) -> dict` | `user` | - |
-| `challenge_api(self, data)` | `signup` | - |
-| `challenge_captcha(self, challenge_json_data)` | `signup` | - |
-| `challenge_code_handler(self, username: str, choice=None)` | `private` | - |
-| `challenge_code_or_raised(self, choice: aiograpi.mixins.challenge.ChallengeChoice, wait_seconds: int = 5, attempts: int = 24, challenge_url: str = None, sessionid: str = None) -> str` | `challenge` | - |
-| `challenge_flow(self, data)` | `signup` | - |
-| `challenge_resolve(self, last_json: Dict) -> bool` | `challenge` | `POST /auth/challenge/resolve` |
-| `challenge_resolve_contact_form(self, challenge_url: str) -> bool` | `challenge` | - |
-| `challenge_resolve_new_password_form(self, result)` | `challenge` | - |
-| `challenge_resolve_simple(self, challenge_url: str) -> bool` | `challenge` | - |
-| `challenge_submit_phone_number(self, data, phone_number)` | `signup` | - |
-| `challenge_verify_sms_captcha(self, data, security_code)` | `signup` | - |
-| `change_password(self, old_password: str, new_password: str) -> bool` | `account` | - |
-| `change_password_handler(self, username: str)` | `private` | - |
-| `check_age_eligibility(self, year, month, day)` | `signup` | - |
-| `check_confirmation_code(self, email, code) -> dict` | `signup` | - |
-| `check_email(self, email) -> dict` | `signup` | - |
-| `check_phone_number(self, phone_number: str)` | `signup` | - |
-| `check_username(self, username)` | `signup` | - |
-| `clip_configure(self, upload_id: str, thumbnail: pathlib._local.Path, width: int, height: int, duration: int, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, feed_show: str = '1', extra_data: Dict[str, str] = {}) -> Dict` | `clip` | - |
-| `clip_download(self, media_pk: int, folder: pathlib._local.Path = '') -> str` | `clip` | `GET /clip/download` |
-| `clip_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> str` | `clip` | `GET /clip/download/by/url` |
-| `clip_info_for_creation(self) -> Dict` | `clip` | - |
-| `clip_pin(self, media_pk: str, revert: bool = False) -> bool` | `clip` | - |
-| `clip_share_to_fb_config(self, device_status: Optional[Dict[str, object]] = None) -> Dict` | `clip` | - |
-| `clip_trial_eligible(self) -> bool` | `clip` | - |
-| `clip_unpin(self, media_pk: str) -> bool` | `clip` | - |
-| `clip_upload(self, path: pathlib._local.Path, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 10, feed_show: str = '1', extra_data: Dict[str, object] = {}, trial: bool = False, trial_graduation_strategy: str = 'manual') -> aiograpi.types.Media` | `clip` | `POST /clip/upload`<br>`POST /clip/upload/by/url` |
-| `clip_upload_as_reel_with_music(self, path: pathlib._local.Path, caption: str, track: aiograpi.types.Track, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `clip` | - |
-| `close_friend_add(self, user_id: str)` | `user` | - |
-| `close_friend_remove(self, user_id: str)` | `user` | - |
-| `collection_medias(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | - |
-| `collection_medias_by_name(self, name: str) -> List[aiograpi.types.Collection]` | `collection` | - |
-| `collection_medias_v1(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | - |
-| `collection_medias_v1_chunk(self, collection_pk: str, max_id: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `collection` | - |
-| `collection_pk_by_name(self, name: str) -> int` | `collection` | - |
-| `collections(self) -> List[aiograpi.types.Collection]` | `collection` | - |
-| `comment_bulk_delete(self, media_id: str, comment_pks: List[int]) -> bool` | `comment` | `DELETE /media/comment` |
-| `comment_like(self, comment_pk: int, revert: bool = False) -> bool` | `comment` | `POST /media/comment/like` |
-| `comment_likers_gql(self, comment_pk: str, amount: int = 0) -> List[dict]` | `comment` | - |
-| `comment_likers_gql_chunk(self, comment_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `comment` | - |
-| `comment_pin(self, media_id: str, comment_pk: int, revert: bool = False)` | `comment` | - |
-| `comment_unlike(self, comment_pk: int) -> bool` | `comment` | `DELETE /media/comment/like` |
-| `comment_unpin(self, media_id: str, comment_pk: int)` | `comment` | - |
-| `create_music_note(self, track: Union[aiograpi.types.Track, Dict], text: str = '', audience: int = 0, start_time: Optional[int] = None, duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -> aiograpi.types.Note` | `note` | - |
-| `create_note(self, text: str, audience: int = 0) -> aiograpi.types.Note` | `note` | `POST /note` |
-| `creator_info(self, user_id: str, entry_point: str = 'direct_thread') -> Tuple[aiograpi.types.UserShort, Dict]` | `user` | - |
-| `delete_note(self, note_id: int) -> bool` | `note` | `DELETE /note` |
-| `direct_active_presence(self) -> Dict` | `direct` | - |
-| `direct_answer(self, thread_id: int, text: str) -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_delete_reaction(self, thread_id: int, message_id: int, emoji: str = '❤', client_context: Optional[str] = None, action_source: str = 'double_tap', target_item_type: Optional[str] = None) -> bool` | `direct` | - |
-| `direct_media(self, thread_id: int, amount: int = 20) -> List[aiograpi.types.Media]` | `direct` | - |
-| `direct_media_share(self, media_id: str, user_ids: List[int], send_attribute: ('feed_timeline', 'feed_contextual_chain', 'feed_short_url', 'feed_contextual_self_profile', 'feed_contextual_profile') = 'feed_timeline', media_type: str = 'photo') -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_message(self, thread_id: int, message_id: int, amount: int = 20) -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_message_delete(self, thread_id: int, message_id: int) -> bool` | `direct` | `DELETE /direct/message` |
-| `direct_message_like(self, thread_id: int, message_id: int, client_context: Optional[str] = None) -> bool` | `direct` | - |
-| `direct_message_search(self, query: str) -> List[Tuple[aiograpi.types.DirectMessage, aiograpi.types.DirectShortThread]]` | `direct` | - |
-| `direct_message_seen(self, thread_id: int, message_id: int) -> bool` | `direct` | `PATCH /direct/message/seen` |
-| `direct_message_unlike(self, thread_id: int, message_id: int, client_context: Optional[str] = None) -> bool` | `direct` | - |
-| `direct_message_unsend(self, thread_id: int, message_id: int) -> bool` | `direct` | - |
-| `direct_messages(self, thread_id: int, amount: int = 20) -> List[aiograpi.types.DirectMessage]` | `direct` | - |
-| `direct_pending_approve(self, thread_id: int) -> bool` | `direct` | - |
-| `direct_pending_chunk(self, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | - |
-| `direct_pending_inbox(self, amount: int = 20) -> List[aiograpi.types.DirectThread]` | `direct` | - |
-| `direct_profile_share(self, user_id: str, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_request_approve(self, thread_id: int) -> bool` | `direct` | - |
-| `direct_requests(self, amount: int = 20) -> List[aiograpi.types.DirectThread]` | `direct` | - |
-| `direct_search(self, query: str, mode: Literal['raven', 'universal'] = 'universal') -> List[aiograpi.types.UserShort]` | `direct` | - |
-| `direct_send(self, text: str, user_ids: List[int] = [], thread_ids: List[int] = [], send_attribute: Literal['message_button', 'inbox_search'] = 'message_button', reply_to_message: Optional[aiograpi.types.DirectMessage] = None) -> aiograpi.types.DirectMessage` | `direct` | `POST /direct/message` |
-| `direct_send_cutout_sticker(self, sticker_pk: str, user_ids: List[int] = None, thread_ids: List[int] = None) -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_send_file(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], content_type: str = 'photo') -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_send_photo(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_send_reaction(self, thread_id: int, message_id: int, emoji: str = '❤', client_context: Optional[str] = None, action_source: str = 'double_tap', target_item_type: Optional[str] = None) -> bool` | `direct` | - |
-| `direct_send_seen(self, thread_id: int) -> bool` | `direct` | - |
-| `direct_send_video(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_send_voice(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], waveform: Optional[List[float]] = None) -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_spam_chunk(self, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | - |
-| `direct_spam_inbox(self, amount: int = 20) -> List[aiograpi.types.DirectThread]` | `direct` | - |
-| `direct_story_share(self, story_id: str, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - |
-| `direct_thread(self, thread_id: int, amount: int = 20) -> aiograpi.types.DirectThread` | `direct` | `GET /direct/thread` |
-| `direct_thread_add_users(self, thread_id: int, user_ids: List[int]) -> bool` | `direct` | - |
-| `direct_thread_by_participants(self, user_ids: List[int]) -> Dict` | `direct` | - |
-| `direct_thread_create(self, user_ids: List[int], title: str = '') -> str` | `direct` | `POST /direct/thread` |
-| `direct_thread_hide(self, thread_id: int, move_to_spam: bool = False) -> bool` | `direct` | - |
-| `direct_thread_mark_unread(self, thread_id: int) -> bool` | `direct` | - |
-| `direct_thread_mute(self, thread_id: int, revert: bool = False) -> bool` | `direct` | - |
-| `direct_thread_mute_video_call(self, thread_id: int, revert: bool = False) -> bool` | `direct` | - |
-| `direct_thread_unmute(self, thread_id: int) -> bool` | `direct` | - |
-| `direct_thread_unmute_video_call(self, thread_id: int) -> bool` | `direct` | - |
-| `direct_thread_update_title(self, thread_id: int, title: str) -> bool` | `direct` | - |
-| `direct_threads(self, amount: int = 20, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None) -> List[aiograpi.types.DirectThread]` | `direct` | - |
-| `direct_threads_chunk(self, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | `GET /direct/inbox` |
-| `direct_users_presence(self, user_ids: List[int]) -> Dict` | `direct` | - |
-| `disable_posts_notifications(self, user_id: str) -> bool` | `user` | - |
-| `disable_reels_notifications(self, user_id: str) -> bool` | `user` | - |
-| `disable_stories_notifications(self, user_id: str) -> bool` | `user` | - |
-| `disable_videos_notifications(self, user_id: str) -> bool` | `user` | - |
-| `discover_recommended_accounts_for_category_v1(self, user_id: str) -> dict` | `user` | - |
-| `dump_instaman(self)` | `auth` | - |
-| `dump_settings(self, path: Union[str, pathlib._local.Path]) -> bool` | `auth` | - |
-| `enable_posts_notifications(self, user_id: str, disable: bool = False) -> bool` | `user` | - |
-| `enable_reels_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - |
-| `enable_stories_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - |
-| `enable_videos_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - |
-| `explore_page(self)` | `explore` | - |
-| `explore_page_media_info(self, media_pk: int)` | `explore` | - |
-| `explore_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - |
-| `expose(self) -> Dict` | `auth` | `PATCH /auth/settings` |
-| `fbsearch_accounts_v2(self, query: str, page_token: Optional[str] = None) -> dict` | `fbsearch` | `GET /search/accounts` |
-| `fbsearch_item(self, item_id: str, search_surface: str, query: str, timezone_offset: int = 0, count: int = 30, reels_page_index: int = None, has_more_reels: str = None, reels_max_id: str = None, next_max_id: str = None, rank_token: str = None, page_index: int = None, page_token: str = None, paging_token: str = None) -> dict` | `fbsearch` | - |
-| `fbsearch_keyword_typeahead(self, query: str, timezone_offset: int = 0, count: int = 30) -> dict` | `fbsearch` | `GET /search/typeahead` |
-| `fbsearch_places(self, query: str, lat: float = 40.74, lng: float = -73.94) -> List[aiograpi.types.Location]` | `fbsearch` | `GET /search/places` |
-| `fbsearch_recent(self) -> List[Tuple[int, Union[aiograpi.types.UserShort, aiograpi.types.Hashtag, Dict]]]` | `fbsearch` | `GET /search/recent` |
-| `fbsearch_reels_v2(self, query: str, reels_max_id: Optional[str] = None, rank_token: Optional[str] = None) -> dict` | `fbsearch` | `GET /search/reels` |
-| `fbsearch_suggested_profiles(self, user_id: str) -> List[aiograpi.types.UserShort]` | `fbsearch` | - |
-| `fbsearch_topsearch_flat(self, query: str) -> List[dict]` | `fbsearch` | - |
-| `fbsearch_topsearch_v2(self, query: str, next_max_id: Optional[str] = None, reels_max_id: Optional[str] = None, rank_token: Optional[str] = None) -> dict` | `fbsearch` | `GET /search/top` |
-| `fbsearch_typeahead_stream(self, query: str, timezone_offset: int = 0, count: int = 30) -> dict` | `fbsearch` | - |
-| `fbsearch_typehead(self, query: str) -> List[dict]` | `fbsearch` | - |
-| `featured_accounts_v1(self, target_user_id: str) -> dict` | `multiple_accounts` | - |
-| `feed_user_stream_item(self, item_id: str, is_pull_to_refresh: bool = False) -> dict` | `user` | - |
-| `fetch_fb_dtsg(self)` | `graphql` | - |
-| `fetch_suggestion_details(self, user_id: str, chained_ids: Union[str, List[Union[str, int]]]) -> dict` | `user` | - |
-| `friends_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - |
-| `gen_user_breadcrumb(self, size: int) -> str` | `auth` | - |
-| `generate_android_device_id(self) -> str` | `auth` | - |
-| `generate_mutation_token(self) -> str` | `auth` | - |
-| `generate_uuid(self, prefix: str = '', suffix: str = '') -> str` | `auth` | - |
-| `get_account_family_v1(self) -> dict` | `multiple_accounts` | - |
-| `get_note_by_user(self, notes: List[aiograpi.types.Note], username: str) -> Optional[aiograpi.types.Note]` | `note` | - |
-| `get_note_text_by_user(self, notes: List[aiograpi.types.Note], username: str) -> Optional[str]` | `note` | - |
-| `get_notes(self) -> List[aiograpi.types.Note]` | `note` | `GET /notes` |
-| `get_prefill_candidates(self, login: bool = False) -> Dict` | `auth` | - |
-| `get_reels_tray_feed(self, reason: Literal['cold_start', 'pull_to_refresh'] = 'pull_to_refresh') -> Dict` | `auth` | - |
-| `get_settings(self) -> Dict` | `auth` | `GET /auth/settings` |
-| `get_signup_config(self) -> dict` | `signup` | - |
-| `get_timeline_feed(self, reason: Literal['cold_start_fetch', 'warm_start_fetch', 'pagination', 'pull_to_refresh', 'auto_refresh'] = 'pull_to_refresh', max_id: str = None, seen_posts: Union[str, Iterable[str], NoneType] = None, feed_view_info: Union[str, List[Dict[str, Any]], NoneType] = None) -> Dict` | `auth` | `GET /account/feed/timeline` |
-| `graphql_request(self, data=None, params=None, headers=None, return_json=True, retries_count=1, retries_timeout=2)` | `graphql` | - |
-| `handle_challenge_result(self, challenge: Dict)` | `challenge` | - |
-| `hashtag_follow(self, hashtag: str, unfollow: bool = False) -> bool` | `hashtag` | `POST /hashtag/follow` |
-| `hashtag_info(self, name: str) -> aiograpi.types.Hashtag` | `hashtag` | `GET /hashtag` |
-| `hashtag_info_a1(self, name: str, max_id: str = None) -> aiograpi.types.Hashtag` | `hashtag` | - |
-| `hashtag_info_gql(self, name: str, amount: int = 12, end_cursor: str = None) -> aiograpi.types.Hashtag` | `hashtag` | - |
-| `hashtag_info_v1(self, name: str) -> aiograpi.types.Hashtag` | `hashtag` | - |
-| `hashtag_medias_a1(self, name: str, amount: int = 27, tab_key: str = '') -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_a1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', end_cursor: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `hashtag` | - |
-| `hashtag_medias_recent(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_recent_a1(self, name: str, amount: int = 71) -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_recent_v1(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_reels_v1(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | `GET /hashtag/reels` |
-| `hashtag_medias_top(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_top_a1(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_top_v1(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_v1(self, name: str, amount: int = 27, tab_key: str = '') -> List[aiograpi.types.Media]` | `hashtag` | - |
-| `hashtag_medias_v1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `hashtag` | `GET /hashtag/media/recent`<br>`GET /hashtag/media/top` |
-| `hashtag_related_hashtags(self, name: str) -> List[aiograpi.types.Hashtag]` | `hashtag` | `GET /hashtag/related` |
-| `hashtag_unfollow(self, hashtag: str) -> bool` | `hashtag` | `DELETE /hashtag/follow` |
-| `highlight_add_stories(self, highlight_pk: str, added_media_ids: List[str]) -> aiograpi.types.Highlight` | `highlight` | `POST /highlight/story` |
-| `highlight_change_cover(self, highlight_pk: str, cover_path: pathlib._local.Path) -> aiograpi.types.Highlight` | `highlight` | - |
-| `highlight_change_title(self, highlight_pk: str, title: str) -> aiograpi.types.Highlight` | `highlight` | - |
-| `highlight_create(self, title: str, story_ids: List[str], cover_story_id: str = '', crop_rect: List[float] = [0.0, 0.21830457, 1.0, 0.78094524]) -> aiograpi.types.Highlight` | `highlight` | `POST /highlight` |
-| `highlight_delete(self, highlight_pk: str) -> bool` | `highlight` | `DELETE /highlight` |
-| `highlight_edit(self, highlight_pk: str, title: str = '', cover: Dict = {}, added_media_ids: List[str] = [], removed_media_ids: List[str] = [])` | `highlight` | `PATCH /highlight` |
-| `highlight_info(self, highlight_pk: str) -> aiograpi.types.Highlight` | `highlight` | `GET /highlight` |
-| `highlight_info_v1(self, highlight_pk: str) -> aiograpi.types.Highlight` | `highlight` | - |
-| `highlight_pk_from_url(self, url: str) -> str` | `highlight` | - |
-| `highlight_remove_stories(self, highlight_pk: str, removed_media_ids: List[str]) -> aiograpi.types.Highlight` | `highlight` | `DELETE /highlight/story` |
-| `igtv_configure(self, upload_id: str, thumbnail: pathlib._local.Path, width: int, height: int, duration: int, title: str, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> Dict` | `igtv` | - |
-| `igtv_download(self, media_pk: int, folder: pathlib._local.Path = '') -> str` | `igtv` | `GET /igtv/download` |
-| `igtv_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> str` | `igtv` | `GET /igtv/download/by/url` |
-| `igtv_upload(self, path: pathlib._local.Path, title: str, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 10, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `igtv` | `POST /igtv/upload`<br>`POST /igtv/upload/by/url` |
-| `init(self) -> bool` | `auth` | - |
-| `inject_sessionid_to_public(self) -> bool` | `auth` | - |
-| `insights_account(self) -> Dict` | `insights` | `GET /insights/account` |
-| `insights_media(self, media_pk: int) -> Dict` | `insights` | `GET /insights/media` |
-| `insights_media_feed_all(self, post_type: Literal['ALL', 'CAROUSEL_V2', 'IMAGE', 'SHOPPING', 'VIDEO'] = 'ALL', time_frame: Literal['ONE_WEEK', 'ONE_MONTH', 'THREE_MONTHS', 'SIX_MONTHS', 'ONE_YEAR', 'TWO_YEARS'] = 'TWO_YEARS', data_ordering: Literal['REACH_COUNT', 'LIKE_COUNT', 'FOLLOW', 'SHARE_COUNT', 'BIO_LINK_CLICK', 'COMMENT_COUNT', 'IMPRESSION_COUNT', 'PROFILE_VIEW', 'VIDEO_VIEW_COUNT', 'SAVE_COUNT'] = 'REACH_COUNT', count: int = 0, sleep: int = 2) -> List[Dict]` | `insights` | `GET /insights/media/feed` |
-| `last_seen_update_note(self) -> bool` | `note` | - |
-| `liked_medias(self, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | `GET /account/liked/media` |
-| `load_settings(self, path: Union[str, pathlib._local.Path], override_app_version: bool = False) -> Dict` | `auth` | - |
-| `location_build(self, location: aiograpi.types.Location) -> str` | `location` | - |
-| `location_complete(self, location: aiograpi.types.Location) -> aiograpi.types.Location` | `location` | - |
-| `location_feed(self, location_id, count=16, end_cursor=None)` | `public` | - |
-| `location_guides_v1(self, location_pk: int) -> List[aiograpi.types.Guide]` | `location` | `GET /location/guides` |
-| `location_info(self, location_pk: int) -> aiograpi.types.Location` | `location` | `GET /location` |
-| `location_info_a1(self, location_pk: int) -> aiograpi.types.Location` | `location` | - |
-| `location_info_v1(self, location_pk: int) -> aiograpi.types.Location` | `location` | - |
-| `location_medias_a1(self, location_pk: int, amount: int = 24, sleep: float = 0.5, tab_key: str = '') -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_a1_chunk(self, location_pk: int, max_amount: int = 24, sleep: float = 0.5, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `location` | - |
-| `location_medias_recent(self, location_pk: int, amount: int = 63, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_recent_a1(self, location_pk: int, amount: int = 24, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_recent_v1(self, location_pk: int, amount: int = 63) -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_top(self, location_pk: int, amount: int = 27, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_top_a1(self, location_pk: int, amount: int = 9, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_top_v1(self, location_pk: int, amount: int = 21) -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_v1(self, location_pk: int, amount: int = 63, tab_key: str = '') -> List[aiograpi.types.Media]` | `location` | - |
-| `location_medias_v1_chunk(self, location_pk: int, max_amount: int = 63, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `location` | `GET /location/media/recent`<br>`GET /location/media/top` |
-| `location_search(self, lat: float, lng: float) -> List[aiograpi.types.Location]` | `location` | `GET /search/locations` |
-| `location_search_name(self, name: str) -> List[aiograpi.types.Location]` | `location` | `GET /search/locations` |
-| `location_search_pk(self, location_pk: int) -> aiograpi.types.Location` | `location` | - |
-| `location_story_sticker_id(self, location: aiograpi.types.Location) -> str` | `location` | - |
-| `login(self, username: Optional[str] = None, password: Optional[str] = None, relogin: bool = False, verification_code: str = '') -> bool` | `auth` | `POST /auth/login` |
-| `login_by_sessionid(self, sessionid: str) -> bool` | `auth` | `POST /auth/login/by/sessionid` |
-| `login_flow(self) -> bool` | `auth` | - |
-| `logout(self) -> bool` | `auth` | - |
-| `media_archive(self, media_id: str, revert: bool = False) -> bool` | `media` | `POST /media/archive` |
-| `media_check_offensive_comment(self, media_id: str, text: str) -> bool` | `comment` | - |
-| `media_check_offensive_comment_v2(self, media_id: str, comment: str) -> dict` | `comment` | - |
-| `media_code_from_pk(self, media_pk: str) -> str` | `media` | - |
-| `media_comment(self, media_id: str, text: str, replied_to_comment_id: Optional[int] = None) -> aiograpi.types.Comment` | `comment` | `POST /media/comment` |
-| `media_comment_infos(self, media_ids: List[str]) -> dict` | `comment` | - |
-| `media_comment_replies(self, media_id: str, comment_id: str, amount: int = 0) -> List[aiograpi.types.Comment]` | `comment` | `GET /media/comment/replies` |
-| `media_comment_replies_chunk(self, media_id: str, comment_id: str, max_amount: int, min_id: str = None) -> Tuple[List[aiograpi.types.Comment], str]` | `comment` | - |
-| `media_comments(self, media_id: str, amount: int = 20) -> List[aiograpi.types.Comment]` | `comment` | - |
-| `media_comments_chunk(self, media_id: str, max_amount: int, min_id: str = None) -> Tuple[List[aiograpi.types.Comment], str]` | `comment` | `GET /media/comments` |
-| `media_comments_gql(self, media_pk: str, amount: int = 50, max_requests: int = 0) -> List[dict]` | `comment` | - |
-| `media_comments_gql_chunk(self, media_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `comment` | - |
-| `media_comments_threaded_gql(self, media_pk: str, comment_pk: str, amount: int = 0) -> List[dict]` | `comment` | - |
-| `media_comments_threaded_gql_chunk(self, media_pk: str, comment_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `comment` | - |
-| `media_comments_v1(self, media_id: str, amount: int = 20) -> List[aiograpi.types.Comment]` | `comment` | - |
-| `media_comments_v1_chunk(self, media_id: str, min_id: str = '', max_id: str = '') -> Tuple[List[aiograpi.types.Comment], str, str]` | `comment` | - |
-| `media_configure_to_cutout_sticker(self, upload_id: str, source_type: str = 'library', manual_box: List[float] = None, use_ai_detection: bool = False, extra_data: Dict[str, str] = None) -> aiograpi.types.Media` | `media` | - |
-| `media_create_livestream(self, title='Instagram Live')` | `media` | - |
-| `media_delete(self, media_id: str) -> bool` | `media` | `DELETE /media` |
-| `media_edit(self, media_id: str, caption: str, title: str = '', usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None) -> Dict` | `media` | `PATCH /media` |
-| `media_end_livestream(self, broadcast_id)` | `media` | - |
-| `media_get_livestream_comments(self, broadcast_id)` | `media` | - |
-| `media_get_livestream_info(self, broadcast_id)` | `media` | - |
-| `media_get_livestream_viewers(self, broadcast_id)` | `media` | - |
-| `media_id(self, media_pk: str) -> str` | `media` | - |
-| `media_info(self, media_pk: str, use_cache: bool = True) -> aiograpi.types.Media` | `media` | `GET /media` |
-| `media_info_a1(self, media_pk: str, max_id: str = None) -> aiograpi.types.Media` | `media` | - |
-| `media_info_gql(self, media_pk: str) -> aiograpi.types.Media` | `media` | - |
-| `media_info_v1(self, media_pk: str) -> aiograpi.types.Media` | `media` | - |
-| `media_info_v2(self, media_id: str) -> aiograpi.types.Media` | `media` | - |
-| `media_like(self, media_id: str, revert: bool = False) -> bool` | `media` | `POST /media/like` |
-| `media_likers(self, media_id: str) -> List[aiograpi.types.UserShort]` | `media` | `GET /media/likers` |
-| `media_likers_gql(self, media_pk: str, amount: int = 0) -> List[dict]` | `media` | - |
-| `media_likers_gql_chunk(self, media_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `media` | - |
-| `media_oembed(self, url: str) -> Dict` | `media` | `GET /media/oembed` |
-| `media_pin(self, media_pk: str, revert: bool = False)` | `media` | `POST /media/pin` |
-| `media_pk(media_id: str) -> str` | `media` | `GET /media` |
-| `media_pk_from_code(self, code: str) -> str` | `media` | `GET /media` |
-| `media_pk_from_url(self, url: str) -> str` | `media` | `GET /media` |
-| `media_save(self, media_id: str, collection_pk: int = None, revert: bool = False) -> bool` | `collection` | `POST /media/save` |
-| `media_seen(self, media_ids: List[str], skipped_media_ids: List[str] = [])` | `media` | `PATCH /media/seen` |
-| `media_start_livestream(self, broadcast_id)` | `media` | - |
-| `media_stream_comments_v1_chunk(self, media_id: str, min_id: str = '', max_id: str = '') -> Tuple[List[aiograpi.types.Comment], str, str]` | `comment` | - |
-| `media_template_v1(self, media_id: str)` | `media` | - |
-| `media_unarchive(self, media_id: str) -> bool` | `media` | `DELETE /media/archive` |
-| `media_unlike(self, media_id: str) -> bool` | `media` | `DELETE /media/like` |
-| `media_unpin(self, media_pk)` | `media` | `DELETE /media/pin` |
-| `media_unsave(self, media_id: str, collection_pk: int = None) -> bool` | `collection` | `DELETE /media/save` |
-| `media_user(self, media_pk: str) -> aiograpi.types.UserShort` | `media` | `GET /media/author` |
-| `music_in_feed_audio_browser(self, browse_session_id: Optional[str] = None) -> Dict` | `track` | - |
-| `mute_posts_from_follow(self, user_id: str, revert: bool = False) -> bool` | `user` | `POST /user/mute/posts` |
-| `mute_stories_from_follow(self, user_id: str, revert: bool = False) -> bool` | `user` | `POST /user/mute/stories` |
-| `new_feed_exist(self) -> bool` | `user` | - |
-| `news_inbox_v1(self, mark_as_seen: bool = False) -> dict` | `account` | `GET /notifications` |
-| `notes_music_browser(self) -> Dict` | `note` | - |
-| `notification_announcements(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_comment_likes(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_comments(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_connection(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_direct_group_requests(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_direct_share_activity(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_disable(self) -> bool` | `notification` | - |
-| `notification_felix_upload_result(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_first_post(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_follow_request_accepted(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_fundraiser_creator(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_fundraiser_supporter(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_like_and_comment_on_photo_user_tagged(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_likes(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_live_broadcast(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_login(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_mute_all(self, setting_value: Literal['cancel', '15_minutes', '1_hour', '2_hour', '4_hour', '8_hour'] = '8_hour') -> bool` | `notification` | - |
-| `notification_new_follower(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_pending_direct_share(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_reminders(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_report_updated(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_rooms(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_settings(self, content_type: str, setting_value: str) -> bool` | `notification` | `PATCH /notifications/settings` |
-| `notification_tagged_in_bio(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_user_tagged(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_video_call(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `notification_view_count(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - |
-| `one_tap_app_login(self, user_id: str, nonce: str) -> bool` | `auth` | - |
-| `parse_authorization(self, authorization) -> dict` | `auth` | - |
-| `password_encrypt(self, password)` | `password` | - |
-| `password_publickeys(self)` | `password` | - |
-| `photo_configure(self, upload_id: str, width: int, height: int, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> Dict` | `photo` | - |
-| `photo_configure_to_story(self, upload_id: str, width: int, height: int, caption: str, mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], extra_data: Dict[str, str] = {}) -> Dict` | `photo` | - |
-| `photo_download(self, media_pk: int, folder: pathlib._local.Path = '', overwrite: bool = True) -> pathlib._local.Path` | `photo` | `GET /photo/download` |
-| `photo_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '', overwrite: bool = True) -> pathlib._local.Path` | `photo` | `GET /photo/download/by/url` |
-| `photo_download_by_url_origin(self, url: str) -> bytes` | `photo` | - |
-| `photo_rupload(self, path: pathlib._local.Path, upload_id: str = '', to_album: bool = False, for_story: bool = False) -> tuple` | `photo` | - |
-| `photo_upload(self, path: pathlib._local.Path, caption: str, upload_id: str = '', usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `photo` | `POST /photo/upload`<br>`POST /photo/upload/by/url` |
-| `photo_upload_to_cutout_sticker(self, path: pathlib._local.Path, bypass_ai: bool = True) -> aiograpi.types.Media` | `photo` | - |
-| `photo_upload_to_story(self, path: pathlib._local.Path, caption: str = '', upload_id: str = '', mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], extra_data: Dict[str, str] = {}) -> aiograpi.types.Story` | `photo` | `POST /story/upload`<br>`POST /story/upload/by/url` |
-| `photo_upload_with_music(self, path: pathlib._local.Path, caption: str, track: Union[aiograpi.types.Track, Dict], upload_id: str = '', usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}, audio_asset_start_time: Optional[int] = None, overlap_duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -> aiograpi.types.Media` | `photo` | - |
-| `pre_login_flow(self) -> bool` | `auth` | - |
-| `private_graphql_clips_profile(self, target_user_id: str, client_doc_id: str = '209049231614685382737238866578', priority: str = None, initial_stream_count: int = 6, page_size: int = 12, no_of_medias_in_each_chunk: int = 6) -> dict` | `user` | - |
-| `private_graphql_followers_list(self, user_id: str, rank_token: str, client_doc_id: str = '28479704798344003308647327139', max_id: int = None, priority: str = None, exclude_field_is_favorite: bool = None, exclude_unused_fields: bool = None) -> dict` | `user` | - |
-| `private_graphql_following_list(self, user_id: str, rank_token: str, client_doc_id: str = '16104639289023609826830352479', max_id: int = None, priority: str = None, exclude_field_is_favorite: bool = None, exclude_unused_fields: bool = None) -> dict` | `user` | - |
-| `private_graphql_inbox_tray_for_user(self, user_id: str, client_doc_id: str = '2035639076042015234490020607', priority: str = None) -> dict` | `user` | - |
-| `private_graphql_memories_pog(self, client_doc_id: str = '4160563056814166588457451196', direct_region_hint: str = None) -> dict` | `graphql` | - |
-| `private_graphql_query_request(self, friendly_name: str, root_field_name: str, variables: dict = None, client_doc_id: str = None, priority: str = None, extra_headers: dict = None) -> dict` | `graphql` | - |
-| `private_graphql_realtime_region_hint(self, client_doc_id: str = '52232106018313849661757113193') -> dict` | `graphql` | - |
-| `private_graphql_request(self, data: dict, headers: dict = None, domain: str = None) -> dict` | `graphql` | - |
-| `private_graphql_top_audio_trends_eligible_categories(self, client_doc_id: str = '10243243298540497152200027985') -> dict` | `graphql` | - |
-| `private_graphql_update_inbox_tray_last_seen(self, client_doc_id: str = '41048505499858972910914091441') -> dict` | `graphql` | - |
-| `private_request(self, endpoint, data=None, params=None, login=False, with_signature=True, headers=None, extra_sig=None, domain: str = None)` | `private` | - |
-| `profile_related_info(self, profile_id)` | `public` | - |
-| `public_a1_request(self, endpoint, data=None, params=None, headers=None, full=False)` | `public` | - |
-| `public_a1_request_user_info_by_username(self, username, data=None, params=None)` | `public` | - |
-| `public_doc_id_graphql_request(self, doc_id: str, variables: Dict[str, Any], referer: Optional[str] = None, headers: Optional[Dict[str, str]] = None) -> Dict[str, Any]` | `public` | - |
-| `public_graphql_request(self, variables, query_hash=None, query_id=None, data=None, params=None, headers=None)` | `public` | - |
-| `public_head(self, url: str, follow_redirects: bool = False)` | `public` | - |
-| `public_request(self, url, data=None, params=None, headers=None, update_headers=None, return_json=False, retries_count=None, retries_timeout=None)` | `public` | - |
-| `reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - |
-| `reels_timeline_media(self, collection_pk: str, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - |
-| `relogin(self) -> bool` | `auth` | `PATCH /auth/relogin` |
-| `remove_bio_links(self, link_ids: list) -> dict` | `account` | - |
-| `report_explore_media(self, media_pk: int)` | `explore` | - |
-| `request_log(self, response)` | `private` | - |
-| `reset_password(self, username: str) -> Dict` | `account` | - |
-| `search_followers(self, user_id: str, query: str) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `search_followers_v1(self, user_id: str, query: str) -> List[aiograpi.types.UserShort]` | `user` | `GET /search/followers` |
-| `search_following(self, user_id: str, query: str) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `search_following_v1(self, user_id: str, query: str) -> List[aiograpi.types.UserShort]` | `user` | `GET /search/following` |
-| `search_hashtags(self, query: str) -> List[aiograpi.types.Hashtag]` | `fbsearch` | `GET /search/hashtags` |
-| `search_music(self, query: str) -> List[aiograpi.types.Track]` | `fbsearch` | `GET /search/music` |
-| `search_users(self, query: str) -> List[aiograpi.types.UserShort]` | `fbsearch` | `GET /search/users` |
-| `search_users_v1(self, query: str, count: int) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `send_confirm_email(self, email: str) -> dict` | `account` | - |
-| `send_confirm_phone_number(self, phone_number: str) -> dict` | `account` | - |
-| `send_signup_sms_code(self, phone_number: str)` | `signup` | - |
-| `send_verify_email(self, email) -> dict` | `signup` | - |
-| `set_app(self, app: Union[str, Dict] = None, seed: str = None) -> bool` | `auth` | - |
-| `set_contact_point_prefill(self, usage: str = 'prefill') -> Dict` | `auth` | - |
-| `set_country(self, country: str = 'US')` | `private` | - |
-| `set_country_code(self, country_code: int = 1)` | `private` | - |
-| `set_device(self, device: Dict = None, reset: bool = False) -> bool` | `auth` | - |
-| `set_external_url(self, external_url) -> dict` | `account` | - |
-| `set_ig_u_rur(self, value)` | `private` | - |
-| `set_ig_www_claim(self, value)` | `private` | - |
-| `set_locale(self, locale: str = 'en_US')` | `private` | `POST /auth/login`<br>`POST /auth/login/by/sessionid`<br>`PATCH /auth/settings` |
-| `set_proxy(self, dsn: Optional[str])` | `aiograpi` | `POST /auth/login`<br>`POST /auth/login/by/sessionid`<br>`PATCH /auth/settings` |
-| `set_retry_config(self, request_timeout: Union[int, float, NoneType] = None, public_request_retries_count: int = None, public_request_retries_timeout: Union[int, float] = None, session_retry_total: int = None, session_retry_backoff_factor: Union[int, float] = None, session_retry_statuses: list = None, public_transport: Optional[str] = None, public_transport_impersonate: Optional[str] = None) -> bool` | `auth` | - |
-| `set_settings(self, settings: Dict) -> bool` | `auth` | `PATCH /auth/settings` |
-| `set_timezone_offset(self, seconds: int = 0)` | `private` | `POST /auth/login`<br>`POST /auth/login/by/sessionid`<br>`PATCH /auth/settings` |
-| `set_user_agent(self, user_agent: str = '', reset: bool = False) -> bool` | `auth` | - |
-| `set_uuids(self, uuids: Dict = None) -> bool` | `auth` | - |
-| `share_code_from_url(self, url: str) -> str` | `share` | - |
-| `share_info(self, code: str) -> aiograpi.types.Share` | `share` | - |
-| `share_info_by_url(self, url: str) -> aiograpi.types.Share` | `share` | - |
-| `signup(self, username: str, password: str, email: str = '', phone_number: str = '', full_name: str = '', year: int = None, month: int = None, day: int = None) -> aiograpi.types.UserShort` | `signup` | - |
-| `small_delay(self)` | `private` | - |
-| `standalone_fundraiser_info_v1(self, user_id: str)` | `fundraiser` | - |
-| `sticker_tray(self) -> dict` | `story` | - |
-| `story_delete(self, story_pk: str) -> bool` | `story` | `DELETE /story` |
-| `story_download(self, story_pk: str, filename: str = '', folder: pathlib._local.Path = '') -> pathlib._local.Path` | `story` | `GET /story/download` |
-| `story_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> pathlib._local.Path` | `story` | `GET /story/download/by/url` |
-| `story_info(self, story_pk: str, use_cache: bool = True) -> aiograpi.types.Story` | `story` | `GET /story` |
-| `story_info_v1(self, story_pk: str) -> aiograpi.types.Story` | `story` | - |
-| `story_like(self, story_id: str, revert: bool = False) -> bool` | `story` | `POST /story/like` |
-| `story_pk_from_url(self, url: str) -> str` | `story` | `GET /story` |
-| `story_seen(self, story_pks: List[str], skipped_story_pks: List[str] = [])` | `story` | `PATCH /story/seen` |
-| `story_unlike(self, story_id: str) -> bool` | `story` | `DELETE /story/like` |
-| `story_viewers(self, story_pk: str, amount: int = 0) -> List[aiograpi.types.Viewer]` | `story` | - |
-| `story_viewers_chunk(self, story_pk: str, max_amount: int = 0, max_id: str = '') -> tuple[typing.List[aiograpi.types.Viewer], str]` | `story` | `GET /story/viewers` |
-| `sync_device_features(self, login: bool = False) -> Dict` | `auth` | - |
-| `sync_launcher(self, login: bool = False) -> Dict` | `auth` | - |
-| `top_search(self, query)` | `public` | - |
-| `totp_disable(self) -> bool` | `totp` | `DELETE /auth/totp` |
-| `totp_enable(self, verification_code: str) -> List[str]` | `totp` | `POST /auth/totp` |
-| `totp_generate_code(seed: str) -> str` | `totp` | - |
-| `totp_generate_seed(self) -> str` | `totp` | - |
-| `track_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> pathlib._local.Path` | `track` | - |
-| `track_info_by_canonical_id(self, music_canonical_id: str) -> aiograpi.types.Track` | `track` | - |
-| `track_info_by_id(self, track_id: str, max_id: str = '') -> Dict` | `track` | - |
-| `track_stream_info_by_id(self, track_id: str, max_id: str = '') -> Dict` | `track` | - |
-| `unmute_posts_from_follow(self, user_id: str) -> bool` | `user` | `DELETE /user/mute/posts` |
-| `unmute_stories_from_follow(self, user_id: str) -> bool` | `user` | `DELETE /user/mute/stories` |
-| `user_about_v1(self, user_id: str) -> aiograpi.types.About` | `user` | `GET /user/about` |
-| `user_block(self, user_id: str, surface: str = 'profile') -> bool` | `user` | `POST /user/block` |
-| `user_clips(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `user_clips_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_clips_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/reels` |
-| `user_clips_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `user_follow(self, user_id: str) -> bool` | `user` | `POST /user/follow` |
-| `user_follow_request_approve(self, user_id: str) -> bool` | `user` | - |
-| `user_follow_request_decline(self, user_id: str) -> bool` | `user` | - |
-| `user_follow_requests(self, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `user_follow_requests_approve(self, user_ids: List[str]) -> Dict[str, bool]` | `user` | - |
-| `user_follow_requests_chunk(self, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /account/follow/requests` |
-| `user_follow_requests_decline(self, user_ids: List[str]) -> Dict[str, bool]` | `user` | - |
-| `user_followers(self, user_id: str, amount: int = 0) -> Dict[str, aiograpi.types.UserShort]` | `user` | - |
-| `user_followers_gql(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `user_followers_gql_chunk(self, user_id: str, max_amount: int = 0, end_cursor: str = None) -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - |
-| `user_followers_v1(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `user_followers_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /user/followers` |
-| `user_following(self, user_id: str, amount: int = 0) -> Dict[str, aiograpi.types.UserShort]` | `user` | - |
-| `user_following_gql(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `user_following_gql_chunk(self, user_id: str, max_amount: int = 0, end_cursor: str = None) -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - |
-| `user_following_v1(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `user_following_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /user/following` |
-| `user_friendship_v1(self, user_id: str) -> aiograpi.types.Relationship` | `user` | `GET /user/friendship` |
-| `user_friendships_v1(self, user_ids: List[str]) -> List[aiograpi.types.RelationshipShort]` | `user` | - |
-| `user_guides_v1(self, user_id: int) -> List[aiograpi.types.Guide]` | `user` | `GET /user/guides` |
-| `user_highlights(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Highlight]` | `highlight` | `GET /user/highlights` |
-| `user_highlights_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Highlight]` | `highlight` | - |
-| `user_id_from_username(self, username: str) -> str` | `user` | - |
-| `user_info(self, user_id: str) -> aiograpi.types.User` | `user` | `GET /user` |
-| `user_info_by_username(self, username: str) -> aiograpi.types.User` | `user` | `GET /user` |
-| `user_info_by_username_a1(self, username: str) -> dict` | `user` | - |
-| `user_info_by_username_gql(self, username: str) -> aiograpi.types.User` | `user` | - |
-| `user_info_by_username_v1(self, username: str) -> aiograpi.types.User` | `user` | `GET /user/posts`<br>`GET /user/reels`<br>`GET /user/tagged/posts`<br>`GET /user/videos` |
-| `user_info_by_username_v2_gql(self, username: str) -> aiograpi.types.User` | `user` | - |
-| `user_info_gql(self, user_id: str) -> aiograpi.types.User` | `user` | - |
-| `user_info_v1(self, user_id: str, from_module: Literal['self_profile', 'feed_timeline', 'reel_feed_timeline'] = 'self_profile', is_app_start: bool = False) -> aiograpi.types.User` | `user` | - |
-| `user_info_v2_gql(self, user_id: str) -> aiograpi.types.User` | `user` | - |
-| `user_medias(self, user_id: int, amount: int = 0, sleep: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `user_medias_chunk(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_medias_chunk_gql(self, user_id: int, sleep: int = 2, end_cursor=None, amount: int = 0) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_medias_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_medias_gql(self, user_id: int, amount: int = 0, sleep: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_medias_paginated_v1(self, user_id: str, amount: int = 33, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/posts` |
-| `user_medias_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `user_pinned_medias(self, user_id) -> List[aiograpi.types.Media]` | `media` | `GET /user/pinned/posts` |
-| `user_related_profiles_gql(self, user_id: str) -> List[aiograpi.types.UserShort]` | `user` | - |
-| `user_remove_follower(self, user_id: str) -> bool` | `user` | `DELETE /user/follower` |
-| `user_short_gql(self, user_id: str) -> aiograpi.types.UserShort` | `user` | - |
-| `user_stories(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | `POST /story/upload`<br>`POST /story/upload/by/url`<br>`GET /user/stories` |
-| `user_stories_gql(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | - |
-| `user_stories_v1(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | - |
-| `user_stream_by_id_flat(self, user_id: str) -> dict` | `user` | - |
-| `user_stream_by_id_v1(self, user_id: str) -> dict` | `user` | - |
-| `user_stream_by_username_flat(self, username: str) -> dict` | `user` | - |
-| `user_stream_by_username_v1(self, username: str) -> dict` | `user` | - |
-| `user_unblock(self, user_id: str, surface: str = 'profile') -> bool` | `user` | `DELETE /user/block` |
-| `user_unfollow(self, user_id: str) -> bool` | `user` | `DELETE /user/follow` |
-| `user_videos_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_videos_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/videos` |
-| `user_videos_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `user_web_profile_info_gql(self, user_id: str) -> dict` | `user` | - |
-| `user_web_profile_info_v1(self, username: str) -> dict` | `user` | - |
-| `username_from_user_id(self, user_id: str) -> str` | `user` | - |
-| `username_from_user_id_gql(self, user_id: str) -> str` | `user` | - |
-| `users_stories_gql(self, user_ids: List[str], amount: int = 0) -> List[aiograpi.types.UserShort]` | `story` | - |
-| `usertag_medias(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `usertag_medias_gql(self, user_id: int, amount: int = 0, sleep: int = 2) -> List[aiograpi.types.Media]` | `media` | - |
-| `usertag_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/tagged/posts` |
-| `usertag_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `usertag_medias_paginated_v1(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `usertag_medias_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `usertag_medias_v1_chunk(self, user_id: int, max_id: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `very_small_delay(self)` | `private` | - |
-| `video_configure(self, upload_id: str, width: int, height: int, duration: int, thumbnail: pathlib._local.Path, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> Dict` | `video` | - |
-| `video_configure_to_story(self, upload_id: str, width: int, height: int, duration: int, thumbnail: pathlib._local.Path, caption: str, mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], thread_ids: List[int] = [], extra_data: Dict[str, str] = {}) -> Dict` | `video` | - |
-| `video_download(self, media_pk: int, folder: pathlib._local.Path = '', overwrite: bool = True) -> pathlib._local.Path` | `video` | `GET /video/download` |
-| `video_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '', overwrite: bool = True) -> pathlib._local.Path` | `video` | `GET /video/download/by/url` |
-| `video_download_by_url_origin(self, url: str) -> bytes` | `video` | - |
-| `video_rupload(self, path: pathlib._local.Path, thumbnail: pathlib._local.Path = None, to_album: bool = False, to_story: bool = False, to_direct: bool = False) -> tuple` | `video` | - |
-| `video_upload(self, path: pathlib._local.Path, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `video` | `POST /video/upload`<br>`POST /video/upload/by/url` |
-| `video_upload_to_cutout_sticker(self, path: pathlib._local.Path, bypass_ai: bool = True) -> aiograpi.types.Media` | `video` | - |
-| `video_upload_to_direct(self, path: pathlib._local.Path, caption: str = '', thumbnail: pathlib._local.Path = None, mentions: List[aiograpi.types.StoryMention] = [], medias: List[aiograpi.types.StoryMedia] = [], thread_ids: List[int] = [], extra_data: Dict[str, str] = {}) -> aiograpi.types.DirectMessage` | `video` | - |
-| `video_upload_to_story(self, path: pathlib._local.Path, caption: str = '', thumbnail: pathlib._local.Path = None, mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], extra_data: Dict[str, str] = {}) -> aiograpi.types.Story` | `video` | `POST /story/upload`<br>`POST /story/upload/by/url` |
-| `web_search_topsearch(self, query: str) -> dict` | `fbsearch` | - |
-| `web_search_topsearch_hashtags(self, query: str) -> List[aiograpi.types.Hashtag]` | `fbsearch` | - |
-| `with_action_data(self, data: Dict) -> Dict` | `auth` | - |
-| `with_default_data(self, data: Dict) -> Dict` | `auth` | - |
-| `with_extra_data(self, data: Dict) -> Dict` | `auth` | - |
-| `with_query_params(data, params)` | `private` | - |
+| aiograpi method | Area | REST endpoint(s) | Status | Notes |
+|---|---|---|---|---|
+| `account_change_picture(self, path: pathlib._local.Path) -> aiograpi.types.UserShort` | `account` | `PATCH /account/picture` | `exposed` | used by at least one public REST route |
+| `account_edit(self, **data: Dict) -> aiograpi.types.Account` | `account` | `PATCH /account` | `exposed` | used by at least one public REST route |
+| `account_info(self) -> aiograpi.types.Account` | `account` | `GET /account` | `exposed` | used by at least one public REST route |
+| `account_security_info(self) -> dict` | `account` | - | `candidate` | potential user-facing REST endpoint |
+| `account_set_biography(self, biography: str) -> bool` | `account` | - | `candidate` | potential user-facing REST endpoint |
+| `account_set_private(self) -> bool` | `account` | `PATCH /account/privacy` | `exposed` | used by at least one public REST route |
+| `account_set_public(self) -> bool` | `account` | `PATCH /account/privacy` | `exposed` | used by at least one public REST route |
+| `accounts_create(self, username: str, password: str, email: str = '', email_code: str = '', phone_number: str = '', phone_code: str = '', full_name: str = '', year: int = None, month: int = None, day: int = None, **kwargs) -> dict` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `album_configure(self, childs: List, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> Dict` | `album` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `album_download(self, media_pk: int, folder: pathlib._local.Path = '', overwrite: bool = True) -> List[pathlib._local.Path]` | `album` | `GET /album/download` | `exposed` | used by at least one public REST route |
+| `album_download_by_urls(self, urls: List[str], folder: pathlib._local.Path = '', overwrite: bool = True) -> List[pathlib._local.Path]` | `album` | `GET /album/download/by/urls` | `exposed` | used by at least one public REST route |
+| `album_download_origin(self, media_pk: int) -> List[bytes]` | `album` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `album_upload(self, paths: List[pathlib._local.Path], caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 3, configure_handler=None, configure_exception=None, to_story=False, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `album` | `POST /album/upload` | `exposed` | used by at least one public REST route |
+| `album_upload_with_music(self, paths: List[pathlib._local.Path], caption: str, track: Union[aiograpi.types.Track, Dict], usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 3, configure_handler=None, configure_exception=None, to_story=False, extra_data: Dict[str, str] = {}, audio_asset_start_time: Optional[int] = None, overlap_duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -> aiograpi.types.Media` | `album` | - | `candidate` | potential user-facing REST endpoint |
+| `archive_medias(self, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `archive_medias_paginated_v1(self, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of candidate `archive_medias` |
+| `archive_medias_v1(self, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of candidate `archive_medias` |
+| `archive_stories(self, amount: int = 0) -> List[aiograpi.types.Story]` | `story` | - | `candidate` | potential user-facing REST endpoint |
+| `archive_stories_v1(self, amount: int = 0) -> List[aiograpi.types.Story]` | `story` | - | `duplicate` | variant of candidate `archive_stories` |
+| `archive_story_days(self, amount: int = 0, include_memories: bool = True) -> List[aiograpi.types.StoryArchiveDay]` | `story` | - | `duplicate` | variant of already exposed `archive_story_days` route family |
+| `archive_story_days_paginated_v1(self, amount: int = 0, end_cursor: str = '', include_memories: bool = True, reel_id: str = '') -> Tuple[List[aiograpi.types.StoryArchiveDay], str]` | `story` | `GET /story/archive` | `exposed` | used by at least one public REST route |
+| `archive_story_days_v1(self, amount: int = 0, include_memories: bool = True) -> List[aiograpi.types.StoryArchiveDay]` | `story` | - | `duplicate` | variant of already exposed `archive_story_days` route family |
+| `bloks_action(self, action: str, data: dict) -> bool` | `bloks` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `bloks_change_password(self, password: str, challenge_context: dict) -> bool` | `bloks` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `chaining(self, user_id: str) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `challenge_api(self, data)` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `challenge_captcha(self, challenge_json_data)` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `challenge_code_handler(self, username: str, choice=None)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `challenge_code_or_raised(self, choice: aiograpi.mixins.challenge.ChallengeChoice, wait_seconds: int = 5, attempts: int = 24, challenge_url: str = None, sessionid: str = None) -> str` | `challenge` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `challenge_flow(self, data)` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `challenge_resolve(self, last_json: Dict) -> bool` | `challenge` | `POST /auth/challenge/resolve` | `exposed` | used by at least one public REST route |
+| `challenge_resolve_contact_form(self, challenge_url: str) -> bool` | `challenge` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `challenge_resolve_new_password_form(self, result)` | `challenge` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `challenge_resolve_simple(self, challenge_url: str) -> bool` | `challenge` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `challenge_submit_phone_number(self, data, phone_number)` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `challenge_verify_sms_captcha(self, data, security_code)` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `change_password(self, old_password: str, new_password: str) -> bool` | `account` | - | `candidate` | potential user-facing REST endpoint |
+| `change_password_handler(self, username: str)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `check_age_eligibility(self, year, month, day)` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `check_confirmation_code(self, email, code) -> dict` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `check_email(self, email) -> dict` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `check_phone_number(self, phone_number: str)` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `check_username(self, username)` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `clip_configure(self, upload_id: str, thumbnail: pathlib._local.Path, width: int, height: int, duration: int, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, feed_show: str = '1', extra_data: Dict[str, str] = {}) -> Dict` | `clip` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `clip_download(self, media_pk: int, folder: pathlib._local.Path = '') -> str` | `clip` | `GET /clip/download` | `exposed` | used by at least one public REST route |
+| `clip_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> str` | `clip` | `GET /clip/download/by/url` | `exposed` | used by at least one public REST route |
+| `clip_info_for_creation(self) -> Dict` | `clip` | - | `candidate` | potential user-facing REST endpoint |
+| `clip_pin(self, media_pk: str, revert: bool = False) -> bool` | `clip` | - | `candidate` | potential user-facing REST endpoint |
+| `clip_share_to_fb_config(self, device_status: Optional[Dict[str, object]] = None) -> Dict` | `clip` | - | `candidate` | potential user-facing REST endpoint |
+| `clip_trial_eligible(self) -> bool` | `clip` | - | `candidate` | potential user-facing REST endpoint |
+| `clip_unpin(self, media_pk: str) -> bool` | `clip` | - | `candidate` | potential user-facing REST endpoint |
+| `clip_upload(self, path: pathlib._local.Path, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 10, feed_show: str = '1', extra_data: Dict[str, object] = {}, trial: bool = False, trial_graduation_strategy: str = 'manual') -> aiograpi.types.Media` | `clip` | `POST /clip/upload`<br>`POST /clip/upload/by/url` | `exposed` | used by at least one public REST route |
+| `clip_upload_as_reel_with_music(self, path: pathlib._local.Path, caption: str, track: aiograpi.types.Track, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `clip` | - | `candidate` | potential user-facing REST endpoint |
+| `close_friend_add(self, user_id: str)` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `close_friend_remove(self, user_id: str)` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `collection_medias(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | - | `candidate` | potential user-facing REST endpoint |
+| `collection_medias_by_name(self, name: str) -> List[aiograpi.types.Collection]` | `collection` | - | `candidate` | potential user-facing REST endpoint |
+| `collection_medias_v1(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | - | `duplicate` | variant of candidate `collection_medias` |
+| `collection_medias_v1_chunk(self, collection_pk: str, max_id: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `collection` | - | `duplicate` | variant of candidate `collection_medias` |
+| `collection_pk_by_name(self, name: str) -> int` | `collection` | - | `candidate` | potential user-facing REST endpoint |
+| `collections(self) -> List[aiograpi.types.Collection]` | `collection` | - | `candidate` | potential user-facing REST endpoint |
+| `comment_bulk_delete(self, media_id: str, comment_pks: List[int]) -> bool` | `comment` | `DELETE /media/comment` | `exposed` | used by at least one public REST route |
+| `comment_like(self, comment_pk: int, revert: bool = False) -> bool` | `comment` | `POST /media/comment/like` | `exposed` | used by at least one public REST route |
+| `comment_likers_gql(self, comment_pk: str, amount: int = 0) -> List[dict]` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `comment_likers_gql_chunk(self, comment_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `comment` | - | `duplicate` | variant of candidate `comment_likers_gql` |
+| `comment_pin(self, media_id: str, comment_pk: int, revert: bool = False)` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `comment_unlike(self, comment_pk: int) -> bool` | `comment` | `DELETE /media/comment/like` | `exposed` | used by at least one public REST route |
+| `comment_unpin(self, media_id: str, comment_pk: int)` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `create_music_note(self, track: Union[aiograpi.types.Track, Dict], text: str = '', audience: int = 0, start_time: Optional[int] = None, duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -> aiograpi.types.Note` | `note` | - | `candidate` | potential user-facing REST endpoint |
+| `create_note(self, text: str, audience: int = 0) -> aiograpi.types.Note` | `note` | `POST /note` | `exposed` | used by at least one public REST route |
+| `creator_info(self, user_id: str, entry_point: str = 'direct_thread') -> Tuple[aiograpi.types.UserShort, Dict]` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `delete_note(self, note_id: int) -> bool` | `note` | `DELETE /note` | `exposed` | used by at least one public REST route |
+| `direct_active_presence(self) -> Dict` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_answer(self, thread_id: int, text: str) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_delete_reaction(self, thread_id: int, message_id: int, emoji: str = '❤', client_context: Optional[str] = None, action_source: str = 'double_tap', target_item_type: Optional[str] = None) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_media(self, thread_id: int, amount: int = 20) -> List[aiograpi.types.Media]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_media_share(self, media_id: str, user_ids: List[int], send_attribute: ('feed_timeline', 'feed_contextual_chain', 'feed_short_url', 'feed_contextual_self_profile', 'feed_contextual_profile') = 'feed_timeline', media_type: str = 'photo') -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_message(self, thread_id: int, message_id: int, amount: int = 20) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_message_delete(self, thread_id: int, message_id: int) -> bool` | `direct` | `DELETE /direct/message` | `exposed` | used by at least one public REST route |
+| `direct_message_like(self, thread_id: int, message_id: int, client_context: Optional[str] = None) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_message_search(self, query: str) -> List[Tuple[aiograpi.types.DirectMessage, aiograpi.types.DirectShortThread]]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_message_seen(self, thread_id: int, message_id: int) -> bool` | `direct` | `PATCH /direct/message/seen` | `exposed` | used by at least one public REST route |
+| `direct_message_unlike(self, thread_id: int, message_id: int, client_context: Optional[str] = None) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_message_unsend(self, thread_id: int, message_id: int) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_messages(self, thread_id: int, amount: int = 20) -> List[aiograpi.types.DirectMessage]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_pending_approve(self, thread_id: int) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_pending_chunk(self, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_pending_inbox(self, amount: int = 20) -> List[aiograpi.types.DirectThread]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_profile_share(self, user_id: str, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_request_approve(self, thread_id: int) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_requests(self, amount: int = 20) -> List[aiograpi.types.DirectThread]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_search(self, query: str, mode: Literal['raven', 'universal'] = 'universal') -> List[aiograpi.types.UserShort]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_send(self, text: str, user_ids: List[int] = [], thread_ids: List[int] = [], send_attribute: Literal['message_button', 'inbox_search'] = 'message_button', reply_to_message: Optional[aiograpi.types.DirectMessage] = None) -> aiograpi.types.DirectMessage` | `direct` | `POST /direct/message` | `exposed` | used by at least one public REST route |
+| `direct_send_cutout_sticker(self, sticker_pk: str, user_ids: List[int] = None, thread_ids: List[int] = None) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_send_file(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], content_type: str = 'photo') -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_send_photo(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_send_reaction(self, thread_id: int, message_id: int, emoji: str = '❤', client_context: Optional[str] = None, action_source: str = 'double_tap', target_item_type: Optional[str] = None) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_send_seen(self, thread_id: int) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_send_video(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_send_voice(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], waveform: Optional[List[float]] = None) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_spam_chunk(self, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_spam_inbox(self, amount: int = 20) -> List[aiograpi.types.DirectThread]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_story_share(self, story_id: str, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_thread(self, thread_id: int, amount: int = 20) -> aiograpi.types.DirectThread` | `direct` | `GET /direct/thread` | `exposed` | used by at least one public REST route |
+| `direct_thread_add_users(self, thread_id: int, user_ids: List[int]) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_thread_by_participants(self, user_ids: List[int]) -> Dict` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_thread_create(self, user_ids: List[int], title: str = '') -> str` | `direct` | `POST /direct/thread` | `exposed` | used by at least one public REST route |
+| `direct_thread_hide(self, thread_id: int, move_to_spam: bool = False) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_thread_mark_unread(self, thread_id: int) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_thread_mute(self, thread_id: int, revert: bool = False) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_thread_mute_video_call(self, thread_id: int, revert: bool = False) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_thread_unmute(self, thread_id: int) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_thread_unmute_video_call(self, thread_id: int) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_thread_update_title(self, thread_id: int, title: str) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_threads(self, amount: int = 20, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None) -> List[aiograpi.types.DirectThread]` | `direct` | - | `duplicate` | variant of already exposed `direct_threads` route family |
+| `direct_threads_chunk(self, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | `GET /direct/inbox` | `exposed` | used by at least one public REST route |
+| `direct_users_presence(self, user_ids: List[int]) -> Dict` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `disable_posts_notifications(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `disable_reels_notifications(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `disable_stories_notifications(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `disable_videos_notifications(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `discover_recommended_accounts_for_category_v1(self, user_id: str) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `dump_instaman(self)` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `dump_settings(self, path: Union[str, pathlib._local.Path]) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `enable_posts_notifications(self, user_id: str, disable: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `enable_reels_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `enable_stories_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `enable_videos_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `explore_page(self)` | `explore` | - | `candidate` | potential user-facing REST endpoint |
+| `explore_page_media_info(self, media_pk: int)` | `explore` | - | `candidate` | potential user-facing REST endpoint |
+| `explore_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - | `candidate` | potential user-facing REST endpoint |
+| `expose(self) -> Dict` | `auth` | `PATCH /auth/settings` | `exposed` | used by at least one public REST route |
+| `fbsearch_accounts_v2(self, query: str, page_token: Optional[str] = None) -> dict` | `fbsearch` | `GET /search/accounts` | `exposed` | used by at least one public REST route |
+| `fbsearch_item(self, item_id: str, search_surface: str, query: str, timezone_offset: int = 0, count: int = 30, reels_page_index: int = None, has_more_reels: str = None, reels_max_id: str = None, next_max_id: str = None, rank_token: str = None, page_index: int = None, page_token: str = None, paging_token: str = None) -> dict` | `fbsearch` | - | `candidate` | potential user-facing REST endpoint |
+| `fbsearch_keyword_typeahead(self, query: str, timezone_offset: int = 0, count: int = 30) -> dict` | `fbsearch` | `GET /search/typeahead` | `exposed` | used by at least one public REST route |
+| `fbsearch_places(self, query: str, lat: float = 40.74, lng: float = -73.94) -> List[aiograpi.types.Location]` | `fbsearch` | `GET /search/places` | `exposed` | used by at least one public REST route |
+| `fbsearch_recent(self) -> List[Tuple[int, Union[aiograpi.types.UserShort, aiograpi.types.Hashtag, Dict]]]` | `fbsearch` | `GET /search/recent` | `exposed` | used by at least one public REST route |
+| `fbsearch_reels_v2(self, query: str, reels_max_id: Optional[str] = None, rank_token: Optional[str] = None) -> dict` | `fbsearch` | `GET /search/reels` | `exposed` | used by at least one public REST route |
+| `fbsearch_suggested_profiles(self, user_id: str) -> List[aiograpi.types.UserShort]` | `fbsearch` | - | `candidate` | potential user-facing REST endpoint |
+| `fbsearch_topsearch_flat(self, query: str) -> List[dict]` | `fbsearch` | - | `candidate` | potential user-facing REST endpoint |
+| `fbsearch_topsearch_v2(self, query: str, next_max_id: Optional[str] = None, reels_max_id: Optional[str] = None, rank_token: Optional[str] = None) -> dict` | `fbsearch` | `GET /search/top` | `exposed` | used by at least one public REST route |
+| `fbsearch_typeahead_stream(self, query: str, timezone_offset: int = 0, count: int = 30) -> dict` | `fbsearch` | - | `candidate` | potential user-facing REST endpoint |
+| `fbsearch_typehead(self, query: str) -> List[dict]` | `fbsearch` | - | `candidate` | potential user-facing REST endpoint |
+| `featured_accounts_v1(self, target_user_id: str) -> dict` | `multiple_accounts` | - | `candidate` | potential user-facing REST endpoint |
+| `feed_user_stream_item(self, item_id: str, is_pull_to_refresh: bool = False) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `fetch_fb_dtsg(self)` | `graphql` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `fetch_suggestion_details(self, user_id: str, chained_ids: Union[str, List[Union[str, int]]]) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `friends_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - | `candidate` | potential user-facing REST endpoint |
+| `gen_user_breadcrumb(self, size: int) -> str` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `generate_android_device_id(self) -> str` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `generate_mutation_token(self) -> str` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `generate_uuid(self, prefix: str = '', suffix: str = '') -> str` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `get_account_family_v1(self) -> dict` | `multiple_accounts` | - | `candidate` | potential user-facing REST endpoint |
+| `get_note_by_user(self, notes: List[aiograpi.types.Note], username: str) -> Optional[aiograpi.types.Note]` | `note` | - | `candidate` | potential user-facing REST endpoint |
+| `get_note_text_by_user(self, notes: List[aiograpi.types.Note], username: str) -> Optional[str]` | `note` | - | `candidate` | potential user-facing REST endpoint |
+| `get_notes(self) -> List[aiograpi.types.Note]` | `note` | `GET /notes` | `exposed` | used by at least one public REST route |
+| `get_prefill_candidates(self, login: bool = False) -> Dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `get_reels_tray_feed(self, reason: Literal['cold_start', 'pull_to_refresh'] = 'pull_to_refresh') -> Dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `get_settings(self) -> Dict` | `auth` | `GET /auth/settings` | `exposed` | used by at least one public REST route |
+| `get_signup_config(self) -> dict` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `get_timeline_feed(self, reason: Literal['cold_start_fetch', 'warm_start_fetch', 'pagination', 'pull_to_refresh', 'auto_refresh'] = 'pull_to_refresh', max_id: str = None, seen_posts: Union[str, Iterable[str], NoneType] = None, feed_view_info: Union[str, List[Dict[str, Any]], NoneType] = None) -> Dict` | `auth` | `GET /account/feed/timeline` | `exposed` | used by at least one public REST route |
+| `graphql_request(self, data=None, params=None, headers=None, return_json=True, retries_count=1, retries_timeout=2)` | `graphql` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `handle_challenge_result(self, challenge: Dict)` | `challenge` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `hashtag_follow(self, hashtag: str, unfollow: bool = False) -> bool` | `hashtag` | `POST /hashtag/follow` | `exposed` | used by at least one public REST route |
+| `hashtag_info(self, name: str) -> aiograpi.types.Hashtag` | `hashtag` | `GET /hashtag` | `exposed` | used by at least one public REST route |
+| `hashtag_info_a1(self, name: str, max_id: str = None) -> aiograpi.types.Hashtag` | `hashtag` | - | `duplicate` | variant of already exposed `hashtag_info` route family |
+| `hashtag_info_gql(self, name: str, amount: int = 12, end_cursor: str = None) -> aiograpi.types.Hashtag` | `hashtag` | - | `duplicate` | variant of already exposed `hashtag_info` route family |
+| `hashtag_info_v1(self, name: str) -> aiograpi.types.Hashtag` | `hashtag` | - | `duplicate` | variant of already exposed `hashtag_info` route family |
+| `hashtag_medias_a1(self, name: str, amount: int = 27, tab_key: str = '') -> List[aiograpi.types.Media]` | `hashtag` | - | `duplicate` | variant of already exposed `hashtag_medias` route family |
+| `hashtag_medias_a1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', end_cursor: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `hashtag` | - | `duplicate` | variant of already exposed `hashtag_medias` route family |
+| `hashtag_medias_recent(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | - | `candidate` | potential user-facing REST endpoint |
+| `hashtag_medias_recent_a1(self, name: str, amount: int = 71) -> List[aiograpi.types.Media]` | `hashtag` | - | `duplicate` | variant of candidate `hashtag_medias_recent` |
+| `hashtag_medias_recent_v1(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | - | `duplicate` | variant of candidate `hashtag_medias_recent` |
+| `hashtag_medias_reels_v1(self, name: str, amount: int = 27) -> List[aiograpi.types.Media]` | `hashtag` | `GET /hashtag/reels` | `exposed` | used by at least one public REST route |
+| `hashtag_medias_top(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | - | `candidate` | potential user-facing REST endpoint |
+| `hashtag_medias_top_a1(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | - | `duplicate` | variant of candidate `hashtag_medias_top` |
+| `hashtag_medias_top_v1(self, name: str, amount: int = 9) -> List[aiograpi.types.Media]` | `hashtag` | - | `duplicate` | variant of candidate `hashtag_medias_top` |
+| `hashtag_medias_v1(self, name: str, amount: int = 27, tab_key: str = '') -> List[aiograpi.types.Media]` | `hashtag` | - | `duplicate` | variant of already exposed `hashtag_medias` route family |
+| `hashtag_medias_v1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `hashtag` | `GET /hashtag/media/recent`<br>`GET /hashtag/media/top` | `exposed` | used by at least one public REST route |
+| `hashtag_related_hashtags(self, name: str) -> List[aiograpi.types.Hashtag]` | `hashtag` | `GET /hashtag/related` | `exposed` | used by at least one public REST route |
+| `hashtag_unfollow(self, hashtag: str) -> bool` | `hashtag` | `DELETE /hashtag/follow` | `exposed` | used by at least one public REST route |
+| `highlight_add_stories(self, highlight_pk: str, added_media_ids: List[str]) -> aiograpi.types.Highlight` | `highlight` | `POST /highlight/story` | `exposed` | used by at least one public REST route |
+| `highlight_change_cover(self, highlight_pk: str, cover_path: pathlib._local.Path) -> aiograpi.types.Highlight` | `highlight` | - | `candidate` | potential user-facing REST endpoint |
+| `highlight_change_title(self, highlight_pk: str, title: str) -> aiograpi.types.Highlight` | `highlight` | - | `candidate` | potential user-facing REST endpoint |
+| `highlight_create(self, title: str, story_ids: List[str], cover_story_id: str = '', crop_rect: List[float] = [0.0, 0.21830457, 1.0, 0.78094524]) -> aiograpi.types.Highlight` | `highlight` | `POST /highlight` | `exposed` | used by at least one public REST route |
+| `highlight_delete(self, highlight_pk: str) -> bool` | `highlight` | `DELETE /highlight` | `exposed` | used by at least one public REST route |
+| `highlight_edit(self, highlight_pk: str, title: str = '', cover: Dict = {}, added_media_ids: List[str] = [], removed_media_ids: List[str] = [])` | `highlight` | `PATCH /highlight` | `exposed` | used by at least one public REST route |
+| `highlight_info(self, highlight_pk: str) -> aiograpi.types.Highlight` | `highlight` | `GET /highlight` | `exposed` | used by at least one public REST route |
+| `highlight_info_v1(self, highlight_pk: str) -> aiograpi.types.Highlight` | `highlight` | - | `duplicate` | variant of already exposed `highlight_info` route family |
+| `highlight_pk_from_url(self, url: str) -> str` | `highlight` | - | `candidate` | potential user-facing REST endpoint |
+| `highlight_remove_stories(self, highlight_pk: str, removed_media_ids: List[str]) -> aiograpi.types.Highlight` | `highlight` | `DELETE /highlight/story` | `exposed` | used by at least one public REST route |
+| `igtv_configure(self, upload_id: str, thumbnail: pathlib._local.Path, width: int, height: int, duration: int, title: str, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> Dict` | `igtv` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `igtv_download(self, media_pk: int, folder: pathlib._local.Path = '') -> str` | `igtv` | `GET /igtv/download` | `exposed` | used by at least one public REST route |
+| `igtv_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> str` | `igtv` | `GET /igtv/download/by/url` | `exposed` | used by at least one public REST route |
+| `igtv_upload(self, path: pathlib._local.Path, title: str, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 10, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `igtv` | `POST /igtv/upload`<br>`POST /igtv/upload/by/url` | `exposed` | used by at least one public REST route |
+| `init(self) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `inject_sessionid_to_public(self) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `insights_account(self) -> Dict` | `insights` | `GET /insights/account` | `exposed` | used by at least one public REST route |
+| `insights_media(self, media_pk: int) -> Dict` | `insights` | `GET /insights/media` | `exposed` | used by at least one public REST route |
+| `insights_media_feed_all(self, post_type: Literal['ALL', 'CAROUSEL_V2', 'IMAGE', 'SHOPPING', 'VIDEO'] = 'ALL', time_frame: Literal['ONE_WEEK', 'ONE_MONTH', 'THREE_MONTHS', 'SIX_MONTHS', 'ONE_YEAR', 'TWO_YEARS'] = 'TWO_YEARS', data_ordering: Literal['REACH_COUNT', 'LIKE_COUNT', 'FOLLOW', 'SHARE_COUNT', 'BIO_LINK_CLICK', 'COMMENT_COUNT', 'IMPRESSION_COUNT', 'PROFILE_VIEW', 'VIDEO_VIEW_COUNT', 'SAVE_COUNT'] = 'REACH_COUNT', count: int = 0, sleep: int = 2) -> List[Dict]` | `insights` | `GET /insights/media/feed` | `exposed` | used by at least one public REST route |
+| `last_seen_update_note(self) -> bool` | `note` | - | `candidate` | potential user-facing REST endpoint |
+| `liked_medias(self, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | `GET /account/liked/media` | `exposed` | used by at least one public REST route |
+| `load_settings(self, path: Union[str, pathlib._local.Path], override_app_version: bool = False) -> Dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `location_build(self, location: aiograpi.types.Location) -> str` | `location` | - | `candidate` | potential user-facing REST endpoint |
+| `location_complete(self, location: aiograpi.types.Location) -> aiograpi.types.Location` | `location` | - | `candidate` | potential user-facing REST endpoint |
+| `location_feed(self, location_id, count=16, end_cursor=None)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `location_guides_v1(self, location_pk: int) -> List[aiograpi.types.Guide]` | `location` | `GET /location/guides` | `exposed` | used by at least one public REST route |
+| `location_info(self, location_pk: int) -> aiograpi.types.Location` | `location` | `GET /location` | `exposed` | used by at least one public REST route |
+| `location_info_a1(self, location_pk: int) -> aiograpi.types.Location` | `location` | - | `duplicate` | variant of already exposed `location_info` route family |
+| `location_info_v1(self, location_pk: int) -> aiograpi.types.Location` | `location` | - | `duplicate` | variant of already exposed `location_info` route family |
+| `location_medias_a1(self, location_pk: int, amount: int = 24, sleep: float = 0.5, tab_key: str = '') -> List[aiograpi.types.Media]` | `location` | - | `duplicate` | variant of already exposed `location_medias` route family |
+| `location_medias_a1_chunk(self, location_pk: int, max_amount: int = 24, sleep: float = 0.5, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `location` | - | `duplicate` | variant of already exposed `location_medias` route family |
+| `location_medias_recent(self, location_pk: int, amount: int = 63, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - | `candidate` | potential user-facing REST endpoint |
+| `location_medias_recent_a1(self, location_pk: int, amount: int = 24, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - | `duplicate` | variant of candidate `location_medias_recent` |
+| `location_medias_recent_v1(self, location_pk: int, amount: int = 63) -> List[aiograpi.types.Media]` | `location` | - | `duplicate` | variant of candidate `location_medias_recent` |
+| `location_medias_top(self, location_pk: int, amount: int = 27, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - | `candidate` | potential user-facing REST endpoint |
+| `location_medias_top_a1(self, location_pk: int, amount: int = 9, sleep: float = 0.5) -> List[aiograpi.types.Media]` | `location` | - | `duplicate` | variant of candidate `location_medias_top` |
+| `location_medias_top_v1(self, location_pk: int, amount: int = 21) -> List[aiograpi.types.Media]` | `location` | - | `duplicate` | variant of candidate `location_medias_top` |
+| `location_medias_v1(self, location_pk: int, amount: int = 63, tab_key: str = '') -> List[aiograpi.types.Media]` | `location` | - | `duplicate` | variant of already exposed `location_medias` route family |
+| `location_medias_v1_chunk(self, location_pk: int, max_amount: int = 63, tab_key: str = '', max_id: str = None) -> Tuple[List[aiograpi.types.Media], str]` | `location` | `GET /location/media/recent`<br>`GET /location/media/top` | `exposed` | used by at least one public REST route |
+| `location_search(self, lat: float, lng: float) -> List[aiograpi.types.Location]` | `location` | `GET /search/locations` | `exposed` | used by at least one public REST route |
+| `location_search_name(self, name: str) -> List[aiograpi.types.Location]` | `location` | `GET /search/locations` | `exposed` | used by at least one public REST route |
+| `location_search_pk(self, location_pk: int) -> aiograpi.types.Location` | `location` | - | `candidate` | potential user-facing REST endpoint |
+| `location_story_sticker_id(self, location: aiograpi.types.Location) -> str` | `location` | - | `candidate` | potential user-facing REST endpoint |
+| `login(self, username: Optional[str] = None, password: Optional[str] = None, relogin: bool = False, verification_code: str = '') -> bool` | `auth` | `POST /auth/login` | `exposed` | used by at least one public REST route |
+| `login_by_sessionid(self, sessionid: str) -> bool` | `auth` | `POST /auth/login/by/sessionid` | `exposed` | used by at least one public REST route |
+| `login_flow(self) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `logout(self) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `media_archive(self, media_id: str, revert: bool = False) -> bool` | `media` | `POST /media/archive` | `exposed` | used by at least one public REST route |
+| `media_check_offensive_comment(self, media_id: str, text: str) -> bool` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `media_check_offensive_comment_v2(self, media_id: str, comment: str) -> dict` | `comment` | - | `duplicate` | variant of candidate `media_check_offensive_comment` |
+| `media_code_from_pk(self, media_pk: str) -> str` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `media_comment(self, media_id: str, text: str, replied_to_comment_id: Optional[int] = None) -> aiograpi.types.Comment` | `comment` | `POST /media/comment` | `exposed` | used by at least one public REST route |
+| `media_comment_infos(self, media_ids: List[str]) -> dict` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `media_comment_replies(self, media_id: str, comment_id: str, amount: int = 0) -> List[aiograpi.types.Comment]` | `comment` | `GET /media/comment/replies` | `exposed` | used by at least one public REST route |
+| `media_comment_replies_chunk(self, media_id: str, comment_id: str, max_amount: int, min_id: str = None) -> Tuple[List[aiograpi.types.Comment], str]` | `comment` | - | `duplicate` | variant of already exposed `media_comment_replies` route family |
+| `media_comments(self, media_id: str, amount: int = 20) -> List[aiograpi.types.Comment]` | `comment` | - | `duplicate` | variant of already exposed `media_comments` route family |
+| `media_comments_chunk(self, media_id: str, max_amount: int, min_id: str = None) -> Tuple[List[aiograpi.types.Comment], str]` | `comment` | `GET /media/comments` | `exposed` | used by at least one public REST route |
+| `media_comments_gql(self, media_pk: str, amount: int = 50, max_requests: int = 0) -> List[dict]` | `comment` | - | `duplicate` | variant of already exposed `media_comments` route family |
+| `media_comments_gql_chunk(self, media_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `comment` | - | `duplicate` | variant of already exposed `media_comments` route family |
+| `media_comments_threaded_gql(self, media_pk: str, comment_pk: str, amount: int = 0) -> List[dict]` | `comment` | - | `duplicate` | variant of already exposed `media_comments` route family |
+| `media_comments_threaded_gql_chunk(self, media_pk: str, comment_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `comment` | - | `duplicate` | variant of already exposed `media_comments` route family |
+| `media_comments_v1(self, media_id: str, amount: int = 20) -> List[aiograpi.types.Comment]` | `comment` | - | `duplicate` | variant of already exposed `media_comments` route family |
+| `media_comments_v1_chunk(self, media_id: str, min_id: str = '', max_id: str = '') -> Tuple[List[aiograpi.types.Comment], str, str]` | `comment` | - | `duplicate` | variant of already exposed `media_comments` route family |
+| `media_configure_to_cutout_sticker(self, upload_id: str, source_type: str = 'library', manual_box: List[float] = None, use_ai_detection: bool = False, extra_data: Dict[str, str] = None) -> aiograpi.types.Media` | `media` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `media_create_livestream(self, title='Instagram Live')` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `media_delete(self, media_id: str) -> bool` | `media` | `DELETE /media` | `exposed` | used by at least one public REST route |
+| `media_edit(self, media_id: str, caption: str, title: str = '', usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None) -> Dict` | `media` | `PATCH /media` | `exposed` | used by at least one public REST route |
+| `media_end_livestream(self, broadcast_id)` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `media_get_livestream_comments(self, broadcast_id)` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `media_get_livestream_info(self, broadcast_id)` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `media_get_livestream_viewers(self, broadcast_id)` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `media_id(self, media_pk: str) -> str` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `media_info(self, media_pk: str, use_cache: bool = True) -> aiograpi.types.Media` | `media` | `GET /media` | `exposed` | used by at least one public REST route |
+| `media_info_a1(self, media_pk: str, max_id: str = None) -> aiograpi.types.Media` | `media` | - | `duplicate` | variant of already exposed `media_info` route family |
+| `media_info_gql(self, media_pk: str) -> aiograpi.types.Media` | `media` | - | `duplicate` | variant of already exposed `media_info` route family |
+| `media_info_v1(self, media_pk: str) -> aiograpi.types.Media` | `media` | - | `duplicate` | variant of already exposed `media_info` route family |
+| `media_info_v2(self, media_id: str) -> aiograpi.types.Media` | `media` | - | `duplicate` | variant of already exposed `media_info` route family |
+| `media_like(self, media_id: str, revert: bool = False) -> bool` | `media` | `POST /media/like` | `exposed` | used by at least one public REST route |
+| `media_likers(self, media_id: str) -> List[aiograpi.types.UserShort]` | `media` | `GET /media/likers` | `exposed` | used by at least one public REST route |
+| `media_likers_gql(self, media_pk: str, amount: int = 0) -> List[dict]` | `media` | - | `duplicate` | variant of already exposed `media_likers` route family |
+| `media_likers_gql_chunk(self, media_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `media` | - | `duplicate` | variant of already exposed `media_likers` route family |
+| `media_oembed(self, url: str) -> Dict` | `media` | `GET /media/oembed` | `exposed` | used by at least one public REST route |
+| `media_pin(self, media_pk: str, revert: bool = False)` | `media` | `POST /media/pin` | `exposed` | used by at least one public REST route |
+| `media_pk(media_id: str) -> str` | `media` | `GET /media` | `exposed` | used by at least one public REST route |
+| `media_pk_from_code(self, code: str) -> str` | `media` | `GET /media` | `exposed` | used by at least one public REST route |
+| `media_pk_from_url(self, url: str) -> str` | `media` | `GET /media` | `exposed` | used by at least one public REST route |
+| `media_save(self, media_id: str, collection_pk: int = None, revert: bool = False) -> bool` | `collection` | `POST /media/save` | `exposed` | used by at least one public REST route |
+| `media_seen(self, media_ids: List[str], skipped_media_ids: List[str] = [])` | `media` | `PATCH /media/seen` | `exposed` | used by at least one public REST route |
+| `media_start_livestream(self, broadcast_id)` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `media_stream_comments_v1_chunk(self, media_id: str, min_id: str = '', max_id: str = '') -> Tuple[List[aiograpi.types.Comment], str, str]` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `media_template_v1(self, media_id: str)` | `media` | - | `candidate` | potential user-facing REST endpoint |
+| `media_unarchive(self, media_id: str) -> bool` | `media` | `DELETE /media/archive` | `exposed` | used by at least one public REST route |
+| `media_unlike(self, media_id: str) -> bool` | `media` | `DELETE /media/like` | `exposed` | used by at least one public REST route |
+| `media_unpin(self, media_pk)` | `media` | `DELETE /media/pin` | `exposed` | used by at least one public REST route |
+| `media_unsave(self, media_id: str, collection_pk: int = None) -> bool` | `collection` | `DELETE /media/save` | `exposed` | used by at least one public REST route |
+| `media_user(self, media_pk: str) -> aiograpi.types.UserShort` | `media` | `GET /media/author` | `exposed` | used by at least one public REST route |
+| `music_in_feed_audio_browser(self, browse_session_id: Optional[str] = None) -> Dict` | `track` | - | `candidate` | potential user-facing REST endpoint |
+| `mute_posts_from_follow(self, user_id: str, revert: bool = False) -> bool` | `user` | `POST /user/mute/posts` | `exposed` | used by at least one public REST route |
+| `mute_stories_from_follow(self, user_id: str, revert: bool = False) -> bool` | `user` | `POST /user/mute/stories` | `exposed` | used by at least one public REST route |
+| `new_feed_exist(self) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `news_inbox_v1(self, mark_as_seen: bool = False) -> dict` | `account` | `GET /notifications` | `exposed` | used by at least one public REST route |
+| `notes_music_browser(self) -> Dict` | `note` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_announcements(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_comment_likes(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_comments(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_connection(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_direct_group_requests(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_direct_share_activity(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_disable(self) -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_felix_upload_result(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_first_post(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_follow_request_accepted(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_fundraiser_creator(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_fundraiser_supporter(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_like_and_comment_on_photo_user_tagged(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_likes(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_live_broadcast(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_login(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_mute_all(self, setting_value: Literal['cancel', '15_minutes', '1_hour', '2_hour', '4_hour', '8_hour'] = '8_hour') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_new_follower(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_pending_direct_share(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_reminders(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_report_updated(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_rooms(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_settings(self, content_type: str, setting_value: str) -> bool` | `notification` | `PATCH /notifications/settings` | `exposed` | used by at least one public REST route |
+| `notification_tagged_in_bio(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_user_tagged(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_video_call(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `notification_view_count(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -> bool` | `notification` | - | `candidate` | potential user-facing REST endpoint |
+| `one_tap_app_login(self, user_id: str, nonce: str) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `parse_authorization(self, authorization) -> dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `password_encrypt(self, password)` | `password` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `password_publickeys(self)` | `password` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `photo_configure(self, upload_id: str, width: int, height: int, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> Dict` | `photo` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `photo_configure_to_story(self, upload_id: str, width: int, height: int, caption: str, mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], extra_data: Dict[str, str] = {}) -> Dict` | `photo` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `photo_download(self, media_pk: int, folder: pathlib._local.Path = '', overwrite: bool = True) -> pathlib._local.Path` | `photo` | `GET /photo/download` | `exposed` | used by at least one public REST route |
+| `photo_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '', overwrite: bool = True) -> pathlib._local.Path` | `photo` | `GET /photo/download/by/url` | `exposed` | used by at least one public REST route |
+| `photo_download_by_url_origin(self, url: str) -> bytes` | `photo` | - | `duplicate` | variant of already exposed `photo_download_by_url` route family |
+| `photo_rupload(self, path: pathlib._local.Path, upload_id: str = '', to_album: bool = False, for_story: bool = False) -> tuple` | `photo` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `photo_upload(self, path: pathlib._local.Path, caption: str, upload_id: str = '', usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `photo` | `POST /photo/upload`<br>`POST /photo/upload/by/url` | `exposed` | used by at least one public REST route |
+| `photo_upload_to_cutout_sticker(self, path: pathlib._local.Path, bypass_ai: bool = True) -> aiograpi.types.Media` | `photo` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `photo_upload_to_story(self, path: pathlib._local.Path, caption: str = '', upload_id: str = '', mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], extra_data: Dict[str, str] = {}) -> aiograpi.types.Story` | `photo` | `POST /story/upload`<br>`POST /story/upload/by/url` | `exposed` | used by at least one public REST route |
+| `photo_upload_with_music(self, path: pathlib._local.Path, caption: str, track: Union[aiograpi.types.Track, Dict], upload_id: str = '', usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}, audio_asset_start_time: Optional[int] = None, overlap_duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -> aiograpi.types.Media` | `photo` | - | `candidate` | potential user-facing REST endpoint |
+| `pre_login_flow(self) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_clips_profile(self, target_user_id: str, client_doc_id: str = '209049231614685382737238866578', priority: str = None, initial_stream_count: int = 6, page_size: int = 12, no_of_medias_in_each_chunk: int = 6) -> dict` | `user` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_followers_list(self, user_id: str, rank_token: str, client_doc_id: str = '28479704798344003308647327139', max_id: int = None, priority: str = None, exclude_field_is_favorite: bool = None, exclude_unused_fields: bool = None) -> dict` | `user` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_following_list(self, user_id: str, rank_token: str, client_doc_id: str = '16104639289023609826830352479', max_id: int = None, priority: str = None, exclude_field_is_favorite: bool = None, exclude_unused_fields: bool = None) -> dict` | `user` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_inbox_tray_for_user(self, user_id: str, client_doc_id: str = '2035639076042015234490020607', priority: str = None) -> dict` | `user` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_memories_pog(self, client_doc_id: str = '4160563056814166588457451196', direct_region_hint: str = None) -> dict` | `graphql` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_query_request(self, friendly_name: str, root_field_name: str, variables: dict = None, client_doc_id: str = None, priority: str = None, extra_headers: dict = None) -> dict` | `graphql` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_realtime_region_hint(self, client_doc_id: str = '52232106018313849661757113193') -> dict` | `graphql` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_request(self, data: dict, headers: dict = None, domain: str = None) -> dict` | `graphql` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_top_audio_trends_eligible_categories(self, client_doc_id: str = '10243243298540497152200027985') -> dict` | `graphql` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_graphql_update_inbox_tray_last_seen(self, client_doc_id: str = '41048505499858972910914091441') -> dict` | `graphql` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `private_request(self, endpoint, data=None, params=None, login=False, with_signature=True, headers=None, extra_sig=None, domain: str = None)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `profile_related_info(self, profile_id)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `public_a1_request(self, endpoint, data=None, params=None, headers=None, full=False)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `public_a1_request_user_info_by_username(self, username, data=None, params=None)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `public_doc_id_graphql_request(self, doc_id: str, variables: Dict[str, Any], referer: Optional[str] = None, headers: Optional[Dict[str, str]] = None) -> Dict[str, Any]` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `public_graphql_request(self, variables, query_hash=None, query_id=None, data=None, params=None, headers=None)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `public_head(self, url: str, follow_redirects: bool = False)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `public_request(self, url, data=None, params=None, headers=None, update_headers=None, return_json=False, retries_count=None, retries_timeout=None)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - | `candidate` | potential user-facing REST endpoint |
+| `reels_timeline_media(self, collection_pk: str, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - | `candidate` | potential user-facing REST endpoint |
+| `relogin(self) -> bool` | `auth` | `PATCH /auth/relogin` | `exposed` | used by at least one public REST route |
+| `remove_bio_links(self, link_ids: list) -> dict` | `account` | - | `candidate` | potential user-facing REST endpoint |
+| `report_explore_media(self, media_pk: int)` | `explore` | - | `candidate` | potential user-facing REST endpoint |
+| `request_log(self, response)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `reset_password(self, username: str) -> Dict` | `account` | - | `candidate` | potential user-facing REST endpoint |
+| `search_followers(self, user_id: str, query: str) -> List[aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `search_followers` route family |
+| `search_followers_v1(self, user_id: str, query: str) -> List[aiograpi.types.UserShort]` | `user` | `GET /search/followers` | `exposed` | used by at least one public REST route |
+| `search_following(self, user_id: str, query: str) -> List[aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `search_following` route family |
+| `search_following_v1(self, user_id: str, query: str) -> List[aiograpi.types.UserShort]` | `user` | `GET /search/following` | `exposed` | used by at least one public REST route |
+| `search_hashtags(self, query: str) -> List[aiograpi.types.Hashtag]` | `fbsearch` | `GET /search/hashtags` | `exposed` | used by at least one public REST route |
+| `search_music(self, query: str) -> List[aiograpi.types.Track]` | `fbsearch` | `GET /search/music` | `exposed` | used by at least one public REST route |
+| `search_users(self, query: str) -> List[aiograpi.types.UserShort]` | `fbsearch` | `GET /search/users` | `exposed` | used by at least one public REST route |
+| `search_users_v1(self, query: str, count: int) -> List[aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `search_users` route family |
+| `send_confirm_email(self, email: str) -> dict` | `account` | - | `candidate` | potential user-facing REST endpoint |
+| `send_confirm_phone_number(self, phone_number: str) -> dict` | `account` | - | `candidate` | potential user-facing REST endpoint |
+| `send_signup_sms_code(self, phone_number: str)` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `send_verify_email(self, email) -> dict` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_app(self, app: Union[str, Dict] = None, seed: str = None) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_contact_point_prefill(self, usage: str = 'prefill') -> Dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_country(self, country: str = 'US')` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_country_code(self, country_code: int = 1)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_device(self, device: Dict = None, reset: bool = False) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_external_url(self, external_url) -> dict` | `account` | - | `candidate` | potential user-facing REST endpoint |
+| `set_ig_u_rur(self, value)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_ig_www_claim(self, value)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_locale(self, locale: str = 'en_US')` | `private` | `POST /auth/login`<br>`POST /auth/login/by/sessionid`<br>`PATCH /auth/settings` | `exposed` | used by at least one public REST route |
+| `set_proxy(self, dsn: Optional[str])` | `aiograpi` | `POST /auth/login`<br>`POST /auth/login/by/sessionid`<br>`PATCH /auth/settings` | `exposed` | used by at least one public REST route |
+| `set_retry_config(self, request_timeout: Union[int, float, NoneType] = None, public_request_retries_count: int = None, public_request_retries_timeout: Union[int, float] = None, session_retry_total: int = None, session_retry_backoff_factor: Union[int, float] = None, session_retry_statuses: list = None, public_transport: Optional[str] = None, public_transport_impersonate: Optional[str] = None) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_settings(self, settings: Dict) -> bool` | `auth` | `PATCH /auth/settings` | `exposed` | used by at least one public REST route |
+| `set_timezone_offset(self, seconds: int = 0)` | `private` | `POST /auth/login`<br>`POST /auth/login/by/sessionid`<br>`PATCH /auth/settings` | `exposed` | used by at least one public REST route |
+| `set_user_agent(self, user_agent: str = '', reset: bool = False) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `set_uuids(self, uuids: Dict = None) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `share_code_from_url(self, url: str) -> str` | `share` | - | `candidate` | potential user-facing REST endpoint |
+| `share_info(self, code: str) -> aiograpi.types.Share` | `share` | - | `candidate` | potential user-facing REST endpoint |
+| `share_info_by_url(self, url: str) -> aiograpi.types.Share` | `share` | - | `candidate` | potential user-facing REST endpoint |
+| `signup(self, username: str, password: str, email: str = '', phone_number: str = '', full_name: str = '', year: int = None, month: int = None, day: int = None) -> aiograpi.types.UserShort` | `signup` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `small_delay(self)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `standalone_fundraiser_info_v1(self, user_id: str)` | `fundraiser` | - | `candidate` | potential user-facing REST endpoint |
+| `sticker_tray(self) -> dict` | `story` | - | `candidate` | potential user-facing REST endpoint |
+| `story_delete(self, story_pk: str) -> bool` | `story` | `DELETE /story` | `exposed` | used by at least one public REST route |
+| `story_download(self, story_pk: str, filename: str = '', folder: pathlib._local.Path = '') -> pathlib._local.Path` | `story` | `GET /story/download` | `exposed` | used by at least one public REST route |
+| `story_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> pathlib._local.Path` | `story` | `GET /story/download/by/url` | `exposed` | used by at least one public REST route |
+| `story_info(self, story_pk: str, use_cache: bool = True) -> aiograpi.types.Story` | `story` | `GET /story` | `exposed` | used by at least one public REST route |
+| `story_info_v1(self, story_pk: str) -> aiograpi.types.Story` | `story` | - | `duplicate` | variant of already exposed `story_info` route family |
+| `story_like(self, story_id: str, revert: bool = False) -> bool` | `story` | `POST /story/like` | `exposed` | used by at least one public REST route |
+| `story_pk_from_url(self, url: str) -> str` | `story` | `GET /story` | `exposed` | used by at least one public REST route |
+| `story_seen(self, story_pks: List[str], skipped_story_pks: List[str] = [])` | `story` | `PATCH /story/seen` | `exposed` | used by at least one public REST route |
+| `story_unlike(self, story_id: str) -> bool` | `story` | `DELETE /story/like` | `exposed` | used by at least one public REST route |
+| `story_viewers(self, story_pk: str, amount: int = 0) -> List[aiograpi.types.Viewer]` | `story` | - | `duplicate` | variant of already exposed `story_viewers` route family |
+| `story_viewers_chunk(self, story_pk: str, max_amount: int = 0, max_id: str = '') -> tuple[typing.List[aiograpi.types.Viewer], str]` | `story` | `GET /story/viewers` | `exposed` | used by at least one public REST route |
+| `sync_device_features(self, login: bool = False) -> Dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `sync_launcher(self, login: bool = False) -> Dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `top_search(self, query)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `totp_disable(self) -> bool` | `totp` | `DELETE /auth/totp` | `exposed` | used by at least one public REST route |
+| `totp_enable(self, verification_code: str) -> List[str]` | `totp` | `POST /auth/totp` | `exposed` | used by at least one public REST route |
+| `totp_generate_code(seed: str) -> str` | `totp` | - | `candidate` | potential user-facing REST endpoint |
+| `totp_generate_seed(self) -> str` | `totp` | - | `candidate` | potential user-facing REST endpoint |
+| `track_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> pathlib._local.Path` | `track` | - | `candidate` | potential user-facing REST endpoint |
+| `track_info_by_canonical_id(self, music_canonical_id: str) -> aiograpi.types.Track` | `track` | - | `candidate` | potential user-facing REST endpoint |
+| `track_info_by_id(self, track_id: str, max_id: str = '') -> Dict` | `track` | - | `candidate` | potential user-facing REST endpoint |
+| `track_stream_info_by_id(self, track_id: str, max_id: str = '') -> Dict` | `track` | - | `candidate` | potential user-facing REST endpoint |
+| `unmute_posts_from_follow(self, user_id: str) -> bool` | `user` | `DELETE /user/mute/posts` | `exposed` | used by at least one public REST route |
+| `unmute_stories_from_follow(self, user_id: str) -> bool` | `user` | `DELETE /user/mute/stories` | `exposed` | used by at least one public REST route |
+| `user_about_v1(self, user_id: str) -> aiograpi.types.About` | `user` | `GET /user/about` | `exposed` | used by at least one public REST route |
+| `user_block(self, user_id: str, surface: str = 'profile') -> bool` | `user` | `POST /user/block` | `exposed` | used by at least one public REST route |
+| `user_clips(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `user_clips` route family |
+| `user_clips_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `user_clips` route family |
+| `user_clips_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/reels` | `exposed` | used by at least one public REST route |
+| `user_clips_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `user_clips` route family |
+| `user_follow(self, user_id: str) -> bool` | `user` | `POST /user/follow` | `exposed` | used by at least one public REST route |
+| `user_follow_request_approve(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_follow_request_decline(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_follow_requests(self, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `user_follow_requests` route family |
+| `user_follow_requests_approve(self, user_ids: List[str]) -> Dict[str, bool]` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_follow_requests_chunk(self, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /account/follow/requests` | `exposed` | used by at least one public REST route |
+| `user_follow_requests_decline(self, user_ids: List[str]) -> Dict[str, bool]` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_followers(self, user_id: str, amount: int = 0) -> Dict[str, aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `user_followers` route family |
+| `user_followers_gql(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `user_followers` route family |
+| `user_followers_gql_chunk(self, user_id: str, max_amount: int = 0, end_cursor: str = None) -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - | `duplicate` | variant of already exposed `user_followers` route family |
+| `user_followers_v1(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `user_followers` route family |
+| `user_followers_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /user/followers` | `exposed` | used by at least one public REST route |
+| `user_following(self, user_id: str, amount: int = 0) -> Dict[str, aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `user_following` route family |
+| `user_following_gql(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `user_following` route family |
+| `user_following_gql_chunk(self, user_id: str, max_amount: int = 0, end_cursor: str = None) -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | - | `duplicate` | variant of already exposed `user_following` route family |
+| `user_following_v1(self, user_id: str, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `user_following` route family |
+| `user_following_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /user/following` | `exposed` | used by at least one public REST route |
+| `user_friendship_v1(self, user_id: str) -> aiograpi.types.Relationship` | `user` | `GET /user/friendship` | `exposed` | used by at least one public REST route |
+| `user_friendships_v1(self, user_ids: List[str]) -> List[aiograpi.types.RelationshipShort]` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_guides_v1(self, user_id: int) -> List[aiograpi.types.Guide]` | `user` | `GET /user/guides` | `exposed` | used by at least one public REST route |
+| `user_highlights(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Highlight]` | `highlight` | `GET /user/highlights` | `exposed` | used by at least one public REST route |
+| `user_highlights_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Highlight]` | `highlight` | - | `duplicate` | variant of already exposed `user_highlights` route family |
+| `user_id_from_username(self, username: str) -> str` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_info(self, user_id: str) -> aiograpi.types.User` | `user` | `GET /user` | `exposed` | used by at least one public REST route |
+| `user_info_by_username(self, username: str) -> aiograpi.types.User` | `user` | `GET /user` | `exposed` | used by at least one public REST route |
+| `user_info_by_username_a1(self, username: str) -> dict` | `user` | - | `duplicate` | variant of already exposed `user_info_by_username` route family |
+| `user_info_by_username_gql(self, username: str) -> aiograpi.types.User` | `user` | - | `duplicate` | variant of already exposed `user_info_by_username` route family |
+| `user_info_by_username_v1(self, username: str) -> aiograpi.types.User` | `user` | `GET /user/posts`<br>`GET /user/reels`<br>`GET /user/tagged/posts`<br>`GET /user/videos` | `exposed` | used by at least one public REST route |
+| `user_info_by_username_v2_gql(self, username: str) -> aiograpi.types.User` | `user` | - | `duplicate` | variant of already exposed `user_info_by_username` route family |
+| `user_info_gql(self, user_id: str) -> aiograpi.types.User` | `user` | - | `duplicate` | variant of already exposed `user_info` route family |
+| `user_info_v1(self, user_id: str, from_module: Literal['self_profile', 'feed_timeline', 'reel_feed_timeline'] = 'self_profile', is_app_start: bool = False) -> aiograpi.types.User` | `user` | - | `duplicate` | variant of already exposed `user_info` route family |
+| `user_info_v2_gql(self, user_id: str) -> aiograpi.types.User` | `user` | - | `duplicate` | variant of already exposed `user_info` route family |
+| `user_medias(self, user_id: int, amount: int = 0, sleep: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `user_medias` route family |
+| `user_medias_chunk(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `user_medias` route family |
+| `user_medias_chunk_gql(self, user_id: int, sleep: int = 2, end_cursor=None, amount: int = 0) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `user_medias` route family |
+| `user_medias_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `user_medias` route family |
+| `user_medias_gql(self, user_id: int, amount: int = 0, sleep: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `user_medias` route family |
+| `user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `user_medias` route family |
+| `user_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `user_medias` route family |
+| `user_medias_paginated_v1(self, user_id: str, amount: int = 33, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/posts` | `exposed` | used by at least one public REST route |
+| `user_medias_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `user_medias` route family |
+| `user_pinned_medias(self, user_id) -> List[aiograpi.types.Media]` | `media` | `GET /user/pinned/posts` | `exposed` | used by at least one public REST route |
+| `user_related_profiles_gql(self, user_id: str) -> List[aiograpi.types.UserShort]` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_remove_follower(self, user_id: str) -> bool` | `user` | `DELETE /user/follower` | `exposed` | used by at least one public REST route |
+| `user_short_gql(self, user_id: str) -> aiograpi.types.UserShort` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_stories(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | `POST /story/upload`<br>`POST /story/upload/by/url`<br>`GET /user/stories` | `exposed` | used by at least one public REST route |
+| `user_stories_gql(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | - | `duplicate` | variant of already exposed `user_stories` route family |
+| `user_stories_v1(self, user_id: str, amount: int = None) -> List[aiograpi.types.Story]` | `story` | - | `duplicate` | variant of already exposed `user_stories` route family |
+| `user_stream_by_id_flat(self, user_id: str) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_stream_by_id_v1(self, user_id: str) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_stream_by_username_flat(self, username: str) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_stream_by_username_v1(self, username: str) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_unblock(self, user_id: str, surface: str = 'profile') -> bool` | `user` | `DELETE /user/block` | `exposed` | used by at least one public REST route |
+| `user_unfollow(self, user_id: str) -> bool` | `user` | `DELETE /user/follow` | `exposed` | used by at least one public REST route |
+| `user_videos_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `user_videos` route family |
+| `user_videos_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/videos` | `exposed` | used by at least one public REST route |
+| `user_videos_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `user_videos` route family |
+| `user_web_profile_info_gql(self, user_id: str) -> dict` | `user` | - | `duplicate` | variant of candidate `user_web_profile_info_v1` |
+| `user_web_profile_info_v1(self, username: str) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `username_from_user_id(self, user_id: str) -> str` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `username_from_user_id_gql(self, user_id: str) -> str` | `user` | - | `duplicate` | variant of candidate `username_from_user_id` |
+| `users_stories_gql(self, user_ids: List[str], amount: int = 0) -> List[aiograpi.types.UserShort]` | `story` | - | `candidate` | potential user-facing REST endpoint |
+| `usertag_medias(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `usertag_medias` route family |
+| `usertag_medias_gql(self, user_id: int, amount: int = 0, sleep: int = 2) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `usertag_medias` route family |
+| `usertag_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/tagged/posts` | `exposed` | used by at least one public REST route |
+| `usertag_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `usertag_medias` route family |
+| `usertag_medias_paginated_v1(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `usertag_medias` route family |
+| `usertag_medias_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `usertag_medias` route family |
+| `usertag_medias_v1_chunk(self, user_id: int, max_id: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - | `duplicate` | variant of already exposed `usertag_medias` route family |
+| `very_small_delay(self)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `video_configure(self, upload_id: str, width: int, height: int, duration: int, thumbnail: pathlib._local.Path, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> Dict` | `video` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `video_configure_to_story(self, upload_id: str, width: int, height: int, duration: int, thumbnail: pathlib._local.Path, caption: str, mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], thread_ids: List[int] = [], extra_data: Dict[str, str] = {}) -> Dict` | `video` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `video_download(self, media_pk: int, folder: pathlib._local.Path = '', overwrite: bool = True) -> pathlib._local.Path` | `video` | `GET /video/download` | `exposed` | used by at least one public REST route |
+| `video_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '', overwrite: bool = True) -> pathlib._local.Path` | `video` | `GET /video/download/by/url` | `exposed` | used by at least one public REST route |
+| `video_download_by_url_origin(self, url: str) -> bytes` | `video` | - | `duplicate` | variant of already exposed `video_download_by_url` route family |
+| `video_rupload(self, path: pathlib._local.Path, thumbnail: pathlib._local.Path = None, to_album: bool = False, to_story: bool = False, to_direct: bool = False) -> tuple` | `video` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `video_upload(self, path: pathlib._local.Path, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `video` | `POST /video/upload`<br>`POST /video/upload/by/url` | `exposed` | used by at least one public REST route |
+| `video_upload_to_cutout_sticker(self, path: pathlib._local.Path, bypass_ai: bool = True) -> aiograpi.types.Media` | `video` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `video_upload_to_direct(self, path: pathlib._local.Path, caption: str = '', thumbnail: pathlib._local.Path = None, mentions: List[aiograpi.types.StoryMention] = [], medias: List[aiograpi.types.StoryMedia] = [], thread_ids: List[int] = [], extra_data: Dict[str, str] = {}) -> aiograpi.types.DirectMessage` | `video` | - | `candidate` | potential user-facing REST endpoint |
+| `video_upload_to_story(self, path: pathlib._local.Path, caption: str = '', thumbnail: pathlib._local.Path = None, mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], extra_data: Dict[str, str] = {}) -> aiograpi.types.Story` | `video` | `POST /story/upload`<br>`POST /story/upload/by/url` | `exposed` | used by at least one public REST route |
+| `web_search_topsearch(self, query: str) -> dict` | `fbsearch` | - | `candidate` | potential user-facing REST endpoint |
+| `web_search_topsearch_hashtags(self, query: str) -> List[aiograpi.types.Hashtag]` | `fbsearch` | - | `candidate` | potential user-facing REST endpoint |
+| `with_action_data(self, data: Dict) -> Dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `with_default_data(self, data: Dict) -> Dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `with_extra_data(self, data: Dict) -> Dict` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
+| `with_query_params(data, params)` | `private` | - | `internal` | low-level aiograpi helper or unsafe generic surface |

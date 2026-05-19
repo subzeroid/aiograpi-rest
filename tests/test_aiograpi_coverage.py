@@ -4,8 +4,10 @@ import sys
 import scripts.generate_aiograpi_coverage as coverage_script
 from scripts.generate_aiograpi_coverage import (
     DOC_PATH,
+    ClientMethod,
     SourceAnalyzer,
     build_markdown,
+    classify_method,
     client_methods,
     resolve_function_methods,
     route_coverage,
@@ -36,6 +38,70 @@ def test_aiograpi_rest_documents_partial_client_coverage():
     }
     assert covered < methods
     assert {"login", "user_about_v1", "photo_upload", "video_upload_to_story"} <= covered
+
+
+def test_aiograpi_coverage_classifies_methods_by_rest_relevance():
+    methods = client_methods()
+    covered = {
+        method
+        for route in route_coverage()
+        for method in route.client_methods
+    }
+
+    assert classify_method(methods["user_about_v1"], covered).status == "exposed"
+    assert classify_method(methods["collections"], covered).status == "candidate"
+    assert classify_method(methods["collection_medias"], covered).status == "candidate"
+    assert classify_method(methods["collection_medias_v1"], covered).status == "duplicate"
+    assert classify_method(methods["direct_message_like"], covered).status == "candidate"
+    assert classify_method(methods["comment_likers_gql"], covered).status == "candidate"
+    assert classify_method(methods["comment_likers_gql_chunk"], covered).status == "duplicate"
+    assert classify_method(methods["hashtag_medias_a1"], covered).status == "duplicate"
+    assert classify_method(methods["media_info_gql"], covered).status == "duplicate"
+    assert classify_method(methods["user_followers_gql"], covered).status == "duplicate"
+    assert classify_method(methods["photo_configure"], covered).status == "internal"
+    assert classify_method(methods["graphql_request"], covered).status == "internal"
+    assert classify_method(methods["signup"], covered).status == "internal"
+
+
+def test_aiograpi_coverage_classifies_paginated_variants_and_exact_internal_helpers():
+    covered: set[str] = set()
+    method_names = {"thing", "thing_paginated", "set_app", "stream_paginated", "stream_paginated_v1"}
+
+    assert classify_method(
+        ClientMethod("thing_paginated", "aiograpi.mixins.media", "(self)"),
+        covered,
+        method_names,
+    ).status == "duplicate"
+    assert classify_method(
+        ClientMethod("stream_paginated", "aiograpi.mixins.media", "(self)"),
+        covered,
+        method_names,
+    ).status == "candidate"
+    assert classify_method(
+        ClientMethod("stream_paginated_v1", "aiograpi.mixins.media", "(self)"),
+        covered,
+        method_names,
+    ).status == "duplicate"
+    assert classify_method(
+        ClientMethod("set_app", "aiograpi.mixins.media", "(self)"),
+        covered,
+        method_names,
+    ).status == "internal"
+
+
+def test_aiograpi_coverage_markdown_summarizes_candidate_backlog():
+    markdown = build_markdown()
+
+    assert "## REST Relevance" in markdown
+    assert "## Candidate Backlog By Area" in markdown
+    assert "| `collection` |" in markdown
+    assert "`collections`" in markdown
+    assert "`collection_medias_v1`" not in markdown.split("## Full Method Matrix", 1)[0]
+    assert "`direct_message_like`" in markdown
+    assert "`comment_likers_gql`" in markdown
+    assert "| `media_info_gql" in markdown
+    assert "`duplicate`" in markdown
+    assert "`internal`" in markdown
 
 
 def test_source_analyzer_ignores_non_route_decorators():

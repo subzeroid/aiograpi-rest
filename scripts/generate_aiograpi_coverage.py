@@ -40,6 +40,78 @@ class RouteCoverage:
     client_methods: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class MethodClassification:
+    status: str
+    reason: str
+
+
+INTERNAL_AREAS = {
+    "auth",
+    "bloks",
+    "challenge",
+    "graphql",
+    "password",
+    "private",
+    "public",
+    "signup",
+}
+INTERNAL_EXACT_METHODS = {
+    "fetch_fb_dtsg",
+    "init",
+    "inject_sessionid_to_public",
+    "login_flow",
+    "one_tap_app_login",
+    "parse_authorization",
+    "pre_login_flow",
+    "public_head",
+    "request_log",
+    "set_app",
+    "set_country",
+    "set_country_code",
+    "set_ig_u_rur",
+    "set_ig_www_claim",
+    "small_delay",
+    "very_small_delay",
+    "with_query_params",
+}
+INTERNAL_PREFIXES = (
+    "check_",
+    "dump_",
+    "gen_",
+    "generate_",
+    "handle_",
+    "load_",
+    "password_",
+    "private_graphql_",
+    "private_request",
+    "public_",
+    "send_signup_",
+)
+INTERNAL_FRAGMENTS = (
+    "_configure",
+    "_rupload",
+    "_upload_to_cutout_sticker",
+    "download_origin",
+    "graphql_request",
+)
+VARIANT_SUFFIXES = (
+    "_paginated_v1",
+    "_threaded_gql_chunk",
+    "_threaded_gql",
+    "_gql_chunk",
+    "_a1_chunk",
+    "_v1_chunk",
+    "_chunk",
+    "_paginated",
+    "_v2_gql",
+    "_v2",
+    "_v1",
+    "_gql",
+    "_a1",
+)
+
+
 class SourceAnalyzer(ast.NodeVisitor):
     def __init__(self, client_method_names: set[str]) -> None:
         self.client_method_names = client_method_names
@@ -189,6 +261,81 @@ def route_coverage() -> list[RouteCoverage]:
     return sorted(coverage, key=lambda item: (item.path, item.method))
 
 
+def classify_method(
+    method: ClientMethod,
+    covered_methods: set[str],
+    method_names: set[str] | None = None,
+) -> MethodClassification:
+    if method.name in covered_methods:
+        return MethodClassification("exposed", "used by at least one public REST route")
+
+    if _is_internal_method(method):
+        return MethodClassification("internal", "low-level aiograpi helper or unsafe generic surface")
+
+    method_names = method_names or set(client_methods())
+    root_name = _canonical_method_root(method.name)
+    covered_roots = {_canonical_method_root(name) for name in covered_methods}
+    if root_name in covered_roots:
+        return MethodClassification("duplicate", f"variant of already exposed `{root_name}` route family")
+
+    group_names = {
+        name
+        for name in method_names
+        if _canonical_method_root(name) == root_name
+    }
+    primary_name = _primary_candidate_name(root_name, group_names)
+    if method.name != primary_name:
+        return MethodClassification("duplicate", f"variant of candidate `{primary_name}`")
+
+    return MethodClassification("candidate", "potential user-facing REST endpoint")
+
+
+def _canonical_method_root(name: str) -> str:
+    current = name
+    changed = True
+    while changed:
+        changed = False
+        for suffix in VARIANT_SUFFIXES:
+            if current.endswith(suffix):
+                current = current[: -len(suffix)]
+                changed = True
+                break
+    if name.endswith("_by_url_origin"):
+        return name.removesuffix("_origin")
+    if current.endswith("_infos"):
+        return current.removesuffix("s")
+    return current
+
+
+def _primary_candidate_name(root_name: str, group_names: set[str]) -> str:
+    if root_name in group_names:
+        return root_name
+    return min(group_names, key=lambda name: (_variant_score(name), len(name), name))
+
+
+def _variant_score(name: str) -> int:
+    if name.endswith("_chunk") or "_chunk_" in name:
+        return 3
+    if name.endswith(("_a1", "_gql", "_v1", "_v2")) or any(
+        marker in name for marker in ("_a1_", "_gql_", "_v1_", "_v2_")
+    ):
+        return 2
+    if name.endswith("_paginated") or "_paginated_" in name:
+        return 1
+    return 0
+
+
+def _is_internal_method(method: ClientMethod) -> bool:
+    name = method.name
+    if method.area in INTERNAL_AREAS:
+        return True
+    if name in INTERNAL_EXACT_METHODS:
+        return True
+    if name.startswith(INTERNAL_PREFIXES):
+        return True
+    return any(fragment in name for fragment in INTERNAL_FRAGMENTS)
+
+
 def build_markdown() -> str:
     methods = client_methods()
     routes = route_coverage()
@@ -199,9 +346,16 @@ def build_markdown() -> str:
             endpoints_by_method[method].append(endpoint)
 
     covered = {method for method, endpoints in endpoints_by_method.items() if endpoints}
+    classifications = {
+        method.name: classify_method(method, covered, set(methods))
+        for method in methods.values()
+    }
     by_area: dict[str, list[str]] = defaultdict(list)
     for method in methods.values():
         by_area[method.area].append(method.name)
+    by_status: dict[str, list[str]] = defaultdict(list)
+    for method_name, classification in classifications.items():
+        by_status[classification.status].append(method_name)
 
     lines = [
         "# aiograpi Method Coverage",
@@ -217,16 +371,49 @@ def build_markdown() -> str:
         f"- Public `aiograpi.Client` methods: **{len(methods)}**",
         f"- Methods reached by REST routes: **{len(covered)}**",
         f"- Methods not exposed as REST routes: **{len(methods) - len(covered)}**",
+        f"- Candidate REST backlog: **{len(by_status['candidate'])}**",
+        "",
+        "## REST Relevance",
+        "",
+        "| Status | Methods | Meaning |",
+        "|---|---:|---|",
+        f"| `exposed` | {len(by_status['exposed'])} | Already used by public REST routes. |",
+        f"| `candidate` | {len(by_status['candidate'])} | Likely useful as a future user-facing REST endpoint. |",
+        f"| `duplicate` | {len(by_status['duplicate'])} | Variant of an already exposed method, such as `_v1`, `_gql`, `_a1`, chunk, or origin helpers. |",
+        f"| `internal` | {len(by_status['internal'])} | Low-level auth/request/configuration/signup/challenge helpers that should not be mirrored blindly. |",
         "",
         "## Coverage By Area",
         "",
-        "| Area | Covered | Total |",
-        "|---|---:|---:|",
+        "| Area | Exposed | Candidates | Duplicates | Internal | Total |",
+        "|---|---:|---:|---:|---:|---:|",
     ]
     for area in sorted(by_area):
         total = len(by_area[area])
-        area_covered = sum(1 for method in by_area[area] if method in covered)
-        lines.append(f"| `{area}` | {area_covered} | {total} |")
+        area_statuses = [classifications[method].status for method in by_area[area]]
+        exposed_count = area_statuses.count("exposed")
+        candidate_count = area_statuses.count("candidate")
+        duplicate_count = area_statuses.count("duplicate")
+        internal_count = area_statuses.count("internal")
+        lines.append(
+            f"| `{area}` | {exposed_count} | {candidate_count} | "
+            f"{duplicate_count} | {internal_count} | {total} |"
+        )
+
+    lines.extend([
+        "",
+        "## Candidate Backlog By Area",
+        "",
+        "| Area | Candidate methods |",
+        "|---|---|",
+    ])
+    for area in sorted(by_area):
+        candidates = [
+            f"`{method}`"
+            for method in by_area[area]
+            if classifications[method].status == "candidate"
+        ]
+        if candidates:
+            lines.append(f"| `{area}` | {', '.join(candidates)} |")
 
     lines.extend([
         "",
@@ -243,13 +430,17 @@ def build_markdown() -> str:
         "",
         "## Full Method Matrix",
         "",
-        "| aiograpi method | Area | REST endpoint(s) |",
-        "|---|---|---|",
+        "| aiograpi method | Area | REST endpoint(s) | Status | Notes |",
+        "|---|---|---|---|---|",
     ])
     for method in methods.values():
         endpoints = endpoints_by_method.get(method.name, [])
         endpoint_text = "<br>".join(endpoints) if endpoints else "-"
-        lines.append(f"| `{method.name}{method.signature}` | `{method.area}` | {endpoint_text} |")
+        classification = classifications[method.name]
+        lines.append(
+            f"| `{method.name}{method.signature}` | `{method.area}` | {endpoint_text} | "
+            f"`{classification.status}` | {classification.reason} |"
+        )
 
     return "\n".join(lines) + "\n"
 

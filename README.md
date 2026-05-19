@@ -301,7 +301,8 @@ https://subzeroid.github.io/aiograpi-rest/
 
 The generated [aiograpi method coverage report](docs/aiograpi-coverage.md)
 answers whether REST routes cover every `aiograpi.Client` method. They do not:
-`aiograpi-rest` exposes a focused subset and documents the uncovered methods.
+`aiograpi-rest` exposes a focused subset and classifies uncovered methods as
+future REST candidates, duplicate implementation variants, or internal helpers.
 
 ### Get a session id
 

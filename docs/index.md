@@ -40,4 +40,6 @@ see [HikerAPI](https://hikerapi.com/p/7RAo9ACK).
 
 The service intentionally exposes a focused subset of `aiograpi.Client`. The
 generated [aiograpi coverage report](aiograpi-coverage.md) lists every public
-client method and whether it is reachable through a REST route.
+client method, whether it is reachable through a REST route, and whether an
+uncovered method is a useful REST candidate, a duplicate implementation variant,
+or an internal helper.
