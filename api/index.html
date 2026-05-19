@@ -452,6 +452,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#comment-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comment Utilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -689,6 +700,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#comment-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comment Utilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -859,6 +881,25 @@ workflows.</p>
 <li><code>GET /track/download/by/url</code> downloads track audio from a URL.</li>
 <li><code>GET /music/feed/browser</code> returns music candidates for feed posts.</li>
 </ul>
+<h2 id="comment-utilities">Comment Utilities</h2>
+<p>Comment routes live under <code>Media (Post)</code> because Instagram comments always
+belong to a media object.</p>
+<ul>
+<li><code>GET /media/comments</code> lists a paginated comment page with <code>next_cursor</code>.</li>
+<li><code>GET /media/comments/stream</code> lists a stream comment page with <code>min_cursor</code>
+  and <code>max_cursor</code>.</li>
+<li><code>POST /media/comment</code> creates a comment or reply.</li>
+<li><code>DELETE /media/comment</code> deletes one comment from media.</li>
+<li><code>GET /media/comment/replies</code> lists replies for one comment.</li>
+<li><code>POST /media/comment/like</code> likes a comment.</li>
+<li><code>DELETE /media/comment/like</code> unlikes a comment.</li>
+<li><code>GET /media/comment/likers</code> lists users who liked a comment.</li>
+<li><code>POST /media/comment/pin</code> pins a comment.</li>
+<li><code>DELETE /media/comment/pin</code> unpins a comment.</li>
+<li><code>GET /media/comment/infos</code> returns comment counters for media IDs.</li>
+<li><code>POST /media/comment/check/offensive</code> checks whether text is offensive for
+  the target media.</li>
+</ul>
 <h2 id="pagination">Pagination</h2>
 <p>Paginated read-list routes return an object with <code>items</code> and <code>next_cursor</code>.
 Pass the returned <code>next_cursor</code> as <code>cursor</code> on the next request to continue
@@ -870,6 +911,8 @@ from the previous page. This shape is used for:</p>
 <li><code>GET /location/media/recent</code></li>
 <li><code>GET /location/media/top</code></li>
 <li><code>GET /media/comments</code></li>
+<li><code>GET /media/comments/stream</code> returns <code>items</code>, <code>min_cursor</code>, and <code>max_cursor</code>
+  instead of <code>next_cursor</code>.</li>
 <li><code>GET /story/archive</code></li>
 <li><code>GET /story/viewers</code></li>
 <li><code>GET /user/reels</code></li>

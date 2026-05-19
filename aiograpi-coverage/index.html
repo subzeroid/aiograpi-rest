@@ -582,9 +582,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <h2 id="summary">Summary</h2>
 <ul>
 <li>Public <code>aiograpi.Client</code> methods: <strong>500</strong></li>
-<li>Methods reached by REST routes: <strong>185</strong></li>
-<li>Methods not exposed as REST routes: <strong>315</strong></li>
-<li>Candidate REST backlog: <strong>130</strong></li>
+<li>Methods reached by REST routes: <strong>191</strong></li>
+<li>Methods not exposed as REST routes: <strong>309</strong></li>
+<li>Candidate REST backlog: <strong>124</strong></li>
 </ul>
 <h2 id="rest-relevance">REST Relevance</h2>
 <table>
@@ -598,12 +598,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tbody>
 <tr>
 <td><code>exposed</code></td>
-<td style="text-align: right;">185</td>
+<td style="text-align: right;">191</td>
 <td>Already used by public REST routes.</td>
 </tr>
 <tr>
 <td><code>candidate</code></td>
-<td style="text-align: right;">130</td>
+<td style="text-align: right;">124</td>
 <td>Likely useful as a future user-facing REST endpoint.</td>
 </tr>
 <tr>
@@ -697,8 +697,8 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>comment</code></td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">10</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">22</td>
@@ -933,10 +933,6 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>clip</code></td>
 <td><code>clip_info_for_creation</code>, <code>clip_pin</code>, <code>clip_share_to_fb_config</code>, <code>clip_trial_eligible</code>, <code>clip_unpin</code>, <code>clip_upload_as_reel_with_music</code></td>
-</tr>
-<tr>
-<td><code>comment</code></td>
-<td><code>comment_likers_gql</code>, <code>comment_pin</code>, <code>comment_unpin</code>, <code>media_check_offensive_comment</code>, <code>media_comment_infos</code>, <code>media_stream_comments_v1_chunk</code></td>
 </tr>
 <tr>
 <td><code>direct</code></td>
@@ -1402,6 +1398,14 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>media_comment</code></td>
 </tr>
 <tr>
+<td><code>POST /media/comment/check/offensive</code></td>
+<td><code>media_check_offensive_comment</code></td>
+</tr>
+<tr>
+<td><code>GET /media/comment/infos</code></td>
+<td><code>media_comment_infos</code></td>
+</tr>
+<tr>
 <td><code>DELETE /media/comment/like</code></td>
 <td><code>comment_unlike</code></td>
 </tr>
@@ -1410,12 +1414,28 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>comment_like</code></td>
 </tr>
 <tr>
+<td><code>GET /media/comment/likers</code></td>
+<td><code>comment_likers_gql</code></td>
+</tr>
+<tr>
+<td><code>DELETE /media/comment/pin</code></td>
+<td><code>comment_unpin</code></td>
+</tr>
+<tr>
+<td><code>POST /media/comment/pin</code></td>
+<td><code>comment_pin</code></td>
+</tr>
+<tr>
 <td><code>GET /media/comment/replies</code></td>
 <td><code>media_comment_replies</code></td>
 </tr>
 <tr>
 <td><code>GET /media/comments</code></td>
 <td><code>media_comments_chunk</code></td>
+</tr>
+<tr>
+<td><code>GET /media/comments/stream</code></td>
+<td><code>media_stream_comments_v1_chunk</code></td>
 </tr>
 <tr>
 <td><code>DELETE /media/like</code></td>
@@ -2179,23 +2199,23 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>comment_likers_gql(self, comment_pk: str, amount: int = 0) -&gt; List[dict]</code></td>
 <td><code>comment</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /media/comment/likers</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>comment_likers_gql_chunk(self, comment_pk: str, end_cursor: str = '') -&gt; Tuple[List[dict], str]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
 <td><code>duplicate</code></td>
-<td>variant of candidate <code>comment_likers_gql</code></td>
+<td>variant of already exposed <code>comment_likers</code> route family</td>
 </tr>
 <tr>
 <td><code>comment_pin(self, media_id: str, comment_pk: int, revert: bool = False)</code></td>
 <td><code>comment</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /media/comment/pin</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>comment_unlike(self, comment_pk: int) -&gt; bool</code></td>
@@ -2207,9 +2227,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>comment_unpin(self, media_id: str, comment_pk: int)</code></td>
 <td><code>comment</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>DELETE /media/comment/pin</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>create_music_note(self, track: Union[aiograpi.types.Track, Dict], text: str = '', audience: int = 0, start_time: Optional[int] = None, duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -&gt; aiograpi.types.Note</code></td>
@@ -3341,16 +3361,16 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>media_check_offensive_comment(self, media_id: str, text: str) -&gt; bool</code></td>
 <td><code>comment</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /media/comment/check/offensive</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_check_offensive_comment_v2(self, media_id: str, comment: str) -&gt; dict</code></td>
 <td><code>comment</code></td>
 <td>-</td>
 <td><code>duplicate</code></td>
-<td>variant of candidate <code>media_check_offensive_comment</code></td>
+<td>variant of already exposed <code>media_check_offensive_comment</code> route family</td>
 </tr>
 <tr>
 <td><code>media_code_from_pk(self, media_pk: str) -&gt; str</code></td>
@@ -3369,9 +3389,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>media_comment_infos(self, media_ids: List[str]) -&gt; dict</code></td>
 <td><code>comment</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /media/comment/infos</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_comment_replies(self, media_id: str, comment_id: str, amount: int = 0) -&gt; List[aiograpi.types.Comment]</code></td>
@@ -3628,9 +3648,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>media_stream_comments_v1_chunk(self, media_id: str, min_id: str = '', max_id: str = '') -&gt; Tuple[List[aiograpi.types.Comment], str, str]</code></td>
 <td><code>comment</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /media/comments/stream</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_template_v1(self, media_id: str)</code></td>
