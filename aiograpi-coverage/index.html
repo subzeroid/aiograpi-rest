@@ -1231,11 +1231,11 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>GET /user/posts</code></td>
-<td><code>user_id_from_username</code>, <code>user_medias_paginated</code></td>
+<td><code>user_info_by_username_v1</code>, <code>user_medias_paginated_v1</code></td>
 </tr>
 <tr>
 <td><code>GET /user/reels</code></td>
-<td><code>user_clips_paginated_v1</code>, <code>user_id_from_username</code></td>
+<td><code>user_clips_paginated_v1</code>, <code>user_info_by_username_v1</code></td>
 </tr>
 <tr>
 <td><code>GET /user/stories</code></td>
@@ -1243,11 +1243,11 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>GET /user/tagged/posts</code></td>
-<td><code>user_id_from_username</code>, <code>usertag_medias_paginated</code></td>
+<td><code>user_info_by_username_v1</code>, <code>usertag_medias_paginated</code></td>
 </tr>
 <tr>
 <td><code>GET /user/videos</code></td>
-<td><code>user_id_from_username</code>, <code>user_videos_paginated_v1</code></td>
+<td><code>user_info_by_username_v1</code>, <code>user_videos_paginated_v1</code></td>
 </tr>
 <tr>
 <td><code>GET /video/download</code></td>
@@ -3460,7 +3460,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_id_from_username(self, username: str) -&gt; str</code></td>
 <td><code>user</code></td>
-<td><code>GET /user/posts</code><br><code>GET /user/reels</code><br><code>GET /user/tagged/posts</code><br><code>GET /user/videos</code></td>
+<td>-</td>
 </tr>
 <tr>
 <td><code>user_info(self, user_id: str) -&gt; aiograpi.types.User</code></td>
@@ -3485,7 +3485,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_info_by_username_v1(self, username: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
-<td>-</td>
+<td><code>GET /user/posts</code><br><code>GET /user/reels</code><br><code>GET /user/tagged/posts</code><br><code>GET /user/videos</code></td>
 </tr>
 <tr>
 <td><code>user_info_by_username_v2_gql(self, username: str) -&gt; aiograpi.types.User</code></td>
@@ -3535,7 +3535,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
-<td><code>GET /user/posts</code></td>
+<td>-</td>
 </tr>
 <tr>
 <td><code>user_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
@@ -3545,7 +3545,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_medias_paginated_v1(self, user_id: str, amount: int = 33, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
-<td>-</td>
+<td><code>GET /user/posts</code></td>
 </tr>
 <tr>
 <td><code>user_medias_v1(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
