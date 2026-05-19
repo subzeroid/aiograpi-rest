@@ -399,10 +399,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#rest-relevance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REST Relevance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#coverage-by-area" class="md-nav__link">
     <span class="md-ellipsis">
       
         Coverage By Area
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#candidate-backlog-by-area" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Candidate Backlog By Area
       
     </span>
   </a>
@@ -477,10 +499,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#rest-relevance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        REST Relevance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#coverage-by-area" class="md-nav__link">
     <span class="md-ellipsis">
       
         Coverage By Area
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#candidate-backlog-by-area" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Candidate Backlog By Area
       
     </span>
   </a>
@@ -540,13 +584,49 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <li>Public <code>aiograpi.Client</code> methods: <strong>500</strong></li>
 <li>Methods reached by REST routes: <strong>137</strong></li>
 <li>Methods not exposed as REST routes: <strong>363</strong></li>
+<li>Candidate REST backlog: <strong>177</strong></li>
 </ul>
+<h2 id="rest-relevance">REST Relevance</h2>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th style="text-align: right;">Methods</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>exposed</code></td>
+<td style="text-align: right;">137</td>
+<td>Already used by public REST routes.</td>
+</tr>
+<tr>
+<td><code>candidate</code></td>
+<td style="text-align: right;">177</td>
+<td>Likely useful as a future user-facing REST endpoint.</td>
+</tr>
+<tr>
+<td><code>duplicate</code></td>
+<td style="text-align: right;">90</td>
+<td>Variant of an already exposed method, such as <code>_v1</code>, <code>_gql</code>, <code>_a1</code>, chunk, or origin helpers.</td>
+</tr>
+<tr>
+<td><code>internal</code></td>
+<td style="text-align: right;">96</td>
+<td>Low-level auth/request/configuration/signup/challenge helpers that should not be mirrored blindly.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="coverage-by-area">Coverage By Area</h2>
 <table>
 <thead>
 <tr>
 <th>Area</th>
-<th style="text-align: right;">Covered</th>
+<th style="text-align: right;">Exposed</th>
+<th style="text-align: right;">Candidates</th>
+<th style="text-align: right;">Duplicates</th>
+<th style="text-align: right;">Internal</th>
 <th style="text-align: right;">Total</th>
 </tr>
 </thead>
@@ -554,177 +634,389 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>account</code></td>
 <td style="text-align: right;">6</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">14</td>
 </tr>
 <tr>
 <td><code>aiograpi</code></td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
 </tr>
 <tr>
 <td><code>album</code></td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">6</td>
 </tr>
 <tr>
 <td><code>auth</code></td>
 <td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">27</td>
 <td style="text-align: right;">34</td>
 </tr>
 <tr>
 <td><code>bloks</code></td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">2</td>
 </tr>
 <tr>
 <td><code>challenge</code></td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;">6</td>
 </tr>
 <tr>
 <td><code>clip</code></td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr>
 <td><code>collection</code></td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">9</td>
 </tr>
 <tr>
 <td><code>comment</code></td>
 <td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">22</td>
 </tr>
 <tr>
 <td><code>direct</code></td>
 <td style="text-align: right;">6</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">45</td>
 </tr>
 <tr>
 <td><code>explore</code></td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
 </tr>
 <tr>
 <td><code>fbsearch</code></td>
 <td style="text-align: right;">9</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">16</td>
 </tr>
 <tr>
 <td><code>fundraiser</code></td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
 </tr>
 <tr>
 <td><code>graphql</code></td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8</td>
 <td style="text-align: right;">8</td>
 </tr>
 <tr>
 <td><code>hashtag</code></td>
 <td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">18</td>
 </tr>
 <tr>
 <td><code>highlight</code></td>
 <td style="text-align: right;">7</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">12</td>
 </tr>
 <tr>
 <td><code>igtv</code></td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">4</td>
 </tr>
 <tr>
 <td><code>insights</code></td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">3</td>
 </tr>
 <tr>
 <td><code>location</code></td>
 <td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr>
 <td><code>media</code></td>
 <td style="text-align: right;">21</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">59</td>
 </tr>
 <tr>
 <td><code>multiple_accounts</code></td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
 </tr>
 <tr>
 <td><code>note</code></td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">8</td>
 </tr>
 <tr>
 <td><code>notification</code></td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">27</td>
 </tr>
 <tr>
 <td><code>password</code></td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
 <td style="text-align: right;">2</td>
 </tr>
 <tr>
 <td><code>photo</code></td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr>
 <td><code>private</code></td>
 <td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11</td>
 <td style="text-align: right;">13</td>
 </tr>
 <tr>
 <td><code>public</code></td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9</td>
 <td style="text-align: right;">9</td>
 </tr>
 <tr>
 <td><code>share</code></td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
 </tr>
 <tr>
 <td><code>signup</code></td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">15</td>
 <td style="text-align: right;">15</td>
 </tr>
 <tr>
 <td><code>story</code></td>
 <td style="text-align: right;">11</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">21</td>
 </tr>
 <tr>
 <td><code>timeline</code></td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
 </tr>
 <tr>
 <td><code>totp</code></td>
 <td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">4</td>
 </tr>
 <tr>
 <td><code>track</code></td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
 </tr>
 <tr>
 <td><code>user</code></td>
 <td style="text-align: right;">20</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;">74</td>
 </tr>
 <tr>
 <td><code>video</code></td>
 <td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
 <td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
+<h2 id="candidate-backlog-by-area">Candidate Backlog By Area</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Candidate methods</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>account</code></td>
+<td><code>account_security_info</code>, <code>account_set_biography</code>, <code>change_password</code>, <code>remove_bio_links</code>, <code>reset_password</code>, <code>send_confirm_email</code>, <code>send_confirm_phone_number</code>, <code>set_external_url</code></td>
+</tr>
+<tr>
+<td><code>album</code></td>
+<td><code>album_upload_with_music</code></td>
+</tr>
+<tr>
+<td><code>clip</code></td>
+<td><code>clip_info_for_creation</code>, <code>clip_pin</code>, <code>clip_share_to_fb_config</code>, <code>clip_trial_eligible</code>, <code>clip_unpin</code>, <code>clip_upload_as_reel_with_music</code></td>
+</tr>
+<tr>
+<td><code>collection</code></td>
+<td><code>collection_medias</code>, <code>collection_medias_by_name</code>, <code>collection_pk_by_name</code>, <code>collections</code></td>
+</tr>
+<tr>
+<td><code>comment</code></td>
+<td><code>comment_likers_gql</code>, <code>comment_pin</code>, <code>comment_unpin</code>, <code>media_check_offensive_comment</code>, <code>media_comment_infos</code>, <code>media_stream_comments_v1_chunk</code></td>
+</tr>
+<tr>
+<td><code>direct</code></td>
+<td><code>direct_active_presence</code>, <code>direct_answer</code>, <code>direct_delete_reaction</code>, <code>direct_media</code>, <code>direct_media_share</code>, <code>direct_message</code>, <code>direct_message_like</code>, <code>direct_message_search</code>, <code>direct_message_unlike</code>, <code>direct_message_unsend</code>, <code>direct_messages</code>, <code>direct_pending_approve</code>, <code>direct_pending_chunk</code>, <code>direct_pending_inbox</code>, <code>direct_profile_share</code>, <code>direct_request_approve</code>, <code>direct_requests</code>, <code>direct_search</code>, <code>direct_send_cutout_sticker</code>, <code>direct_send_file</code>, <code>direct_send_photo</code>, <code>direct_send_reaction</code>, <code>direct_send_seen</code>, <code>direct_send_video</code>, <code>direct_send_voice</code>, <code>direct_spam_chunk</code>, <code>direct_spam_inbox</code>, <code>direct_story_share</code>, <code>direct_thread_add_users</code>, <code>direct_thread_by_participants</code>, <code>direct_thread_hide</code>, <code>direct_thread_mark_unread</code>, <code>direct_thread_mute</code>, <code>direct_thread_mute_video_call</code>, <code>direct_thread_unmute</code>, <code>direct_thread_unmute_video_call</code>, <code>direct_thread_update_title</code>, <code>direct_users_presence</code></td>
+</tr>
+<tr>
+<td><code>explore</code></td>
+<td><code>explore_page</code>, <code>explore_page_media_info</code>, <code>report_explore_media</code></td>
+</tr>
+<tr>
+<td><code>fbsearch</code></td>
+<td><code>fbsearch_item</code>, <code>fbsearch_suggested_profiles</code>, <code>fbsearch_topsearch_flat</code>, <code>fbsearch_typeahead_stream</code>, <code>fbsearch_typehead</code>, <code>web_search_topsearch</code>, <code>web_search_topsearch_hashtags</code></td>
+</tr>
+<tr>
+<td><code>fundraiser</code></td>
+<td><code>standalone_fundraiser_info_v1</code></td>
+</tr>
+<tr>
+<td><code>hashtag</code></td>
+<td><code>hashtag_medias_recent</code>, <code>hashtag_medias_top</code></td>
+</tr>
+<tr>
+<td><code>highlight</code></td>
+<td><code>highlight_change_cover</code>, <code>highlight_change_title</code>, <code>highlight_pk_from_url</code></td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td><code>location_build</code>, <code>location_complete</code>, <code>location_medias_recent</code>, <code>location_medias_top</code>, <code>location_search_pk</code>, <code>location_story_sticker_id</code></td>
+</tr>
+<tr>
+<td><code>media</code></td>
+<td><code>archive_medias</code>, <code>media_code_from_pk</code>, <code>media_create_livestream</code>, <code>media_end_livestream</code>, <code>media_get_livestream_comments</code>, <code>media_get_livestream_info</code>, <code>media_get_livestream_viewers</code>, <code>media_id</code>, <code>media_start_livestream</code>, <code>media_template_v1</code></td>
+</tr>
+<tr>
+<td><code>multiple_accounts</code></td>
+<td><code>featured_accounts_v1</code>, <code>get_account_family_v1</code></td>
+</tr>
+<tr>
+<td><code>note</code></td>
+<td><code>create_music_note</code>, <code>get_note_by_user</code>, <code>get_note_text_by_user</code>, <code>last_seen_update_note</code>, <code>notes_music_browser</code></td>
+</tr>
+<tr>
+<td><code>notification</code></td>
+<td><code>notification_announcements</code>, <code>notification_comment_likes</code>, <code>notification_comments</code>, <code>notification_connection</code>, <code>notification_direct_group_requests</code>, <code>notification_direct_share_activity</code>, <code>notification_disable</code>, <code>notification_felix_upload_result</code>, <code>notification_first_post</code>, <code>notification_follow_request_accepted</code>, <code>notification_fundraiser_creator</code>, <code>notification_fundraiser_supporter</code>, <code>notification_like_and_comment_on_photo_user_tagged</code>, <code>notification_likes</code>, <code>notification_live_broadcast</code>, <code>notification_login</code>, <code>notification_mute_all</code>, <code>notification_new_follower</code>, <code>notification_pending_direct_share</code>, <code>notification_reminders</code>, <code>notification_report_updated</code>, <code>notification_rooms</code>, <code>notification_tagged_in_bio</code>, <code>notification_user_tagged</code>, <code>notification_video_call</code>, <code>notification_view_count</code></td>
+</tr>
+<tr>
+<td><code>photo</code></td>
+<td><code>photo_upload_with_music</code></td>
+</tr>
+<tr>
+<td><code>share</code></td>
+<td><code>share_code_from_url</code>, <code>share_info</code>, <code>share_info_by_url</code></td>
+</tr>
+<tr>
+<td><code>story</code></td>
+<td><code>archive_stories</code>, <code>sticker_tray</code>, <code>users_stories_gql</code></td>
+</tr>
+<tr>
+<td><code>timeline</code></td>
+<td><code>explore_reels</code>, <code>friends_reels</code>, <code>reels</code>, <code>reels_timeline_media</code></td>
+</tr>
+<tr>
+<td><code>totp</code></td>
+<td><code>totp_generate_code</code>, <code>totp_generate_seed</code></td>
+</tr>
+<tr>
+<td><code>track</code></td>
+<td><code>music_in_feed_audio_browser</code>, <code>track_download_by_url</code>, <code>track_info_by_canonical_id</code>, <code>track_info_by_id</code>, <code>track_stream_info_by_id</code></td>
+</tr>
+<tr>
+<td><code>user</code></td>
+<td><code>chaining</code>, <code>close_friend_add</code>, <code>close_friend_remove</code>, <code>creator_info</code>, <code>disable_posts_notifications</code>, <code>disable_reels_notifications</code>, <code>disable_stories_notifications</code>, <code>disable_videos_notifications</code>, <code>discover_recommended_accounts_for_category_v1</code>, <code>enable_posts_notifications</code>, <code>enable_reels_notifications</code>, <code>enable_stories_notifications</code>, <code>enable_videos_notifications</code>, <code>feed_user_stream_item</code>, <code>fetch_suggestion_details</code>, <code>new_feed_exist</code>, <code>user_follow_request_approve</code>, <code>user_follow_request_decline</code>, <code>user_follow_requests_approve</code>, <code>user_follow_requests_decline</code>, <code>user_friendships_v1</code>, <code>user_id_from_username</code>, <code>user_related_profiles_gql</code>, <code>user_short_gql</code>, <code>user_stream_by_id_flat</code>, <code>user_stream_by_id_v1</code>, <code>user_stream_by_username_flat</code>, <code>user_stream_by_username_v1</code>, <code>user_web_profile_info_v1</code>, <code>username_from_user_id</code></td>
+</tr>
+<tr>
+<td><code>video</code></td>
+<td><code>video_upload_to_direct</code></td>
 </tr>
 </tbody>
 </table>
@@ -1274,6 +1566,8 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <th>aiograpi method</th>
 <th>Area</th>
 <th>REST endpoint(s)</th>
+<th>Status</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -1281,2501 +1575,3501 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>account_change_picture(self, path: pathlib._local.Path) -&gt; aiograpi.types.UserShort</code></td>
 <td><code>account</code></td>
 <td><code>PATCH /account/picture</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>account_edit(self, **data: Dict) -&gt; aiograpi.types.Account</code></td>
 <td><code>account</code></td>
 <td><code>PATCH /account</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>account_info(self) -&gt; aiograpi.types.Account</code></td>
 <td><code>account</code></td>
 <td><code>GET /account</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>account_security_info(self) -&gt; dict</code></td>
 <td><code>account</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>account_set_biography(self, biography: str) -&gt; bool</code></td>
 <td><code>account</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>account_set_private(self) -&gt; bool</code></td>
 <td><code>account</code></td>
 <td><code>PATCH /account/privacy</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>account_set_public(self) -&gt; bool</code></td>
 <td><code>account</code></td>
 <td><code>PATCH /account/privacy</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>accounts_create(self, username: str, password: str, email: str = '', email_code: str = '', phone_number: str = '', phone_code: str = '', full_name: str = '', year: int = None, month: int = None, day: int = None, **kwargs) -&gt; dict</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>album_configure(self, childs: List, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -&gt; Dict</code></td>
 <td><code>album</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>album_download(self, media_pk: int, folder: pathlib._local.Path = '', overwrite: bool = True) -&gt; List[pathlib._local.Path]</code></td>
 <td><code>album</code></td>
 <td><code>GET /album/download</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>album_download_by_urls(self, urls: List[str], folder: pathlib._local.Path = '', overwrite: bool = True) -&gt; List[pathlib._local.Path]</code></td>
 <td><code>album</code></td>
 <td><code>GET /album/download/by/urls</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>album_download_origin(self, media_pk: int) -&gt; List[bytes]</code></td>
 <td><code>album</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>album_upload(self, paths: List[pathlib._local.Path], caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 3, configure_handler=None, configure_exception=None, to_story=False, extra_data: Dict[str, str] = {}) -&gt; aiograpi.types.Media</code></td>
 <td><code>album</code></td>
 <td><code>POST /album/upload</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>album_upload_with_music(self, paths: List[pathlib._local.Path], caption: str, track: Union[aiograpi.types.Track, Dict], usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 3, configure_handler=None, configure_exception=None, to_story=False, extra_data: Dict[str, str] = {}, audio_asset_start_time: Optional[int] = None, overlap_duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -&gt; aiograpi.types.Media</code></td>
 <td><code>album</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>archive_medias(self, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>archive_medias_paginated_v1(self, amount: int = 0, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>archive_medias</code></td>
 </tr>
 <tr>
 <td><code>archive_medias_v1(self, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>archive_medias</code></td>
 </tr>
 <tr>
 <td><code>archive_stories(self, amount: int = 0) -&gt; List[aiograpi.types.Story]</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>archive_stories_v1(self, amount: int = 0) -&gt; List[aiograpi.types.Story]</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>archive_stories</code></td>
 </tr>
 <tr>
 <td><code>archive_story_days(self, amount: int = 0, include_memories: bool = True) -&gt; List[aiograpi.types.StoryArchiveDay]</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>archive_story_days</code> route family</td>
 </tr>
 <tr>
 <td><code>archive_story_days_paginated_v1(self, amount: int = 0, end_cursor: str = '', include_memories: bool = True, reel_id: str = '') -&gt; Tuple[List[aiograpi.types.StoryArchiveDay], str]</code></td>
 <td><code>story</code></td>
 <td><code>GET /story/archive</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>archive_story_days_v1(self, amount: int = 0, include_memories: bool = True) -&gt; List[aiograpi.types.StoryArchiveDay]</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>archive_story_days</code> route family</td>
 </tr>
 <tr>
 <td><code>bloks_action(self, action: str, data: dict) -&gt; bool</code></td>
 <td><code>bloks</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>bloks_change_password(self, password: str, challenge_context: dict) -&gt; bool</code></td>
 <td><code>bloks</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>chaining(self, user_id: str) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>challenge_api(self, data)</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>challenge_captcha(self, challenge_json_data)</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>challenge_code_handler(self, username: str, choice=None)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>challenge_code_or_raised(self, choice: aiograpi.mixins.challenge.ChallengeChoice, wait_seconds: int = 5, attempts: int = 24, challenge_url: str = None, sessionid: str = None) -&gt; str</code></td>
 <td><code>challenge</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>challenge_flow(self, data)</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>challenge_resolve(self, last_json: Dict) -&gt; bool</code></td>
 <td><code>challenge</code></td>
 <td><code>POST /auth/challenge/resolve</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>challenge_resolve_contact_form(self, challenge_url: str) -&gt; bool</code></td>
 <td><code>challenge</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>challenge_resolve_new_password_form(self, result)</code></td>
 <td><code>challenge</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>challenge_resolve_simple(self, challenge_url: str) -&gt; bool</code></td>
 <td><code>challenge</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>challenge_submit_phone_number(self, data, phone_number)</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>challenge_verify_sms_captcha(self, data, security_code)</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>change_password(self, old_password: str, new_password: str) -&gt; bool</code></td>
 <td><code>account</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>change_password_handler(self, username: str)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>check_age_eligibility(self, year, month, day)</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>check_confirmation_code(self, email, code) -&gt; dict</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>check_email(self, email) -&gt; dict</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>check_phone_number(self, phone_number: str)</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>check_username(self, username)</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>clip_configure(self, upload_id: str, thumbnail: pathlib._local.Path, width: int, height: int, duration: int, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, feed_show: str = '1', extra_data: Dict[str, str] = {}) -&gt; Dict</code></td>
 <td><code>clip</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>clip_download(self, media_pk: int, folder: pathlib._local.Path = '') -&gt; str</code></td>
 <td><code>clip</code></td>
 <td><code>GET /clip/download</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>clip_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -&gt; str</code></td>
 <td><code>clip</code></td>
 <td><code>GET /clip/download/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>clip_info_for_creation(self) -&gt; Dict</code></td>
 <td><code>clip</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>clip_pin(self, media_pk: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>clip</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>clip_share_to_fb_config(self, device_status: Optional[Dict[str, object]] = None) -&gt; Dict</code></td>
 <td><code>clip</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>clip_trial_eligible(self) -&gt; bool</code></td>
 <td><code>clip</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>clip_unpin(self, media_pk: str) -&gt; bool</code></td>
 <td><code>clip</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>clip_upload(self, path: pathlib._local.Path, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 10, feed_show: str = '1', extra_data: Dict[str, object] = {}, trial: bool = False, trial_graduation_strategy: str = 'manual') -&gt; aiograpi.types.Media</code></td>
 <td><code>clip</code></td>
 <td><code>POST /clip/upload</code><br><code>POST /clip/upload/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>clip_upload_as_reel_with_music(self, path: pathlib._local.Path, caption: str, track: aiograpi.types.Track, extra_data: Dict[str, str] = {}) -&gt; aiograpi.types.Media</code></td>
 <td><code>clip</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>close_friend_add(self, user_id: str)</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>close_friend_remove(self, user_id: str)</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>collection_medias(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>collection</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>collection_medias_by_name(self, name: str) -&gt; List[aiograpi.types.Collection]</code></td>
 <td><code>collection</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>collection_medias_v1(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>collection</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>collection_medias</code></td>
 </tr>
 <tr>
 <td><code>collection_medias_v1_chunk(self, collection_pk: str, max_id: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>collection</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>collection_medias</code></td>
 </tr>
 <tr>
 <td><code>collection_pk_by_name(self, name: str) -&gt; int</code></td>
 <td><code>collection</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>collections(self) -&gt; List[aiograpi.types.Collection]</code></td>
 <td><code>collection</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>comment_bulk_delete(self, media_id: str, comment_pks: List[int]) -&gt; bool</code></td>
 <td><code>comment</code></td>
 <td><code>DELETE /media/comment</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>comment_like(self, comment_pk: int, revert: bool = False) -&gt; bool</code></td>
 <td><code>comment</code></td>
 <td><code>POST /media/comment/like</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>comment_likers_gql(self, comment_pk: str, amount: int = 0) -&gt; List[dict]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>comment_likers_gql_chunk(self, comment_pk: str, end_cursor: str = '') -&gt; Tuple[List[dict], str]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>comment_likers_gql</code></td>
 </tr>
 <tr>
 <td><code>comment_pin(self, media_id: str, comment_pk: int, revert: bool = False)</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>comment_unlike(self, comment_pk: int) -&gt; bool</code></td>
 <td><code>comment</code></td>
 <td><code>DELETE /media/comment/like</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>comment_unpin(self, media_id: str, comment_pk: int)</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>create_music_note(self, track: Union[aiograpi.types.Track, Dict], text: str = '', audience: int = 0, start_time: Optional[int] = None, duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -&gt; aiograpi.types.Note</code></td>
 <td><code>note</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>create_note(self, text: str, audience: int = 0) -&gt; aiograpi.types.Note</code></td>
 <td><code>note</code></td>
 <td><code>POST /note</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>creator_info(self, user_id: str, entry_point: str = 'direct_thread') -&gt; Tuple[aiograpi.types.UserShort, Dict]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>delete_note(self, note_id: int) -&gt; bool</code></td>
 <td><code>note</code></td>
 <td><code>DELETE /note</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_active_presence(self) -&gt; Dict</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_answer(self, thread_id: int, text: str) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_delete_reaction(self, thread_id: int, message_id: int, emoji: str = '❤', client_context: Optional[str] = None, action_source: str = 'double_tap', target_item_type: Optional[str] = None) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_media(self, thread_id: int, amount: int = 20) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_media_share(self, media_id: str, user_ids: List[int], send_attribute: ('feed_timeline', 'feed_contextual_chain', 'feed_short_url', 'feed_contextual_self_profile', 'feed_contextual_profile') = 'feed_timeline', media_type: str = 'photo') -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_message(self, thread_id: int, message_id: int, amount: int = 20) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_message_delete(self, thread_id: int, message_id: int) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td><code>DELETE /direct/message</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_message_like(self, thread_id: int, message_id: int, client_context: Optional[str] = None) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_message_search(self, query: str) -&gt; List[Tuple[aiograpi.types.DirectMessage, aiograpi.types.DirectShortThread]]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_message_seen(self, thread_id: int, message_id: int) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td><code>PATCH /direct/message/seen</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_message_unlike(self, thread_id: int, message_id: int, client_context: Optional[str] = None) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_message_unsend(self, thread_id: int, message_id: int) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_messages(self, thread_id: int, amount: int = 20) -&gt; List[aiograpi.types.DirectMessage]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_pending_approve(self, thread_id: int) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_pending_chunk(self, cursor: str = None) -&gt; Tuple[List[aiograpi.types.DirectThread], str]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_pending_inbox(self, amount: int = 20) -&gt; List[aiograpi.types.DirectThread]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_profile_share(self, user_id: str, user_ids: List[int] = [], thread_ids: List[int] = []) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_request_approve(self, thread_id: int) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_requests(self, amount: int = 20) -&gt; List[aiograpi.types.DirectThread]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_search(self, query: str, mode: Literal['raven', 'universal'] = 'universal') -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_send(self, text: str, user_ids: List[int] = [], thread_ids: List[int] = [], send_attribute: Literal['message_button', 'inbox_search'] = 'message_button', reply_to_message: Optional[aiograpi.types.DirectMessage] = None) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td><code>POST /direct/message</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_send_cutout_sticker(self, sticker_pk: str, user_ids: List[int] = None, thread_ids: List[int] = None) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_send_file(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], content_type: str = 'photo') -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_send_photo(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_send_reaction(self, thread_id: int, message_id: int, emoji: str = '❤', client_context: Optional[str] = None, action_source: str = 'double_tap', target_item_type: Optional[str] = None) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_send_seen(self, thread_id: int) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_send_video(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_send_voice(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], waveform: Optional[List[float]] = None) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_spam_chunk(self, cursor: str = None) -&gt; Tuple[List[aiograpi.types.DirectThread], str]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_spam_inbox(self, amount: int = 20) -&gt; List[aiograpi.types.DirectThread]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_story_share(self, story_id: str, user_ids: List[int] = [], thread_ids: List[int] = []) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_thread(self, thread_id: int, amount: int = 20) -&gt; aiograpi.types.DirectThread</code></td>
 <td><code>direct</code></td>
 <td><code>GET /direct/thread</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_thread_add_users(self, thread_id: int, user_ids: List[int]) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_thread_by_participants(self, user_ids: List[int]) -&gt; Dict</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_thread_create(self, user_ids: List[int], title: str = '') -&gt; str</code></td>
 <td><code>direct</code></td>
 <td><code>POST /direct/thread</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_thread_hide(self, thread_id: int, move_to_spam: bool = False) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_thread_mark_unread(self, thread_id: int) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_thread_mute(self, thread_id: int, revert: bool = False) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_thread_mute_video_call(self, thread_id: int, revert: bool = False) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_thread_unmute(self, thread_id: int) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_thread_unmute_video_call(self, thread_id: int) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_thread_update_title(self, thread_id: int, title: str) -&gt; bool</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>direct_threads(self, amount: int = 20, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None) -&gt; List[aiograpi.types.DirectThread]</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>direct_threads</code> route family</td>
 </tr>
 <tr>
 <td><code>direct_threads_chunk(self, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None, cursor: str = None) -&gt; Tuple[List[aiograpi.types.DirectThread], str]</code></td>
 <td><code>direct</code></td>
 <td><code>GET /direct/inbox</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_users_presence(self, user_ids: List[int]) -&gt; Dict</code></td>
 <td><code>direct</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>disable_posts_notifications(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>disable_reels_notifications(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>disable_stories_notifications(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>disable_videos_notifications(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>discover_recommended_accounts_for_category_v1(self, user_id: str) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>dump_instaman(self)</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>dump_settings(self, path: Union[str, pathlib._local.Path]) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>enable_posts_notifications(self, user_id: str, disable: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>enable_reels_notifications(self, user_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>enable_stories_notifications(self, user_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>enable_videos_notifications(self, user_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>explore_page(self)</code></td>
 <td><code>explore</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>explore_page_media_info(self, media_pk: int)</code></td>
 <td><code>explore</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>explore_reels(self, amount: int = 10, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>timeline</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>expose(self) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td><code>PATCH /auth/settings</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>fbsearch_accounts_v2(self, query: str, page_token: Optional[str] = None) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
 <td><code>GET /search/accounts</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>fbsearch_item(self, item_id: str, search_surface: str, query: str, timezone_offset: int = 0, count: int = 30, reels_page_index: int = None, has_more_reels: str = None, reels_max_id: str = None, next_max_id: str = None, rank_token: str = None, page_index: int = None, page_token: str = None, paging_token: str = None) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>fbsearch_keyword_typeahead(self, query: str, timezone_offset: int = 0, count: int = 30) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
 <td><code>GET /search/typeahead</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>fbsearch_places(self, query: str, lat: float = 40.74, lng: float = -73.94) -&gt; List[aiograpi.types.Location]</code></td>
 <td><code>fbsearch</code></td>
 <td><code>GET /search/places</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>fbsearch_recent(self) -&gt; List[Tuple[int, Union[aiograpi.types.UserShort, aiograpi.types.Hashtag, Dict]]]</code></td>
 <td><code>fbsearch</code></td>
 <td><code>GET /search/recent</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>fbsearch_reels_v2(self, query: str, reels_max_id: Optional[str] = None, rank_token: Optional[str] = None) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
 <td><code>GET /search/reels</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>fbsearch_suggested_profiles(self, user_id: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>fbsearch</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>fbsearch_topsearch_flat(self, query: str) -&gt; List[dict]</code></td>
 <td><code>fbsearch</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>fbsearch_topsearch_v2(self, query: str, next_max_id: Optional[str] = None, reels_max_id: Optional[str] = None, rank_token: Optional[str] = None) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
 <td><code>GET /search/top</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>fbsearch_typeahead_stream(self, query: str, timezone_offset: int = 0, count: int = 30) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>fbsearch_typehead(self, query: str) -&gt; List[dict]</code></td>
 <td><code>fbsearch</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>featured_accounts_v1(self, target_user_id: str) -&gt; dict</code></td>
 <td><code>multiple_accounts</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>feed_user_stream_item(self, item_id: str, is_pull_to_refresh: bool = False) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>fetch_fb_dtsg(self)</code></td>
 <td><code>graphql</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>fetch_suggestion_details(self, user_id: str, chained_ids: Union[str, List[Union[str, int]]]) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>friends_reels(self, amount: int = 10, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>timeline</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>gen_user_breadcrumb(self, size: int) -&gt; str</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>generate_android_device_id(self) -&gt; str</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>generate_mutation_token(self) -&gt; str</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>generate_uuid(self, prefix: str = '', suffix: str = '') -&gt; str</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>get_account_family_v1(self) -&gt; dict</code></td>
 <td><code>multiple_accounts</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>get_note_by_user(self, notes: List[aiograpi.types.Note], username: str) -&gt; Optional[aiograpi.types.Note]</code></td>
 <td><code>note</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>get_note_text_by_user(self, notes: List[aiograpi.types.Note], username: str) -&gt; Optional[str]</code></td>
 <td><code>note</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>get_notes(self) -&gt; List[aiograpi.types.Note]</code></td>
 <td><code>note</code></td>
 <td><code>GET /notes</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>get_prefill_candidates(self, login: bool = False) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>get_reels_tray_feed(self, reason: Literal['cold_start', 'pull_to_refresh'] = 'pull_to_refresh') -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>get_settings(self) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td><code>GET /auth/settings</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>get_signup_config(self) -&gt; dict</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>get_timeline_feed(self, reason: Literal['cold_start_fetch', 'warm_start_fetch', 'pagination', 'pull_to_refresh', 'auto_refresh'] = 'pull_to_refresh', max_id: str = None, seen_posts: Union[str, Iterable[str], NoneType] = None, feed_view_info: Union[str, List[Dict[str, Any]], NoneType] = None) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td><code>GET /account/feed/timeline</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>graphql_request(self, data=None, params=None, headers=None, return_json=True, retries_count=1, retries_timeout=2)</code></td>
 <td><code>graphql</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>handle_challenge_result(self, challenge: Dict)</code></td>
 <td><code>challenge</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>hashtag_follow(self, hashtag: str, unfollow: bool = False) -&gt; bool</code></td>
 <td><code>hashtag</code></td>
 <td><code>POST /hashtag/follow</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>hashtag_info(self, name: str) -&gt; aiograpi.types.Hashtag</code></td>
 <td><code>hashtag</code></td>
 <td><code>GET /hashtag</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>hashtag_info_a1(self, name: str, max_id: str = None) -&gt; aiograpi.types.Hashtag</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>hashtag_info</code> route family</td>
 </tr>
 <tr>
 <td><code>hashtag_info_gql(self, name: str, amount: int = 12, end_cursor: str = None) -&gt; aiograpi.types.Hashtag</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>hashtag_info</code> route family</td>
 </tr>
 <tr>
 <td><code>hashtag_info_v1(self, name: str) -&gt; aiograpi.types.Hashtag</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>hashtag_info</code> route family</td>
 </tr>
 <tr>
 <td><code>hashtag_medias_a1(self, name: str, amount: int = 27, tab_key: str = '') -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>hashtag_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>hashtag_medias_a1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', end_cursor: str = None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>hashtag_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>hashtag_medias_recent(self, name: str, amount: int = 27) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>hashtag_medias_recent_a1(self, name: str, amount: int = 71) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>hashtag_medias_recent</code></td>
 </tr>
 <tr>
 <td><code>hashtag_medias_recent_v1(self, name: str, amount: int = 27) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>hashtag_medias_recent</code></td>
 </tr>
 <tr>
 <td><code>hashtag_medias_reels_v1(self, name: str, amount: int = 27) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
 <td><code>GET /hashtag/reels</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>hashtag_medias_top(self, name: str, amount: int = 9) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>hashtag_medias_top_a1(self, name: str, amount: int = 9) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>hashtag_medias_top</code></td>
 </tr>
 <tr>
 <td><code>hashtag_medias_top_v1(self, name: str, amount: int = 9) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>hashtag_medias_top</code></td>
 </tr>
 <tr>
 <td><code>hashtag_medias_v1(self, name: str, amount: int = 27, tab_key: str = '') -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>hashtag_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>hashtag_medias_v1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', max_id: str = None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>hashtag</code></td>
 <td><code>GET /hashtag/media/recent</code><br><code>GET /hashtag/media/top</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>hashtag_related_hashtags(self, name: str) -&gt; List[aiograpi.types.Hashtag]</code></td>
 <td><code>hashtag</code></td>
 <td><code>GET /hashtag/related</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>hashtag_unfollow(self, hashtag: str) -&gt; bool</code></td>
 <td><code>hashtag</code></td>
 <td><code>DELETE /hashtag/follow</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>highlight_add_stories(self, highlight_pk: str, added_media_ids: List[str]) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
 <td><code>POST /highlight/story</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>highlight_change_cover(self, highlight_pk: str, cover_path: pathlib._local.Path) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>highlight_change_title(self, highlight_pk: str, title: str) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>highlight_create(self, title: str, story_ids: List[str], cover_story_id: str = '', crop_rect: List[float] = [0.0, 0.21830457, 1.0, 0.78094524]) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
 <td><code>POST /highlight</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>highlight_delete(self, highlight_pk: str) -&gt; bool</code></td>
 <td><code>highlight</code></td>
 <td><code>DELETE /highlight</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>highlight_edit(self, highlight_pk: str, title: str = '', cover: Dict = {}, added_media_ids: List[str] = [], removed_media_ids: List[str] = [])</code></td>
 <td><code>highlight</code></td>
 <td><code>PATCH /highlight</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>highlight_info(self, highlight_pk: str) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
 <td><code>GET /highlight</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>highlight_info_v1(self, highlight_pk: str) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>highlight_info</code> route family</td>
 </tr>
 <tr>
 <td><code>highlight_pk_from_url(self, url: str) -&gt; str</code></td>
 <td><code>highlight</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>highlight_remove_stories(self, highlight_pk: str, removed_media_ids: List[str]) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
 <td><code>DELETE /highlight/story</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>igtv_configure(self, upload_id: str, thumbnail: pathlib._local.Path, width: int, height: int, duration: int, title: str, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -&gt; Dict</code></td>
 <td><code>igtv</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>igtv_download(self, media_pk: int, folder: pathlib._local.Path = '') -&gt; str</code></td>
 <td><code>igtv</code></td>
 <td><code>GET /igtv/download</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>igtv_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -&gt; str</code></td>
 <td><code>igtv</code></td>
 <td><code>GET /igtv/download/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>igtv_upload(self, path: pathlib._local.Path, title: str, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 10, extra_data: Dict[str, str] = {}) -&gt; aiograpi.types.Media</code></td>
 <td><code>igtv</code></td>
 <td><code>POST /igtv/upload</code><br><code>POST /igtv/upload/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>init(self) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>inject_sessionid_to_public(self) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>insights_account(self) -&gt; Dict</code></td>
 <td><code>insights</code></td>
 <td><code>GET /insights/account</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>insights_media(self, media_pk: int) -&gt; Dict</code></td>
 <td><code>insights</code></td>
 <td><code>GET /insights/media</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>insights_media_feed_all(self, post_type: Literal['ALL', 'CAROUSEL_V2', 'IMAGE', 'SHOPPING', 'VIDEO'] = 'ALL', time_frame: Literal['ONE_WEEK', 'ONE_MONTH', 'THREE_MONTHS', 'SIX_MONTHS', 'ONE_YEAR', 'TWO_YEARS'] = 'TWO_YEARS', data_ordering: Literal['REACH_COUNT', 'LIKE_COUNT', 'FOLLOW', 'SHARE_COUNT', 'BIO_LINK_CLICK', 'COMMENT_COUNT', 'IMPRESSION_COUNT', 'PROFILE_VIEW', 'VIDEO_VIEW_COUNT', 'SAVE_COUNT'] = 'REACH_COUNT', count: int = 0, sleep: int = 2) -&gt; List[Dict]</code></td>
 <td><code>insights</code></td>
 <td><code>GET /insights/media/feed</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>last_seen_update_note(self) -&gt; bool</code></td>
 <td><code>note</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>liked_medias(self, amount: int = 21, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>collection</code></td>
 <td><code>GET /account/liked/media</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>load_settings(self, path: Union[str, pathlib._local.Path], override_app_version: bool = False) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>location_build(self, location: aiograpi.types.Location) -&gt; str</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>location_complete(self, location: aiograpi.types.Location) -&gt; aiograpi.types.Location</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>location_feed(self, location_id, count=16, end_cursor=None)</code></td>
 <td><code>public</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>location_guides_v1(self, location_pk: int) -&gt; List[aiograpi.types.Guide]</code></td>
 <td><code>location</code></td>
 <td><code>GET /location/guides</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>location_info(self, location_pk: int) -&gt; aiograpi.types.Location</code></td>
 <td><code>location</code></td>
 <td><code>GET /location</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>location_info_a1(self, location_pk: int) -&gt; aiograpi.types.Location</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>location_info</code> route family</td>
 </tr>
 <tr>
 <td><code>location_info_v1(self, location_pk: int) -&gt; aiograpi.types.Location</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>location_info</code> route family</td>
 </tr>
 <tr>
 <td><code>location_medias_a1(self, location_pk: int, amount: int = 24, sleep: float = 0.5, tab_key: str = '') -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>location_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>location_medias_a1_chunk(self, location_pk: int, max_amount: int = 24, sleep: float = 0.5, tab_key: str = '', max_id: str = None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>location_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>location_medias_recent(self, location_pk: int, amount: int = 63, sleep: float = 0.5) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>location_medias_recent_a1(self, location_pk: int, amount: int = 24, sleep: float = 0.5) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>location_medias_recent</code></td>
 </tr>
 <tr>
 <td><code>location_medias_recent_v1(self, location_pk: int, amount: int = 63) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>location_medias_recent</code></td>
 </tr>
 <tr>
 <td><code>location_medias_top(self, location_pk: int, amount: int = 27, sleep: float = 0.5) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>location_medias_top_a1(self, location_pk: int, amount: int = 9, sleep: float = 0.5) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>location_medias_top</code></td>
 </tr>
 <tr>
 <td><code>location_medias_top_v1(self, location_pk: int, amount: int = 21) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>location_medias_top</code></td>
 </tr>
 <tr>
 <td><code>location_medias_v1(self, location_pk: int, amount: int = 63, tab_key: str = '') -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>location_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>location_medias_v1_chunk(self, location_pk: int, max_amount: int = 63, tab_key: str = '', max_id: str = None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>location</code></td>
 <td><code>GET /location/media/recent</code><br><code>GET /location/media/top</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>location_search(self, lat: float, lng: float) -&gt; List[aiograpi.types.Location]</code></td>
 <td><code>location</code></td>
 <td><code>GET /search/locations</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>location_search_name(self, name: str) -&gt; List[aiograpi.types.Location]</code></td>
 <td><code>location</code></td>
 <td><code>GET /search/locations</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>location_search_pk(self, location_pk: int) -&gt; aiograpi.types.Location</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>location_story_sticker_id(self, location: aiograpi.types.Location) -&gt; str</code></td>
 <td><code>location</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>login(self, username: Optional[str] = None, password: Optional[str] = None, relogin: bool = False, verification_code: str = '') -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td><code>POST /auth/login</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>login_by_sessionid(self, sessionid: str) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td><code>POST /auth/login/by/sessionid</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>login_flow(self) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>logout(self) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>media_archive(self, media_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>media</code></td>
 <td><code>POST /media/archive</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_check_offensive_comment(self, media_id: str, text: str) -&gt; bool</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_check_offensive_comment_v2(self, media_id: str, comment: str) -&gt; dict</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>media_check_offensive_comment</code></td>
 </tr>
 <tr>
 <td><code>media_code_from_pk(self, media_pk: str) -&gt; str</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_comment(self, media_id: str, text: str, replied_to_comment_id: Optional[int] = None) -&gt; aiograpi.types.Comment</code></td>
 <td><code>comment</code></td>
 <td><code>POST /media/comment</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_comment_infos(self, media_ids: List[str]) -&gt; dict</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_comment_replies(self, media_id: str, comment_id: str, amount: int = 0) -&gt; List[aiograpi.types.Comment]</code></td>
 <td><code>comment</code></td>
 <td><code>GET /media/comment/replies</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_comment_replies_chunk(self, media_id: str, comment_id: str, max_amount: int, min_id: str = None) -&gt; Tuple[List[aiograpi.types.Comment], str]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_comment_replies</code> route family</td>
 </tr>
 <tr>
 <td><code>media_comments(self, media_id: str, amount: int = 20) -&gt; List[aiograpi.types.Comment]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_comments</code> route family</td>
 </tr>
 <tr>
 <td><code>media_comments_chunk(self, media_id: str, max_amount: int, min_id: str = None) -&gt; Tuple[List[aiograpi.types.Comment], str]</code></td>
 <td><code>comment</code></td>
 <td><code>GET /media/comments</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_comments_gql(self, media_pk: str, amount: int = 50, max_requests: int = 0) -&gt; List[dict]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_comments</code> route family</td>
 </tr>
 <tr>
 <td><code>media_comments_gql_chunk(self, media_pk: str, end_cursor: str = '') -&gt; Tuple[List[dict], str]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_comments</code> route family</td>
 </tr>
 <tr>
 <td><code>media_comments_threaded_gql(self, media_pk: str, comment_pk: str, amount: int = 0) -&gt; List[dict]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_comments</code> route family</td>
 </tr>
 <tr>
 <td><code>media_comments_threaded_gql_chunk(self, media_pk: str, comment_pk: str, end_cursor: str = '') -&gt; Tuple[List[dict], str]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_comments</code> route family</td>
 </tr>
 <tr>
 <td><code>media_comments_v1(self, media_id: str, amount: int = 20) -&gt; List[aiograpi.types.Comment]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_comments</code> route family</td>
 </tr>
 <tr>
 <td><code>media_comments_v1_chunk(self, media_id: str, min_id: str = '', max_id: str = '') -&gt; Tuple[List[aiograpi.types.Comment], str, str]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_comments</code> route family</td>
 </tr>
 <tr>
 <td><code>media_configure_to_cutout_sticker(self, upload_id: str, source_type: str = 'library', manual_box: List[float] = None, use_ai_detection: bool = False, extra_data: Dict[str, str] = None) -&gt; aiograpi.types.Media</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>media_create_livestream(self, title='Instagram Live')</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_delete(self, media_id: str) -&gt; bool</code></td>
 <td><code>media</code></td>
 <td><code>DELETE /media</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_edit(self, media_id: str, caption: str, title: str = '', usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None) -&gt; Dict</code></td>
 <td><code>media</code></td>
 <td><code>PATCH /media</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_end_livestream(self, broadcast_id)</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_get_livestream_comments(self, broadcast_id)</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_get_livestream_info(self, broadcast_id)</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_get_livestream_viewers(self, broadcast_id)</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_id(self, media_pk: str) -&gt; str</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_info(self, media_pk: str, use_cache: bool = True) -&gt; aiograpi.types.Media</code></td>
 <td><code>media</code></td>
 <td><code>GET /media</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_info_a1(self, media_pk: str, max_id: str = None) -&gt; aiograpi.types.Media</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_info</code> route family</td>
 </tr>
 <tr>
 <td><code>media_info_gql(self, media_pk: str) -&gt; aiograpi.types.Media</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_info</code> route family</td>
 </tr>
 <tr>
 <td><code>media_info_v1(self, media_pk: str) -&gt; aiograpi.types.Media</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_info</code> route family</td>
 </tr>
 <tr>
 <td><code>media_info_v2(self, media_id: str) -&gt; aiograpi.types.Media</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_info</code> route family</td>
 </tr>
 <tr>
 <td><code>media_like(self, media_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>media</code></td>
 <td><code>POST /media/like</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_likers(self, media_id: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>media</code></td>
 <td><code>GET /media/likers</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_likers_gql(self, media_pk: str, amount: int = 0) -&gt; List[dict]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_likers</code> route family</td>
 </tr>
 <tr>
 <td><code>media_likers_gql_chunk(self, media_pk: str, end_cursor: str = '') -&gt; Tuple[List[dict], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>media_likers</code> route family</td>
 </tr>
 <tr>
 <td><code>media_oembed(self, url: str) -&gt; Dict</code></td>
 <td><code>media</code></td>
 <td><code>GET /media/oembed</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_pin(self, media_pk: str, revert: bool = False)</code></td>
 <td><code>media</code></td>
 <td><code>POST /media/pin</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_pk(media_id: str) -&gt; str</code></td>
 <td><code>media</code></td>
 <td><code>GET /media</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_pk_from_code(self, code: str) -&gt; str</code></td>
 <td><code>media</code></td>
 <td><code>GET /media</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_pk_from_url(self, url: str) -&gt; str</code></td>
 <td><code>media</code></td>
 <td><code>GET /media</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_save(self, media_id: str, collection_pk: int = None, revert: bool = False) -&gt; bool</code></td>
 <td><code>collection</code></td>
 <td><code>POST /media/save</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_seen(self, media_ids: List[str], skipped_media_ids: List[str] = [])</code></td>
 <td><code>media</code></td>
 <td><code>PATCH /media/seen</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_start_livestream(self, broadcast_id)</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_stream_comments_v1_chunk(self, media_id: str, min_id: str = '', max_id: str = '') -&gt; Tuple[List[aiograpi.types.Comment], str, str]</code></td>
 <td><code>comment</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_template_v1(self, media_id: str)</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>media_unarchive(self, media_id: str) -&gt; bool</code></td>
 <td><code>media</code></td>
 <td><code>DELETE /media/archive</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_unlike(self, media_id: str) -&gt; bool</code></td>
 <td><code>media</code></td>
 <td><code>DELETE /media/like</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_unpin(self, media_pk)</code></td>
 <td><code>media</code></td>
 <td><code>DELETE /media/pin</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_unsave(self, media_id: str, collection_pk: int = None) -&gt; bool</code></td>
 <td><code>collection</code></td>
 <td><code>DELETE /media/save</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>media_user(self, media_pk: str) -&gt; aiograpi.types.UserShort</code></td>
 <td><code>media</code></td>
 <td><code>GET /media/author</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>music_in_feed_audio_browser(self, browse_session_id: Optional[str] = None) -&gt; Dict</code></td>
 <td><code>track</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>mute_posts_from_follow(self, user_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td><code>POST /user/mute/posts</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>mute_stories_from_follow(self, user_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td><code>POST /user/mute/stories</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>new_feed_exist(self) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>news_inbox_v1(self, mark_as_seen: bool = False) -&gt; dict</code></td>
 <td><code>account</code></td>
 <td><code>GET /notifications</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>notes_music_browser(self) -&gt; Dict</code></td>
 <td><code>note</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_announcements(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_comment_likes(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_comments(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_connection(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_direct_group_requests(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_direct_share_activity(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_disable(self) -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_felix_upload_result(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_first_post(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_follow_request_accepted(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_fundraiser_creator(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_fundraiser_supporter(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_like_and_comment_on_photo_user_tagged(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_likes(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_live_broadcast(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_login(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_mute_all(self, setting_value: Literal['cancel', '15_minutes', '1_hour', '2_hour', '4_hour', '8_hour'] = '8_hour') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_new_follower(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_pending_direct_share(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_reminders(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_report_updated(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_rooms(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_settings(self, content_type: str, setting_value: str) -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td><code>PATCH /notifications/settings</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>notification_tagged_in_bio(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_user_tagged(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_video_call(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>notification_view_count(self, setting_value: Literal['off', 'following_only', 'everyone'] = 'off') -&gt; bool</code></td>
 <td><code>notification</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>one_tap_app_login(self, user_id: str, nonce: str) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>parse_authorization(self, authorization) -&gt; dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>password_encrypt(self, password)</code></td>
 <td><code>password</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>password_publickeys(self)</code></td>
 <td><code>password</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>photo_configure(self, upload_id: str, width: int, height: int, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -&gt; Dict</code></td>
 <td><code>photo</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>photo_configure_to_story(self, upload_id: str, width: int, height: int, caption: str, mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], extra_data: Dict[str, str] = {}) -&gt; Dict</code></td>
 <td><code>photo</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>photo_download(self, media_pk: int, folder: pathlib._local.Path = '', overwrite: bool = True) -&gt; pathlib._local.Path</code></td>
 <td><code>photo</code></td>
 <td><code>GET /photo/download</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>photo_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '', overwrite: bool = True) -&gt; pathlib._local.Path</code></td>
 <td><code>photo</code></td>
 <td><code>GET /photo/download/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>photo_download_by_url_origin(self, url: str) -&gt; bytes</code></td>
 <td><code>photo</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>photo_download_by_url</code> route family</td>
 </tr>
 <tr>
 <td><code>photo_rupload(self, path: pathlib._local.Path, upload_id: str = '', to_album: bool = False, for_story: bool = False) -&gt; tuple</code></td>
 <td><code>photo</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>photo_upload(self, path: pathlib._local.Path, caption: str, upload_id: str = '', usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -&gt; aiograpi.types.Media</code></td>
 <td><code>photo</code></td>
 <td><code>POST /photo/upload</code><br><code>POST /photo/upload/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>photo_upload_to_cutout_sticker(self, path: pathlib._local.Path, bypass_ai: bool = True) -&gt; aiograpi.types.Media</code></td>
 <td><code>photo</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>photo_upload_to_story(self, path: pathlib._local.Path, caption: str = '', upload_id: str = '', mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], extra_data: Dict[str, str] = {}) -&gt; aiograpi.types.Story</code></td>
 <td><code>photo</code></td>
 <td><code>POST /story/upload</code><br><code>POST /story/upload/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>photo_upload_with_music(self, path: pathlib._local.Path, caption: str, track: Union[aiograpi.types.Track, Dict], upload_id: str = '', usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}, audio_asset_start_time: Optional[int] = None, overlap_duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -&gt; aiograpi.types.Media</code></td>
 <td><code>photo</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>pre_login_flow(self) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_clips_profile(self, target_user_id: str, client_doc_id: str = '209049231614685382737238866578', priority: str = None, initial_stream_count: int = 6, page_size: int = 12, no_of_medias_in_each_chunk: int = 6) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_followers_list(self, user_id: str, rank_token: str, client_doc_id: str = '28479704798344003308647327139', max_id: int = None, priority: str = None, exclude_field_is_favorite: bool = None, exclude_unused_fields: bool = None) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_following_list(self, user_id: str, rank_token: str, client_doc_id: str = '16104639289023609826830352479', max_id: int = None, priority: str = None, exclude_field_is_favorite: bool = None, exclude_unused_fields: bool = None) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_inbox_tray_for_user(self, user_id: str, client_doc_id: str = '2035639076042015234490020607', priority: str = None) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_memories_pog(self, client_doc_id: str = '4160563056814166588457451196', direct_region_hint: str = None) -&gt; dict</code></td>
 <td><code>graphql</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_query_request(self, friendly_name: str, root_field_name: str, variables: dict = None, client_doc_id: str = None, priority: str = None, extra_headers: dict = None) -&gt; dict</code></td>
 <td><code>graphql</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_realtime_region_hint(self, client_doc_id: str = '52232106018313849661757113193') -&gt; dict</code></td>
 <td><code>graphql</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_request(self, data: dict, headers: dict = None, domain: str = None) -&gt; dict</code></td>
 <td><code>graphql</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_top_audio_trends_eligible_categories(self, client_doc_id: str = '10243243298540497152200027985') -&gt; dict</code></td>
 <td><code>graphql</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_graphql_update_inbox_tray_last_seen(self, client_doc_id: str = '41048505499858972910914091441') -&gt; dict</code></td>
 <td><code>graphql</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>private_request(self, endpoint, data=None, params=None, login=False, with_signature=True, headers=None, extra_sig=None, domain: str = None)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>profile_related_info(self, profile_id)</code></td>
 <td><code>public</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>public_a1_request(self, endpoint, data=None, params=None, headers=None, full=False)</code></td>
 <td><code>public</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>public_a1_request_user_info_by_username(self, username, data=None, params=None)</code></td>
 <td><code>public</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>public_doc_id_graphql_request(self, doc_id: str, variables: Dict[str, Any], referer: Optional[str] = None, headers: Optional[Dict[str, str]] = None) -&gt; Dict[str, Any]</code></td>
 <td><code>public</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>public_graphql_request(self, variables, query_hash=None, query_id=None, data=None, params=None, headers=None)</code></td>
 <td><code>public</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>public_head(self, url: str, follow_redirects: bool = False)</code></td>
 <td><code>public</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>public_request(self, url, data=None, params=None, headers=None, update_headers=None, return_json=False, retries_count=None, retries_timeout=None)</code></td>
 <td><code>public</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>reels(self, amount: int = 10, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>timeline</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>reels_timeline_media(self, collection_pk: str, amount: int = 10, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>timeline</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>relogin(self) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td><code>PATCH /auth/relogin</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>remove_bio_links(self, link_ids: list) -&gt; dict</code></td>
 <td><code>account</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>report_explore_media(self, media_pk: int)</code></td>
 <td><code>explore</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>request_log(self, response)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>reset_password(self, username: str) -&gt; Dict</code></td>
 <td><code>account</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>search_followers(self, user_id: str, query: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>search_followers</code> route family</td>
 </tr>
 <tr>
 <td><code>search_followers_v1(self, user_id: str, query: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td><code>GET /search/followers</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>search_following(self, user_id: str, query: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>search_following</code> route family</td>
 </tr>
 <tr>
 <td><code>search_following_v1(self, user_id: str, query: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td><code>GET /search/following</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>search_hashtags(self, query: str) -&gt; List[aiograpi.types.Hashtag]</code></td>
 <td><code>fbsearch</code></td>
 <td><code>GET /search/hashtags</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>search_music(self, query: str) -&gt; List[aiograpi.types.Track]</code></td>
 <td><code>fbsearch</code></td>
 <td><code>GET /search/music</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>search_users(self, query: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>fbsearch</code></td>
 <td><code>GET /search/users</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>search_users_v1(self, query: str, count: int) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>search_users</code> route family</td>
 </tr>
 <tr>
 <td><code>send_confirm_email(self, email: str) -&gt; dict</code></td>
 <td><code>account</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>send_confirm_phone_number(self, phone_number: str) -&gt; dict</code></td>
 <td><code>account</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>send_signup_sms_code(self, phone_number: str)</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>send_verify_email(self, email) -&gt; dict</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_app(self, app: Union[str, Dict] = None, seed: str = None) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_contact_point_prefill(self, usage: str = 'prefill') -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_country(self, country: str = 'US')</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_country_code(self, country_code: int = 1)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_device(self, device: Dict = None, reset: bool = False) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_external_url(self, external_url) -&gt; dict</code></td>
 <td><code>account</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>set_ig_u_rur(self, value)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_ig_www_claim(self, value)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_locale(self, locale: str = 'en_US')</code></td>
 <td><code>private</code></td>
 <td><code>POST /auth/login</code><br><code>POST /auth/login/by/sessionid</code><br><code>PATCH /auth/settings</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>set_proxy(self, dsn: Optional[str])</code></td>
 <td><code>aiograpi</code></td>
 <td><code>POST /auth/login</code><br><code>POST /auth/login/by/sessionid</code><br><code>PATCH /auth/settings</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>set_retry_config(self, request_timeout: Union[int, float, NoneType] = None, public_request_retries_count: int = None, public_request_retries_timeout: Union[int, float] = None, session_retry_total: int = None, session_retry_backoff_factor: Union[int, float] = None, session_retry_statuses: list = None, public_transport: Optional[str] = None, public_transport_impersonate: Optional[str] = None) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_settings(self, settings: Dict) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td><code>PATCH /auth/settings</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>set_timezone_offset(self, seconds: int = 0)</code></td>
 <td><code>private</code></td>
 <td><code>POST /auth/login</code><br><code>POST /auth/login/by/sessionid</code><br><code>PATCH /auth/settings</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>set_user_agent(self, user_agent: str = '', reset: bool = False) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>set_uuids(self, uuids: Dict = None) -&gt; bool</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>share_code_from_url(self, url: str) -&gt; str</code></td>
 <td><code>share</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>share_info(self, code: str) -&gt; aiograpi.types.Share</code></td>
 <td><code>share</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>share_info_by_url(self, url: str) -&gt; aiograpi.types.Share</code></td>
 <td><code>share</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>signup(self, username: str, password: str, email: str = '', phone_number: str = '', full_name: str = '', year: int = None, month: int = None, day: int = None) -&gt; aiograpi.types.UserShort</code></td>
 <td><code>signup</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>small_delay(self)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>standalone_fundraiser_info_v1(self, user_id: str)</code></td>
 <td><code>fundraiser</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>sticker_tray(self) -&gt; dict</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>story_delete(self, story_pk: str) -&gt; bool</code></td>
 <td><code>story</code></td>
 <td><code>DELETE /story</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>story_download(self, story_pk: str, filename: str = '', folder: pathlib._local.Path = '') -&gt; pathlib._local.Path</code></td>
 <td><code>story</code></td>
 <td><code>GET /story/download</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>story_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -&gt; pathlib._local.Path</code></td>
 <td><code>story</code></td>
 <td><code>GET /story/download/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>story_info(self, story_pk: str, use_cache: bool = True) -&gt; aiograpi.types.Story</code></td>
 <td><code>story</code></td>
 <td><code>GET /story</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>story_info_v1(self, story_pk: str) -&gt; aiograpi.types.Story</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>story_info</code> route family</td>
 </tr>
 <tr>
 <td><code>story_like(self, story_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>story</code></td>
 <td><code>POST /story/like</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>story_pk_from_url(self, url: str) -&gt; str</code></td>
 <td><code>story</code></td>
 <td><code>GET /story</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>story_seen(self, story_pks: List[str], skipped_story_pks: List[str] = [])</code></td>
 <td><code>story</code></td>
 <td><code>PATCH /story/seen</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>story_unlike(self, story_id: str) -&gt; bool</code></td>
 <td><code>story</code></td>
 <td><code>DELETE /story/like</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>story_viewers(self, story_pk: str, amount: int = 0) -&gt; List[aiograpi.types.Viewer]</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>story_viewers</code> route family</td>
 </tr>
 <tr>
 <td><code>story_viewers_chunk(self, story_pk: str, max_amount: int = 0, max_id: str = '') -&gt; tuple[typing.List[aiograpi.types.Viewer], str]</code></td>
 <td><code>story</code></td>
 <td><code>GET /story/viewers</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>sync_device_features(self, login: bool = False) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>sync_launcher(self, login: bool = False) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>top_search(self, query)</code></td>
 <td><code>public</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>totp_disable(self) -&gt; bool</code></td>
 <td><code>totp</code></td>
 <td><code>DELETE /auth/totp</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>totp_enable(self, verification_code: str) -&gt; List[str]</code></td>
 <td><code>totp</code></td>
 <td><code>POST /auth/totp</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>totp_generate_code(seed: str) -&gt; str</code></td>
 <td><code>totp</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>totp_generate_seed(self) -&gt; str</code></td>
 <td><code>totp</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>track_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -&gt; pathlib._local.Path</code></td>
 <td><code>track</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>track_info_by_canonical_id(self, music_canonical_id: str) -&gt; aiograpi.types.Track</code></td>
 <td><code>track</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>track_info_by_id(self, track_id: str, max_id: str = '') -&gt; Dict</code></td>
 <td><code>track</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>track_stream_info_by_id(self, track_id: str, max_id: str = '') -&gt; Dict</code></td>
 <td><code>track</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>unmute_posts_from_follow(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td><code>DELETE /user/mute/posts</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>unmute_stories_from_follow(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td><code>DELETE /user/mute/stories</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_about_v1(self, user_id: str) -&gt; aiograpi.types.About</code></td>
 <td><code>user</code></td>
 <td><code>GET /user/about</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_block(self, user_id: str, surface: str = 'profile') -&gt; bool</code></td>
 <td><code>user</code></td>
 <td><code>POST /user/block</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_clips(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_clips</code> route family</td>
 </tr>
 <tr>
 <td><code>user_clips_chunk_v1(self, user_id: int, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_clips</code> route family</td>
 </tr>
 <tr>
 <td><code>user_clips_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td><code>GET /user/reels</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_clips_v1(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_clips</code> route family</td>
 </tr>
 <tr>
 <td><code>user_follow(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td><code>POST /user/follow</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_follow_request_approve(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_follow_request_decline(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_follow_requests(self, amount: int = 0) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_follow_requests</code> route family</td>
 </tr>
 <tr>
 <td><code>user_follow_requests_approve(self, user_ids: List[str]) -&gt; Dict[str, bool]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_follow_requests_chunk(self, max_amount: int = 0, max_id: str = '') -&gt; Tuple[List[aiograpi.types.UserShort], str]</code></td>
 <td><code>user</code></td>
 <td><code>GET /account/follow/requests</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_follow_requests_decline(self, user_ids: List[str]) -&gt; Dict[str, bool]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_followers(self, user_id: str, amount: int = 0) -&gt; Dict[str, aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_followers</code> route family</td>
 </tr>
 <tr>
 <td><code>user_followers_gql(self, user_id: str, amount: int = 0) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_followers</code> route family</td>
 </tr>
 <tr>
 <td><code>user_followers_gql_chunk(self, user_id: str, max_amount: int = 0, end_cursor: str = None) -&gt; Tuple[List[aiograpi.types.UserShort], str]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_followers</code> route family</td>
 </tr>
 <tr>
 <td><code>user_followers_v1(self, user_id: str, amount: int = 0) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_followers</code> route family</td>
 </tr>
 <tr>
 <td><code>user_followers_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -&gt; Tuple[List[aiograpi.types.UserShort], str]</code></td>
 <td><code>user</code></td>
 <td><code>GET /user/followers</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_following(self, user_id: str, amount: int = 0) -&gt; Dict[str, aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_following</code> route family</td>
 </tr>
 <tr>
 <td><code>user_following_gql(self, user_id: str, amount: int = 0) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_following</code> route family</td>
 </tr>
 <tr>
 <td><code>user_following_gql_chunk(self, user_id: str, max_amount: int = 0, end_cursor: str = None) -&gt; Tuple[List[aiograpi.types.UserShort], str]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_following</code> route family</td>
 </tr>
 <tr>
 <td><code>user_following_v1(self, user_id: str, amount: int = 0) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_following</code> route family</td>
 </tr>
 <tr>
 <td><code>user_following_v1_chunk(self, user_id: str, max_amount: int = 0, max_id: str = '') -&gt; Tuple[List[aiograpi.types.UserShort], str]</code></td>
 <td><code>user</code></td>
 <td><code>GET /user/following</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_friendship_v1(self, user_id: str) -&gt; aiograpi.types.Relationship</code></td>
 <td><code>user</code></td>
 <td><code>GET /user/friendship</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_friendships_v1(self, user_ids: List[str]) -&gt; List[aiograpi.types.RelationshipShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_guides_v1(self, user_id: int) -&gt; List[aiograpi.types.Guide]</code></td>
 <td><code>user</code></td>
 <td><code>GET /user/guides</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_highlights(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Highlight]</code></td>
 <td><code>highlight</code></td>
 <td><code>GET /user/highlights</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_highlights_v1(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Highlight]</code></td>
 <td><code>highlight</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_highlights</code> route family</td>
 </tr>
 <tr>
 <td><code>user_id_from_username(self, username: str) -&gt; str</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_info(self, user_id: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
 <td><code>GET /user</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_info_by_username(self, username: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
 <td><code>GET /user</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_info_by_username_a1(self, username: str) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_info_by_username</code> route family</td>
 </tr>
 <tr>
 <td><code>user_info_by_username_gql(self, username: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_info_by_username</code> route family</td>
 </tr>
 <tr>
 <td><code>user_info_by_username_v1(self, username: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
 <td><code>GET /user/posts</code><br><code>GET /user/reels</code><br><code>GET /user/tagged/posts</code><br><code>GET /user/videos</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_info_by_username_v2_gql(self, username: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_info_by_username</code> route family</td>
 </tr>
 <tr>
 <td><code>user_info_gql(self, user_id: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_info</code> route family</td>
 </tr>
 <tr>
 <td><code>user_info_v1(self, user_id: str, from_module: Literal['self_profile', 'feed_timeline', 'reel_feed_timeline'] = 'self_profile', is_app_start: bool = False) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_info</code> route family</td>
 </tr>
 <tr>
 <td><code>user_info_v2_gql(self, user_id: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_info</code> route family</td>
 </tr>
 <tr>
 <td><code>user_medias(self, user_id: int, amount: int = 0, sleep: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>user_medias_chunk(self, user_id: int, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>user_medias_chunk_gql(self, user_id: int, sleep: int = 2, end_cursor=None, amount: int = 0) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>user_medias_chunk_v1(self, user_id: int, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>user_medias_gql(self, user_id: int, amount: int = 0, sleep: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>user_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>user_medias_paginated_v1(self, user_id: str, amount: int = 33, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td><code>GET /user/posts</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_medias_v1(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>user_pinned_medias(self, user_id) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td><code>GET /user/pinned/posts</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_related_profiles_gql(self, user_id: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_remove_follower(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td><code>DELETE /user/follower</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_short_gql(self, user_id: str) -&gt; aiograpi.types.UserShort</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_stories(self, user_id: str, amount: int = None) -&gt; List[aiograpi.types.Story]</code></td>
 <td><code>story</code></td>
 <td><code>POST /story/upload</code><br><code>POST /story/upload/by/url</code><br><code>GET /user/stories</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_stories_gql(self, user_id: str, amount: int = None) -&gt; List[aiograpi.types.Story]</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_stories</code> route family</td>
 </tr>
 <tr>
 <td><code>user_stories_v1(self, user_id: str, amount: int = None) -&gt; List[aiograpi.types.Story]</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_stories</code> route family</td>
 </tr>
 <tr>
 <td><code>user_stream_by_id_flat(self, user_id: str) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_stream_by_id_v1(self, user_id: str) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_stream_by_username_flat(self, username: str) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_stream_by_username_v1(self, username: str) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>user_unblock(self, user_id: str, surface: str = 'profile') -&gt; bool</code></td>
 <td><code>user</code></td>
 <td><code>DELETE /user/block</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_unfollow(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
 <td><code>DELETE /user/follow</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_videos_chunk_v1(self, user_id: int, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_videos</code> route family</td>
 </tr>
 <tr>
 <td><code>user_videos_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td><code>GET /user/videos</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_videos_v1(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>user_videos</code> route family</td>
 </tr>
 <tr>
 <td><code>user_web_profile_info_gql(self, user_id: str) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>user_web_profile_info_v1</code></td>
 </tr>
 <tr>
 <td><code>user_web_profile_info_v1(self, username: str) -&gt; dict</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>username_from_user_id(self, user_id: str) -&gt; str</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>username_from_user_id_gql(self, user_id: str) -&gt; str</code></td>
 <td><code>user</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of candidate <code>username_from_user_id</code></td>
 </tr>
 <tr>
 <td><code>users_stories_gql(self, user_ids: List[str], amount: int = 0) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>story</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>usertag_medias(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>usertag_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>usertag_medias_gql(self, user_id: int, amount: int = 0, sleep: int = 2) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>usertag_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>usertag_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td><code>GET /user/tagged/posts</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>usertag_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>usertag_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>usertag_medias_paginated_v1(self, user_id: str, amount: int = 0, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>usertag_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>usertag_medias_v1(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>usertag_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>usertag_medias_v1_chunk(self, user_id: int, max_id: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>usertag_medias</code> route family</td>
 </tr>
 <tr>
 <td><code>very_small_delay(self)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>video_configure(self, upload_id: str, width: int, height: int, duration: int, thumbnail: pathlib._local.Path, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -&gt; Dict</code></td>
 <td><code>video</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>video_configure_to_story(self, upload_id: str, width: int, height: int, duration: int, thumbnail: pathlib._local.Path, caption: str, mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], thread_ids: List[int] = [], extra_data: Dict[str, str] = {}) -&gt; Dict</code></td>
 <td><code>video</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>video_download(self, media_pk: int, folder: pathlib._local.Path = '', overwrite: bool = True) -&gt; pathlib._local.Path</code></td>
 <td><code>video</code></td>
 <td><code>GET /video/download</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>video_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '', overwrite: bool = True) -&gt; pathlib._local.Path</code></td>
 <td><code>video</code></td>
 <td><code>GET /video/download/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>video_download_by_url_origin(self, url: str) -&gt; bytes</code></td>
 <td><code>video</code></td>
 <td>-</td>
+<td><code>duplicate</code></td>
+<td>variant of already exposed <code>video_download_by_url</code> route family</td>
 </tr>
 <tr>
 <td><code>video_rupload(self, path: pathlib._local.Path, thumbnail: pathlib._local.Path = None, to_album: bool = False, to_story: bool = False, to_direct: bool = False) -&gt; tuple</code></td>
 <td><code>video</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>video_upload(self, path: pathlib._local.Path, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -&gt; aiograpi.types.Media</code></td>
 <td><code>video</code></td>
 <td><code>POST /video/upload</code><br><code>POST /video/upload/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>video_upload_to_cutout_sticker(self, path: pathlib._local.Path, bypass_ai: bool = True) -&gt; aiograpi.types.Media</code></td>
 <td><code>video</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>video_upload_to_direct(self, path: pathlib._local.Path, caption: str = '', thumbnail: pathlib._local.Path = None, mentions: List[aiograpi.types.StoryMention] = [], medias: List[aiograpi.types.StoryMedia] = [], thread_ids: List[int] = [], extra_data: Dict[str, str] = {}) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>video</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>video_upload_to_story(self, path: pathlib._local.Path, caption: str = '', thumbnail: pathlib._local.Path = None, mentions: List[aiograpi.types.StoryMention] = [], locations: List[aiograpi.types.StoryLocation] = [], links: List[aiograpi.types.StoryLink] = [], hashtags: List[aiograpi.types.StoryHashtag] = [], stickers: List[aiograpi.types.StorySticker] = [], medias: List[aiograpi.types.StoryMedia] = [], polls: List[aiograpi.types.StoryPoll] = [], extra_data: Dict[str, str] = {}) -&gt; aiograpi.types.Story</code></td>
 <td><code>video</code></td>
 <td><code>POST /story/upload</code><br><code>POST /story/upload/by/url</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>web_search_topsearch(self, query: str) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>web_search_topsearch_hashtags(self, query: str) -&gt; List[aiograpi.types.Hashtag]</code></td>
 <td><code>fbsearch</code></td>
 <td>-</td>
+<td><code>candidate</code></td>
+<td>potential user-facing REST endpoint</td>
 </tr>
 <tr>
 <td><code>with_action_data(self, data: Dict) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>with_default_data(self, data: Dict) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>with_extra_data(self, data: Dict) -&gt; Dict</code></td>
 <td><code>auth</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 <tr>
 <td><code>with_query_params(data, params)</code></td>
 <td><code>private</code></td>
 <td>-</td>
+<td><code>internal</code></td>
+<td>low-level aiograpi helper or unsafe generic surface</td>
 </tr>
 </tbody>
 </table>
