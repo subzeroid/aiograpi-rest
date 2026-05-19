@@ -397,6 +397,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -579,6 +590,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#search" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -645,9 +667,10 @@ Swagger UI exposes this through the green <strong>Authorize</strong> button.</p>
 <p>Session-aware routes still accept legacy <code>sessionid</code> values from query
 parameters, form data, or a <code>sessionid</code> cookie for backwards compatibility.</p>
 <h3 id="session-client-options">Session Client Options</h3>
-<p><code>POST /auth/login</code> accepts optional <code>proxy</code>, <code>locale</code>, and <code>timezone</code> form
-fields. The service persists the proxy separately from <code>aiograpi</code> settings
-because <code>Client.get_settings()</code> does not include proxy transport state.</p>
+<p><code>POST /auth/login</code> and <code>POST /auth/login/by/sessionid</code> accept optional <code>proxy</code>,
+<code>locale</code>, and <code>timezone</code> form fields. The service persists the proxy separately
+from <code>aiograpi</code> settings because <code>Client.get_settings()</code> does not include proxy
+transport state.</p>
 <p>Use <code>PATCH /auth/settings</code> to update an existing session after login. Send the
 session through <code>X-Session-ID</code> or the legacy <code>sessionid</code> form field, then pass
 any of:</p>
@@ -691,27 +714,49 @@ check account and proxy health before retrying.</p>
 </ul>
 <p>The schema uses client-friendly operation IDs and request schema names so it can
 be passed directly into OpenAPI client generators.</p>
+<h2 id="search">Search</h2>
+<p>Search routes live under the <code>Search</code> tag and hide Instagram's internal
+<code>fbsearch</code> naming behind resource-oriented paths:</p>
+<ul>
+<li><code>GET /search/users</code> searches accounts by query.</li>
+<li><code>GET /search/accounts</code> searches accounts through Instagram's newer search
+  surface and supports <code>page_token</code>.</li>
+<li><code>GET /search/followers</code> searches inside a user's followers.</li>
+<li><code>GET /search/following</code> searches inside accounts a user follows.</li>
+<li><code>GET /search/hashtags</code> searches hashtags.</li>
+<li><code>GET /search/music</code> searches music tracks.</li>
+<li><code>GET /search/locations</code> searches locations by name or coordinates.</li>
+<li><code>GET /search/places</code> searches places by query with optional <code>lat</code> and <code>lng</code>
+  ranking context.</li>
+<li><code>GET /search/top</code> returns Instagram's blended top search results.</li>
+<li><code>GET /search/reels</code> returns Reel search results.</li>
+<li><code>GET /search/recent</code> returns the authenticated account's recent searches.</li>
+<li><code>GET /search/typeahead</code> returns autocomplete suggestions for a partial query.</li>
+</ul>
+<p><code>/search/top</code>, <code>/search/reels</code>, <code>/search/accounts</code>, and <code>/search/typeahead</code>
+return raw Instagram-shaped objects because their payloads vary by ranking
+surface and cursor state.</p>
 <h2 id="pagination">Pagination</h2>
 <p>Paginated read-list routes return an object with <code>items</code> and <code>next_cursor</code>.
 Pass the returned <code>next_cursor</code> as <code>cursor</code> on the next request to continue
 from the previous page. This shape is used for:</p>
 <ul>
 <li><code>GET /direct/inbox</code></li>
-<li><code>GET /hashtag/medias/recent</code></li>
-<li><code>GET /hashtag/medias/top</code></li>
-<li><code>GET /location/medias/recent</code></li>
-<li><code>GET /location/medias/top</code></li>
+<li><code>GET /hashtag/media/recent</code></li>
+<li><code>GET /hashtag/media/top</code></li>
+<li><code>GET /location/media/recent</code></li>
+<li><code>GET /location/media/top</code></li>
 <li><code>GET /story/archive</code></li>
 <li><code>GET /story/viewers</code></li>
-<li><code>GET /user/clips</code></li>
-<li><code>GET /user/follow/requests</code></li>
+<li><code>GET /user/reels</code></li>
+<li><code>GET /account/follow/requests</code></li>
 <li><code>GET /user/followers</code></li>
 <li><code>GET /user/following</code></li>
-<li><code>GET /user/medias</code></li>
-<li><code>GET /user/tagged/medias</code></li>
+<li><code>GET /user/posts</code></li>
+<li><code>GET /user/tagged/posts</code></li>
 <li><code>GET /user/videos</code></li>
 </ul>
-<p>User media collection routes accept either <code>user_id</code> for numeric Instagram
+<p>User post collection routes accept either <code>user_id</code> for numeric Instagram
 user PKs or <code>username</code> for usernames. If a legacy client passes a username in
 <code>user_id</code>, the service resolves it before calling <code>aiograpi</code>.</p>
 <h2 id="form-json-fields">Form JSON Fields</h2>

@@ -538,8 +538,8 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <h2 id="summary">Summary</h2>
 <ul>
 <li>Public <code>aiograpi.Client</code> methods: <strong>500</strong></li>
-<li>Methods reached by REST routes: <strong>124</strong></li>
-<li>Methods not exposed as REST routes: <strong>376</strong></li>
+<li>Methods reached by REST routes: <strong>132</strong></li>
+<li>Methods not exposed as REST routes: <strong>368</strong></li>
 </ul>
 <h2 id="coverage-by-area">Coverage By Area</h2>
 <table>
@@ -608,7 +608,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>fbsearch</code></td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
 <td style="text-align: right;">16</td>
 </tr>
 <tr>
@@ -648,7 +648,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>media</code></td>
-<td style="text-align: right;">21</td>
+<td style="text-align: right;">20</td>
 <td style="text-align: right;">59</td>
 </tr>
 <tr>
@@ -718,7 +718,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>user</code></td>
-<td style="text-align: right;">18</td>
+<td style="text-align: right;">19</td>
 <td style="text-align: right;">74</td>
 </tr>
 <tr>
@@ -738,8 +738,24 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </thead>
 <tbody>
 <tr>
-<td><code>GET /account/info</code></td>
+<td><code>GET /account</code></td>
 <td><code>account_info</code></td>
+</tr>
+<tr>
+<td><code>PATCH /account</code></td>
+<td><code>account_edit</code></td>
+</tr>
+<tr>
+<td><code>GET /account/feed/timeline</code></td>
+<td><code>get_timeline_feed</code></td>
+</tr>
+<tr>
+<td><code>GET /account/follow/requests</code></td>
+<td><code>user_follow_requests_chunk</code></td>
+</tr>
+<tr>
+<td><code>GET /account/liked/media</code></td>
+<td><code>liked_medias</code></td>
 </tr>
 <tr>
 <td><code>PATCH /account/picture</code></td>
@@ -748,10 +764,6 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>PATCH /account/privacy</code></td>
 <td><code>account_set_private</code>, <code>account_set_public</code></td>
-</tr>
-<tr>
-<td><code>PATCH /account/profile</code></td>
-<td><code>account_edit</code></td>
 </tr>
 <tr>
 <td><code>GET /album/download</code></td>
@@ -775,7 +787,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>POST /auth/login/by/sessionid</code></td>
-<td><code>login_by_sessionid</code></td>
+<td><code>login_by_sessionid</code>, <code>set_locale</code>, <code>set_proxy</code>, <code>set_timezone_offset</code></td>
 </tr>
 <tr>
 <td><code>PATCH /auth/relogin</code></td>
@@ -790,15 +802,11 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>expose</code>, <code>set_locale</code>, <code>set_proxy</code>, <code>set_settings</code>, <code>set_timezone_offset</code></td>
 </tr>
 <tr>
-<td><code>GET /auth/timeline/feed</code></td>
-<td><code>get_timeline_feed</code></td>
-</tr>
-<tr>
 <td><code>DELETE /auth/totp</code></td>
 <td><code>totp_disable</code></td>
 </tr>
 <tr>
-<td><code>POST /auth/totp/enable</code></td>
+<td><code>POST /auth/totp</code></td>
 <td><code>totp_enable</code></td>
 </tr>
 <tr>
@@ -842,6 +850,10 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>direct_thread_create</code></td>
 </tr>
 <tr>
+<td><code>GET /hashtag</code></td>
+<td><code>hashtag_info</code></td>
+</tr>
+<tr>
 <td><code>DELETE /hashtag/follow</code></td>
 <td><code>hashtag_unfollow</code></td>
 </tr>
@@ -850,20 +862,20 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>hashtag_follow</code></td>
 </tr>
 <tr>
-<td><code>GET /hashtag/info</code></td>
-<td><code>hashtag_info</code></td>
-</tr>
-<tr>
-<td><code>GET /hashtag/medias/recent</code></td>
+<td><code>GET /hashtag/media/recent</code></td>
 <td><code>hashtag_medias_v1_chunk</code></td>
 </tr>
 <tr>
-<td><code>GET /hashtag/medias/top</code></td>
+<td><code>GET /hashtag/media/top</code></td>
 <td><code>hashtag_medias_v1_chunk</code></td>
 </tr>
 <tr>
 <td><code>DELETE /highlight</code></td>
 <td><code>highlight_delete</code></td>
+</tr>
+<tr>
+<td><code>GET /highlight</code></td>
+<td><code>highlight_info</code></td>
 </tr>
 <tr>
 <td><code>PATCH /highlight</code></td>
@@ -874,15 +886,11 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>highlight_create</code></td>
 </tr>
 <tr>
-<td><code>GET /highlight/info</code></td>
-<td><code>highlight_info</code></td>
-</tr>
-<tr>
-<td><code>DELETE /highlight/stories</code></td>
+<td><code>DELETE /highlight/story</code></td>
 <td><code>highlight_remove_stories</code></td>
 </tr>
 <tr>
-<td><code>POST /highlight/stories</code></td>
+<td><code>POST /highlight/story</code></td>
 <td><code>highlight_add_stories</code></td>
 </tr>
 <tr>
@@ -910,28 +918,28 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>insights_media</code></td>
 </tr>
 <tr>
-<td><code>GET /insights/media/feed/all</code></td>
+<td><code>GET /insights/media/feed</code></td>
 <td><code>insights_media_feed_all</code></td>
 </tr>
 <tr>
-<td><code>GET /location/info</code></td>
+<td><code>GET /location</code></td>
 <td><code>location_info</code></td>
 </tr>
 <tr>
-<td><code>GET /location/medias/recent</code></td>
+<td><code>GET /location/media/recent</code></td>
 <td><code>location_medias_v1_chunk</code></td>
 </tr>
 <tr>
-<td><code>GET /location/medias/top</code></td>
+<td><code>GET /location/media/top</code></td>
 <td><code>location_medias_v1_chunk</code></td>
-</tr>
-<tr>
-<td><code>GET /location/search</code></td>
-<td><code>location_search</code>, <code>location_search_name</code></td>
 </tr>
 <tr>
 <td><code>DELETE /media</code></td>
 <td><code>media_delete</code></td>
+</tr>
+<tr>
+<td><code>GET /media</code></td>
+<td><code>media_info</code>, <code>media_pk</code>, <code>media_pk_from_code</code>, <code>media_pk_from_url</code></td>
 </tr>
 <tr>
 <td><code>PATCH /media</code></td>
@@ -944,6 +952,10 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>POST /media/archive</code></td>
 <td><code>media_archive</code></td>
+</tr>
+<tr>
+<td><code>GET /media/author</code></td>
+<td><code>media_user</code></td>
 </tr>
 <tr>
 <td><code>DELETE /media/comment</code></td>
@@ -970,24 +982,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>media_comments</code></td>
 </tr>
 <tr>
-<td><code>GET /media/id</code></td>
-<td><code>media_id</code></td>
-</tr>
-<tr>
-<td><code>GET /media/info</code></td>
-<td><code>media_info</code></td>
-</tr>
-<tr>
 <td><code>DELETE /media/like</code></td>
 <td><code>media_unlike</code></td>
 </tr>
 <tr>
 <td><code>POST /media/like</code></td>
 <td><code>media_like</code></td>
-</tr>
-<tr>
-<td><code>GET /media/liked</code></td>
-<td><code>liked_medias</code></td>
 </tr>
 <tr>
 <td><code>GET /media/likers</code></td>
@@ -1006,18 +1006,6 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>media_pin</code></td>
 </tr>
 <tr>
-<td><code>GET /media/pk</code></td>
-<td><code>media_pk</code></td>
-</tr>
-<tr>
-<td><code>GET /media/pk/from/code</code></td>
-<td><code>media_pk_from_code</code></td>
-</tr>
-<tr>
-<td><code>GET /media/pk/from/url</code></td>
-<td><code>media_pk_from_url</code></td>
-</tr>
-<tr>
 <td><code>DELETE /media/save</code></td>
 <td><code>media_unsave</code></td>
 </tr>
@@ -1028,10 +1016,6 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>PATCH /media/seen</code></td>
 <td><code>media_seen</code></td>
-</tr>
-<tr>
-<td><code>GET /media/user</code></td>
-<td><code>media_user</code></td>
 </tr>
 <tr>
 <td><code>DELETE /note</code></td>
@@ -1074,8 +1058,60 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>photo_upload</code></td>
 </tr>
 <tr>
+<td><code>GET /search/accounts</code></td>
+<td><code>fbsearch_accounts_v2</code></td>
+</tr>
+<tr>
+<td><code>GET /search/followers</code></td>
+<td><code>search_followers_v1</code></td>
+</tr>
+<tr>
+<td><code>GET /search/following</code></td>
+<td><code>search_following_v1</code></td>
+</tr>
+<tr>
+<td><code>GET /search/hashtags</code></td>
+<td><code>search_hashtags</code></td>
+</tr>
+<tr>
+<td><code>GET /search/locations</code></td>
+<td><code>location_search</code>, <code>location_search_name</code></td>
+</tr>
+<tr>
+<td><code>GET /search/music</code></td>
+<td><code>search_music</code></td>
+</tr>
+<tr>
+<td><code>GET /search/places</code></td>
+<td><code>fbsearch_places</code></td>
+</tr>
+<tr>
+<td><code>GET /search/recent</code></td>
+<td><code>fbsearch_recent</code></td>
+</tr>
+<tr>
+<td><code>GET /search/reels</code></td>
+<td><code>fbsearch_reels_v2</code></td>
+</tr>
+<tr>
+<td><code>GET /search/top</code></td>
+<td><code>fbsearch_topsearch_v2</code></td>
+</tr>
+<tr>
+<td><code>GET /search/typeahead</code></td>
+<td><code>fbsearch_keyword_typeahead</code></td>
+</tr>
+<tr>
+<td><code>GET /search/users</code></td>
+<td><code>search_users</code></td>
+</tr>
+<tr>
 <td><code>DELETE /story</code></td>
 <td><code>story_delete</code></td>
+</tr>
+<tr>
+<td><code>GET /story</code></td>
+<td><code>story_info</code>, <code>story_pk_from_url</code></td>
 </tr>
 <tr>
 <td><code>GET /story/archive</code></td>
@@ -1090,20 +1126,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>story_download_by_url</code></td>
 </tr>
 <tr>
-<td><code>GET /story/info</code></td>
-<td><code>story_info</code></td>
-</tr>
-<tr>
 <td><code>DELETE /story/like</code></td>
 <td><code>story_unlike</code></td>
 </tr>
 <tr>
 <td><code>POST /story/like</code></td>
 <td><code>story_like</code></td>
-</tr>
-<tr>
-<td><code>GET /story/pk/from/url</code></td>
-<td><code>story_pk_from_url</code></td>
 </tr>
 <tr>
 <td><code>PATCH /story/seen</code></td>
@@ -1118,12 +1146,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>photo_upload_to_story</code>, <code>user_stories</code>, <code>video_upload_to_story</code></td>
 </tr>
 <tr>
-<td><code>GET /story/user/stories</code></td>
-<td><code>user_stories</code></td>
-</tr>
-<tr>
 <td><code>GET /story/viewers</code></td>
 <td><code>story_viewers_chunk</code></td>
+</tr>
+<tr>
+<td><code>GET /user</code></td>
+<td><code>user_info</code>, <code>user_info_by_username</code></td>
 </tr>
 <tr>
 <td><code>GET /user/about</code></td>
@@ -1138,20 +1166,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>user_block</code></td>
 </tr>
 <tr>
-<td><code>GET /user/clips</code></td>
-<td><code>user_clips_paginated_v1</code>, <code>user_id_from_username</code></td>
-</tr>
-<tr>
 <td><code>DELETE /user/follow</code></td>
 <td><code>user_unfollow</code></td>
 </tr>
 <tr>
 <td><code>POST /user/follow</code></td>
 <td><code>user_follow</code></td>
-</tr>
-<tr>
-<td><code>GET /user/follow/requests</code></td>
-<td><code>user_follow_requests_chunk</code></td>
 </tr>
 <tr>
 <td><code>DELETE /user/follower</code></td>
@@ -1174,22 +1194,6 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>user_highlights</code></td>
 </tr>
 <tr>
-<td><code>GET /user/id/from/username</code></td>
-<td><code>user_id_from_username</code></td>
-</tr>
-<tr>
-<td><code>GET /user/info</code></td>
-<td><code>user_info</code></td>
-</tr>
-<tr>
-<td><code>GET /user/info/by/username</code></td>
-<td><code>user_info_by_username</code></td>
-</tr>
-<tr>
-<td><code>GET /user/medias</code></td>
-<td><code>user_id_from_username</code>, <code>user_medias_paginated</code></td>
-</tr>
-<tr>
 <td><code>DELETE /user/mute/posts</code></td>
 <td><code>unmute_posts_from_follow</code></td>
 </tr>
@@ -1206,16 +1210,20 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>mute_stories_from_follow</code></td>
 </tr>
 <tr>
-<td><code>GET /user/search</code></td>
-<td><code>search_users</code></td>
+<td><code>GET /user/posts</code></td>
+<td><code>user_id_from_username</code>, <code>user_medias_paginated</code></td>
 </tr>
 <tr>
-<td><code>GET /user/tagged/medias</code></td>
+<td><code>GET /user/reels</code></td>
+<td><code>user_clips_paginated_v1</code>, <code>user_id_from_username</code></td>
+</tr>
+<tr>
+<td><code>GET /user/stories</code></td>
+<td><code>user_stories</code></td>
+</tr>
+<tr>
+<td><code>GET /user/tagged/posts</code></td>
 <td><code>user_id_from_username</code>, <code>usertag_medias_paginated</code></td>
-</tr>
-<tr>
-<td><code>GET /user/username/from/id</code></td>
-<td><code>username_from_user_id</code></td>
 </tr>
 <tr>
 <td><code>GET /user/videos</code></td>
@@ -1257,12 +1265,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>account_edit(self, **data: Dict) -&gt; aiograpi.types.Account</code></td>
 <td><code>account</code></td>
-<td><code>PATCH /account/profile</code></td>
+<td><code>PATCH /account</code></td>
 </tr>
 <tr>
 <td><code>account_info(self) -&gt; aiograpi.types.Account</code></td>
 <td><code>account</code></td>
-<td><code>GET /account/info</code></td>
+<td><code>GET /account</code></td>
 </tr>
 <tr>
 <td><code>account_security_info(self) -&gt; dict</code></td>
@@ -1912,7 +1920,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>fbsearch_accounts_v2(self, query: str, page_token: Optional[str] = None) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
-<td>-</td>
+<td><code>GET /search/accounts</code></td>
 </tr>
 <tr>
 <td><code>fbsearch_item(self, item_id: str, search_surface: str, query: str, timezone_offset: int = 0, count: int = 30, reels_page_index: int = None, has_more_reels: str = None, reels_max_id: str = None, next_max_id: str = None, rank_token: str = None, page_index: int = None, page_token: str = None, paging_token: str = None) -&gt; dict</code></td>
@@ -1922,22 +1930,22 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>fbsearch_keyword_typeahead(self, query: str, timezone_offset: int = 0, count: int = 30) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
-<td>-</td>
+<td><code>GET /search/typeahead</code></td>
 </tr>
 <tr>
 <td><code>fbsearch_places(self, query: str, lat: float = 40.74, lng: float = -73.94) -&gt; List[aiograpi.types.Location]</code></td>
 <td><code>fbsearch</code></td>
-<td>-</td>
+<td><code>GET /search/places</code></td>
 </tr>
 <tr>
 <td><code>fbsearch_recent(self) -&gt; List[Tuple[int, Union[aiograpi.types.UserShort, aiograpi.types.Hashtag, Dict]]]</code></td>
 <td><code>fbsearch</code></td>
-<td>-</td>
+<td><code>GET /search/recent</code></td>
 </tr>
 <tr>
 <td><code>fbsearch_reels_v2(self, query: str, reels_max_id: Optional[str] = None, rank_token: Optional[str] = None) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
-<td>-</td>
+<td><code>GET /search/reels</code></td>
 </tr>
 <tr>
 <td><code>fbsearch_suggested_profiles(self, user_id: str) -&gt; List[aiograpi.types.UserShort]</code></td>
@@ -1952,7 +1960,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>fbsearch_topsearch_v2(self, query: str, next_max_id: Optional[str] = None, reels_max_id: Optional[str] = None, rank_token: Optional[str] = None) -&gt; dict</code></td>
 <td><code>fbsearch</code></td>
-<td>-</td>
+<td><code>GET /search/top</code></td>
 </tr>
 <tr>
 <td><code>fbsearch_typeahead_stream(self, query: str, timezone_offset: int = 0, count: int = 30) -&gt; dict</code></td>
@@ -2052,7 +2060,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>get_timeline_feed(self, reason: Literal['cold_start_fetch', 'warm_start_fetch', 'pagination', 'pull_to_refresh', 'auto_refresh'] = 'pull_to_refresh', max_id: str = None, seen_posts: Union[str, Iterable[str], NoneType] = None, feed_view_info: Union[str, List[Dict[str, Any]], NoneType] = None) -&gt; Dict</code></td>
 <td><code>auth</code></td>
-<td><code>GET /auth/timeline/feed</code></td>
+<td><code>GET /account/feed/timeline</code></td>
 </tr>
 <tr>
 <td><code>graphql_request(self, data=None, params=None, headers=None, return_json=True, retries_count=1, retries_timeout=2)</code></td>
@@ -2072,7 +2080,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>hashtag_info(self, name: str) -&gt; aiograpi.types.Hashtag</code></td>
 <td><code>hashtag</code></td>
-<td><code>GET /hashtag/info</code></td>
+<td><code>GET /hashtag</code></td>
 </tr>
 <tr>
 <td><code>hashtag_info_a1(self, name: str, max_id: str = None) -&gt; aiograpi.types.Hashtag</code></td>
@@ -2142,7 +2150,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>hashtag_medias_v1_chunk(self, name: str, max_amount: int = 27, tab_key: str = '', max_id: str = None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>hashtag</code></td>
-<td><code>GET /hashtag/medias/recent</code><br><code>GET /hashtag/medias/top</code></td>
+<td><code>GET /hashtag/media/recent</code><br><code>GET /hashtag/media/top</code></td>
 </tr>
 <tr>
 <td><code>hashtag_related_hashtags(self, name: str) -&gt; List[aiograpi.types.Hashtag]</code></td>
@@ -2157,7 +2165,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>highlight_add_stories(self, highlight_pk: str, added_media_ids: List[str]) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
-<td><code>POST /highlight/stories</code></td>
+<td><code>POST /highlight/story</code></td>
 </tr>
 <tr>
 <td><code>highlight_change_cover(self, highlight_pk: str, cover_path: pathlib._local.Path) -&gt; aiograpi.types.Highlight</code></td>
@@ -2187,7 +2195,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>highlight_info(self, highlight_pk: str) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
-<td><code>GET /highlight/info</code></td>
+<td><code>GET /highlight</code></td>
 </tr>
 <tr>
 <td><code>highlight_info_v1(self, highlight_pk: str) -&gt; aiograpi.types.Highlight</code></td>
@@ -2202,7 +2210,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>highlight_remove_stories(self, highlight_pk: str, removed_media_ids: List[str]) -&gt; aiograpi.types.Highlight</code></td>
 <td><code>highlight</code></td>
-<td><code>DELETE /highlight/stories</code></td>
+<td><code>DELETE /highlight/story</code></td>
 </tr>
 <tr>
 <td><code>igtv_configure(self, upload_id: str, thumbnail: pathlib._local.Path, width: int, height: int, duration: int, title: str, caption: str, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, extra_data: Dict[str, str] = {}) -&gt; Dict</code></td>
@@ -2247,7 +2255,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>insights_media_feed_all(self, post_type: Literal['ALL', 'CAROUSEL_V2', 'IMAGE', 'SHOPPING', 'VIDEO'] = 'ALL', time_frame: Literal['ONE_WEEK', 'ONE_MONTH', 'THREE_MONTHS', 'SIX_MONTHS', 'ONE_YEAR', 'TWO_YEARS'] = 'TWO_YEARS', data_ordering: Literal['REACH_COUNT', 'LIKE_COUNT', 'FOLLOW', 'SHARE_COUNT', 'BIO_LINK_CLICK', 'COMMENT_COUNT', 'IMPRESSION_COUNT', 'PROFILE_VIEW', 'VIDEO_VIEW_COUNT', 'SAVE_COUNT'] = 'REACH_COUNT', count: int = 0, sleep: int = 2) -&gt; List[Dict]</code></td>
 <td><code>insights</code></td>
-<td><code>GET /insights/media/feed/all</code></td>
+<td><code>GET /insights/media/feed</code></td>
 </tr>
 <tr>
 <td><code>last_seen_update_note(self) -&gt; bool</code></td>
@@ -2257,7 +2265,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>liked_medias(self, amount: int = 21, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>collection</code></td>
-<td><code>GET /media/liked</code></td>
+<td><code>GET /account/liked/media</code></td>
 </tr>
 <tr>
 <td><code>load_settings(self, path: Union[str, pathlib._local.Path], override_app_version: bool = False) -&gt; Dict</code></td>
@@ -2287,7 +2295,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>location_info(self, location_pk: int) -&gt; aiograpi.types.Location</code></td>
 <td><code>location</code></td>
-<td><code>GET /location/info</code></td>
+<td><code>GET /location</code></td>
 </tr>
 <tr>
 <td><code>location_info_a1(self, location_pk: int) -&gt; aiograpi.types.Location</code></td>
@@ -2347,17 +2355,17 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>location_medias_v1_chunk(self, location_pk: int, max_amount: int = 63, tab_key: str = '', max_id: str = None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>location</code></td>
-<td><code>GET /location/medias/recent</code><br><code>GET /location/medias/top</code></td>
+<td><code>GET /location/media/recent</code><br><code>GET /location/media/top</code></td>
 </tr>
 <tr>
 <td><code>location_search(self, lat: float, lng: float) -&gt; List[aiograpi.types.Location]</code></td>
 <td><code>location</code></td>
-<td><code>GET /location/search</code></td>
+<td><code>GET /search/locations</code></td>
 </tr>
 <tr>
 <td><code>location_search_name(self, name: str) -&gt; List[aiograpi.types.Location]</code></td>
 <td><code>location</code></td>
-<td><code>GET /location/search</code></td>
+<td><code>GET /search/locations</code></td>
 </tr>
 <tr>
 <td><code>location_search_pk(self, location_pk: int) -&gt; aiograpi.types.Location</code></td>
@@ -2512,12 +2520,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>media_id(self, media_pk: str) -&gt; str</code></td>
 <td><code>media</code></td>
-<td><code>GET /media/id</code></td>
+<td>-</td>
 </tr>
 <tr>
 <td><code>media_info(self, media_pk: str, use_cache: bool = True) -&gt; aiograpi.types.Media</code></td>
 <td><code>media</code></td>
-<td><code>GET /media/info</code></td>
+<td><code>GET /media</code></td>
 </tr>
 <tr>
 <td><code>media_info_a1(self, media_pk: str, max_id: str = None) -&gt; aiograpi.types.Media</code></td>
@@ -2572,17 +2580,17 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>media_pk(media_id: str) -&gt; str</code></td>
 <td><code>media</code></td>
-<td><code>GET /media/pk</code></td>
+<td><code>GET /media</code></td>
 </tr>
 <tr>
 <td><code>media_pk_from_code(self, code: str) -&gt; str</code></td>
 <td><code>media</code></td>
-<td><code>GET /media/pk/from/code</code></td>
+<td><code>GET /media</code></td>
 </tr>
 <tr>
 <td><code>media_pk_from_url(self, url: str) -&gt; str</code></td>
 <td><code>media</code></td>
-<td><code>GET /media/pk/from/url</code></td>
+<td><code>GET /media</code></td>
 </tr>
 <tr>
 <td><code>media_save(self, media_id: str, collection_pk: int = None, revert: bool = False) -&gt; bool</code></td>
@@ -2632,7 +2640,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>media_user(self, media_pk: str) -&gt; aiograpi.types.UserShort</code></td>
 <td><code>media</code></td>
-<td><code>GET /media/user</code></td>
+<td><code>GET /media/author</code></td>
 </tr>
 <tr>
 <td><code>music_in_feed_audio_browser(self, browse_session_id: Optional[str] = None) -&gt; Dict</code></td>
@@ -3007,7 +3015,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>search_followers_v1(self, user_id: str, query: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
-<td>-</td>
+<td><code>GET /search/followers</code></td>
 </tr>
 <tr>
 <td><code>search_following(self, user_id: str, query: str) -&gt; List[aiograpi.types.UserShort]</code></td>
@@ -3017,22 +3025,22 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>search_following_v1(self, user_id: str, query: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>user</code></td>
-<td>-</td>
+<td><code>GET /search/following</code></td>
 </tr>
 <tr>
 <td><code>search_hashtags(self, query: str) -&gt; List[aiograpi.types.Hashtag]</code></td>
 <td><code>fbsearch</code></td>
-<td>-</td>
+<td><code>GET /search/hashtags</code></td>
 </tr>
 <tr>
 <td><code>search_music(self, query: str) -&gt; List[aiograpi.types.Track]</code></td>
 <td><code>fbsearch</code></td>
-<td>-</td>
+<td><code>GET /search/music</code></td>
 </tr>
 <tr>
 <td><code>search_users(self, query: str) -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>fbsearch</code></td>
-<td><code>GET /user/search</code></td>
+<td><code>GET /search/users</code></td>
 </tr>
 <tr>
 <td><code>search_users_v1(self, query: str, count: int) -&gt; List[aiograpi.types.UserShort]</code></td>
@@ -3102,12 +3110,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>set_locale(self, locale: str = 'en_US')</code></td>
 <td><code>private</code></td>
-<td><code>POST /auth/login</code><br><code>PATCH /auth/settings</code></td>
+<td><code>POST /auth/login</code><br><code>POST /auth/login/by/sessionid</code><br><code>PATCH /auth/settings</code></td>
 </tr>
 <tr>
 <td><code>set_proxy(self, dsn: Optional[str])</code></td>
 <td><code>aiograpi</code></td>
-<td><code>POST /auth/login</code><br><code>PATCH /auth/settings</code></td>
+<td><code>POST /auth/login</code><br><code>POST /auth/login/by/sessionid</code><br><code>PATCH /auth/settings</code></td>
 </tr>
 <tr>
 <td><code>set_retry_config(self, request_timeout: Union[int, float, NoneType] = None, public_request_retries_count: int = None, public_request_retries_timeout: Union[int, float] = None, session_retry_total: int = None, session_retry_backoff_factor: Union[int, float] = None, session_retry_statuses: list = None, public_transport: Optional[str] = None, public_transport_impersonate: Optional[str] = None) -&gt; bool</code></td>
@@ -3122,7 +3130,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>set_timezone_offset(self, seconds: int = 0)</code></td>
 <td><code>private</code></td>
-<td><code>POST /auth/login</code><br><code>PATCH /auth/settings</code></td>
+<td><code>POST /auth/login</code><br><code>POST /auth/login/by/sessionid</code><br><code>PATCH /auth/settings</code></td>
 </tr>
 <tr>
 <td><code>set_user_agent(self, user_agent: str = '', reset: bool = False) -&gt; bool</code></td>
@@ -3187,7 +3195,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>story_info(self, story_pk: str, use_cache: bool = True) -&gt; aiograpi.types.Story</code></td>
 <td><code>story</code></td>
-<td><code>GET /story/info</code></td>
+<td><code>GET /story</code></td>
 </tr>
 <tr>
 <td><code>story_info_v1(self, story_pk: str) -&gt; aiograpi.types.Story</code></td>
@@ -3202,7 +3210,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>story_pk_from_url(self, url: str) -&gt; str</code></td>
 <td><code>story</code></td>
-<td><code>GET /story/pk/from/url</code></td>
+<td><code>GET /story</code></td>
 </tr>
 <tr>
 <td><code>story_seen(self, story_pks: List[str], skipped_story_pks: List[str] = [])</code></td>
@@ -3247,7 +3255,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>totp_enable(self, verification_code: str) -&gt; List[str]</code></td>
 <td><code>totp</code></td>
-<td><code>POST /auth/totp/enable</code></td>
+<td><code>POST /auth/totp</code></td>
 </tr>
 <tr>
 <td><code>totp_generate_code(seed: str) -&gt; str</code></td>
@@ -3312,7 +3320,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_clips_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
-<td><code>GET /user/clips</code></td>
+<td><code>GET /user/reels</code></td>
 </tr>
 <tr>
 <td><code>user_clips_v1(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
@@ -3347,7 +3355,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_follow_requests_chunk(self, max_amount: int = 0, max_id: str = '') -&gt; Tuple[List[aiograpi.types.UserShort], str]</code></td>
 <td><code>user</code></td>
-<td><code>GET /user/follow/requests</code></td>
+<td><code>GET /account/follow/requests</code></td>
 </tr>
 <tr>
 <td><code>user_follow_requests_decline(self, user_ids: List[str]) -&gt; Dict[str, bool]</code></td>
@@ -3432,17 +3440,17 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_id_from_username(self, username: str) -&gt; str</code></td>
 <td><code>user</code></td>
-<td><code>GET /user/clips</code><br><code>GET /user/id/from/username</code><br><code>GET /user/medias</code><br><code>GET /user/tagged/medias</code><br><code>GET /user/videos</code></td>
+<td><code>GET /user/posts</code><br><code>GET /user/reels</code><br><code>GET /user/tagged/posts</code><br><code>GET /user/videos</code></td>
 </tr>
 <tr>
 <td><code>user_info(self, user_id: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
-<td><code>GET /user/info</code></td>
+<td><code>GET /user</code></td>
 </tr>
 <tr>
 <td><code>user_info_by_username(self, username: str) -&gt; aiograpi.types.User</code></td>
 <td><code>user</code></td>
-<td><code>GET /user/info/by/username</code></td>
+<td><code>GET /user</code></td>
 </tr>
 <tr>
 <td><code>user_info_by_username_a1(self, username: str) -&gt; dict</code></td>
@@ -3507,7 +3515,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
-<td><code>GET /user/medias</code></td>
+<td><code>GET /user/posts</code></td>
 </tr>
 <tr>
 <td><code>user_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
@@ -3547,7 +3555,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_stories(self, user_id: str, amount: int = None) -&gt; List[aiograpi.types.Story]</code></td>
 <td><code>story</code></td>
-<td><code>POST /story/upload</code><br><code>POST /story/upload/by/url</code><br><code>GET /story/user/stories</code></td>
+<td><code>POST /story/upload</code><br><code>POST /story/upload/by/url</code><br><code>GET /user/stories</code></td>
 </tr>
 <tr>
 <td><code>user_stories_gql(self, user_id: str, amount: int = None) -&gt; List[aiograpi.types.Story]</code></td>
@@ -3617,7 +3625,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>username_from_user_id(self, user_id: str) -&gt; str</code></td>
 <td><code>user</code></td>
-<td><code>GET /user/username/from/id</code></td>
+<td>-</td>
 </tr>
 <tr>
 <td><code>username_from_user_id_gql(self, user_id: str) -&gt; str</code></td>
@@ -3642,7 +3650,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>usertag_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
 <td><code>media</code></td>
-<td><code>GET /user/tagged/medias</code></td>
+<td><code>GET /user/tagged/posts</code></td>
 </tr>
 <tr>
 <td><code>usertag_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -&gt; Tuple[List[aiograpi.types.Media], str]</code></td>
