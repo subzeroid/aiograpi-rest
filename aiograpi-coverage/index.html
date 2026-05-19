@@ -538,8 +538,8 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <h2 id="summary">Summary</h2>
 <ul>
 <li>Public <code>aiograpi.Client</code> methods: <strong>500</strong></li>
-<li>Methods reached by REST routes: <strong>132</strong></li>
-<li>Methods not exposed as REST routes: <strong>368</strong></li>
+<li>Methods reached by REST routes: <strong>137</strong></li>
+<li>Methods not exposed as REST routes: <strong>363</strong></li>
 </ul>
 <h2 id="coverage-by-area">Coverage By Area</h2>
 <table>
@@ -623,7 +623,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>hashtag</code></td>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">6</td>
 <td style="text-align: right;">18</td>
 </tr>
 <tr>
@@ -643,12 +643,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>location</code></td>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr>
 <td><code>media</code></td>
-<td style="text-align: right;">20</td>
+<td style="text-align: right;">21</td>
 <td style="text-align: right;">59</td>
 </tr>
 <tr>
@@ -718,7 +718,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>user</code></td>
-<td style="text-align: right;">19</td>
+<td style="text-align: right;">20</td>
 <td style="text-align: right;">74</td>
 </tr>
 <tr>
@@ -870,6 +870,14 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>hashtag_medias_v1_chunk</code></td>
 </tr>
 <tr>
+<td><code>GET /hashtag/reels</code></td>
+<td><code>hashtag_medias_reels_v1</code></td>
+</tr>
+<tr>
+<td><code>GET /hashtag/related</code></td>
+<td><code>hashtag_related_hashtags</code></td>
+</tr>
+<tr>
 <td><code>DELETE /highlight</code></td>
 <td><code>highlight_delete</code></td>
 </tr>
@@ -926,6 +934,10 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>location_info</code></td>
 </tr>
 <tr>
+<td><code>GET /location/guides</code></td>
+<td><code>location_guides_v1</code></td>
+</tr>
+<tr>
 <td><code>GET /location/media/recent</code></td>
 <td><code>location_medias_v1_chunk</code></td>
 </tr>
@@ -979,7 +991,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>GET /media/comments</code></td>
-<td><code>media_comments</code></td>
+<td><code>media_comments_chunk</code></td>
 </tr>
 <tr>
 <td><code>DELETE /media/like</code></td>
@@ -1190,6 +1202,10 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>user_friendship_v1</code></td>
 </tr>
 <tr>
+<td><code>GET /user/guides</code></td>
+<td><code>user_guides_v1</code></td>
+</tr>
+<tr>
 <td><code>GET /user/highlights</code></td>
 <td><code>user_highlights</code></td>
 </tr>
@@ -1208,6 +1224,10 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>POST /user/mute/stories</code></td>
 <td><code>mute_stories_from_follow</code></td>
+</tr>
+<tr>
+<td><code>GET /user/pinned/posts</code></td>
+<td><code>user_pinned_medias</code></td>
 </tr>
 <tr>
 <td><code>GET /user/posts</code></td>
@@ -2125,7 +2145,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>hashtag_medias_reels_v1(self, name: str, amount: int = 27) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>hashtag</code></td>
-<td>-</td>
+<td><code>GET /hashtag/reels</code></td>
 </tr>
 <tr>
 <td><code>hashtag_medias_top(self, name: str, amount: int = 9) -&gt; List[aiograpi.types.Media]</code></td>
@@ -2155,7 +2175,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>hashtag_related_hashtags(self, name: str) -&gt; List[aiograpi.types.Hashtag]</code></td>
 <td><code>hashtag</code></td>
-<td>-</td>
+<td><code>GET /hashtag/related</code></td>
 </tr>
 <tr>
 <td><code>hashtag_unfollow(self, hashtag: str) -&gt; bool</code></td>
@@ -2290,7 +2310,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>location_guides_v1(self, location_pk: int) -&gt; List[aiograpi.types.Guide]</code></td>
 <td><code>location</code></td>
-<td>-</td>
+<td><code>GET /location/guides</code></td>
 </tr>
 <tr>
 <td><code>location_info(self, location_pk: int) -&gt; aiograpi.types.Location</code></td>
@@ -2440,12 +2460,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>media_comments(self, media_id: str, amount: int = 20) -&gt; List[aiograpi.types.Comment]</code></td>
 <td><code>comment</code></td>
-<td><code>GET /media/comments</code></td>
+<td>-</td>
 </tr>
 <tr>
 <td><code>media_comments_chunk(self, media_id: str, max_amount: int, min_id: str = None) -&gt; Tuple[List[aiograpi.types.Comment], str]</code></td>
 <td><code>comment</code></td>
-<td>-</td>
+<td><code>GET /media/comments</code></td>
 </tr>
 <tr>
 <td><code>media_comments_gql(self, media_pk: str, amount: int = 50, max_requests: int = 0) -&gt; List[dict]</code></td>
@@ -3425,7 +3445,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_guides_v1(self, user_id: int) -&gt; List[aiograpi.types.Guide]</code></td>
 <td><code>user</code></td>
-<td>-</td>
+<td><code>GET /user/guides</code></td>
 </tr>
 <tr>
 <td><code>user_highlights(self, user_id: int, amount: int = 0) -&gt; List[aiograpi.types.Highlight]</code></td>
@@ -3535,7 +3555,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_pinned_medias(self, user_id) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>media</code></td>
-<td>-</td>
+<td><code>GET /user/pinned/posts</code></td>
 </tr>
 <tr>
 <td><code>user_related_profiles_gql(self, user_id: str) -&gt; List[aiograpi.types.UserShort]</code></td>
