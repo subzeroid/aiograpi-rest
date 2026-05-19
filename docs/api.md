@@ -96,6 +96,17 @@ Search routes live under the `Search` tag and hide Instagram's internal
 return raw Instagram-shaped objects because their payloads vary by ranking
 surface and cursor state.
 
+## Reels
+
+Global Reels feed routes live under the `Reels` tag and return arrays of media
+objects. They accept `amount` and `last_media_pk` where the underlying
+`aiograpi` method supports feed continuation.
+
+- `GET /reels` returns connected Reels media.
+- `GET /reels/friends` returns Friends tab Reels media.
+- `GET /reels/explore` returns Explore Reels media.
+- `GET /reels/timeline` returns Reels media for a `collection_pk`.
+
 ## Pagination
 
 Paginated read-list routes return an object with `items` and `next_cursor`.

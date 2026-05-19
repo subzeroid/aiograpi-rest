@@ -30,6 +30,7 @@ from aiograpi_rest.routers import (
     note,
     notifications,
     photo,
+    reels,
     search,
     story,
     user,
@@ -98,6 +99,7 @@ OPENAPI_TAGS = [
     {"name": "Account", "description": "Authenticated account profile and privacy operations."},
     {"name": "User", "description": "Profile lookup and user relationship operations."},
     {"name": "Search", "description": "Cross-resource search operations."},
+    {"name": "Reels", "description": "Connected, friends, explore, and collection Reels feeds."},
     {"name": "Media (Post)", "description": "Generic media/post lookup, edits, and interactions."},
     {"name": "Direct", "description": "Instagram Direct inbox, thread, and message operations."},
     {"name": "Hashtag", "description": "Hashtag lookup, media discovery, and follow operations."},
@@ -155,6 +157,10 @@ OPERATION_SUMMARIES = {
     "deleteMediaSave": "Unsave media",
     "postMediaPin": "Pin media",
     "deleteMediaPin": "Unpin media",
+    "getReels": "List connected Reels",
+    "getReelsFriends": "List friends Reels",
+    "getReelsExplore": "List explore Reels",
+    "getReelsTimeline": "List Reels timeline media",
     "getDirectInbox": "List paginated direct inbox threads",
     "getDirectRequests": "List direct message requests",
     "getDirectSpam": "List paginated direct spam threads",
@@ -473,6 +479,7 @@ app = FastAPI(
 app.include_router(auth.router)
 app.include_router(account.router)
 app.include_router(search.router)
+app.include_router(reels.router)
 app.include_router(media.router)
 app.include_router(media.user_router)
 app.include_router(direct.router)

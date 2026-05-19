@@ -306,6 +306,10 @@ async def test_openapi_uses_rest_http_methods():
         "/photo/upload": {"post"},
         "/photo/upload/by/url": {"post"},
         "/ready": {"get"},
+        "/reels": {"get"},
+        "/reels/explore": {"get"},
+        "/reels/friends": {"get"},
+        "/reels/timeline": {"get"},
         "/search/accounts": {"get"},
         "/search/followers": {"get"},
         "/search/following": {"get"},
@@ -498,6 +502,7 @@ async def test_openapi_uses_human_friendly_tag_names():
         "Note",
         "Notifications",
         "Photo",
+        "Reels",
         "Search",
         "Story",
         "System",
@@ -509,6 +514,7 @@ async def test_openapi_uses_human_friendly_tag_names():
         "Account",
         "User",
         "Search",
+        "Reels",
         "Media (Post)",
         "Direct",
         "Hashtag",
@@ -579,6 +585,10 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/media/comment/replies"]["get"]["summary"] == "List media comment replies"
     assert paths["/media/likers"]["get"]["summary"] == "List media likers"
     assert paths["/notes"]["get"]["summary"] == "List notes"
+    assert paths["/reels"]["get"]["summary"] == "List connected Reels"
+    assert paths["/reels/friends"]["get"]["summary"] == "List friends Reels"
+    assert paths["/reels/explore"]["get"]["summary"] == "List explore Reels"
+    assert paths["/reels/timeline"]["get"]["summary"] == "List Reels timeline media"
     assert paths["/search/accounts"]["get"]["summary"] == "Search accounts"
     assert paths["/search/followers"]["get"]["summary"] == "Search a user's followers"
     assert paths["/search/following"]["get"]["summary"] == "Search accounts a user follows"

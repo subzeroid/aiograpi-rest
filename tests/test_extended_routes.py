@@ -450,6 +450,22 @@ class FakeExpandedClient:
         self.calls.append(("hashtag_unfollow", hashtag))
         return True
 
+    async def reels(self, amount=10, last_media_pk=0):
+        self.calls.append(("reels", amount, last_media_pk))
+        return [_media_payload(31)]
+
+    async def friends_reels(self, amount=10, last_media_pk=0):
+        self.calls.append(("friends_reels", amount, last_media_pk))
+        return [_media_payload(32)]
+
+    async def explore_reels(self, amount=10, last_media_pk=0):
+        self.calls.append(("explore_reels", amount, last_media_pk))
+        return [_media_payload(33)]
+
+    async def reels_timeline_media(self, collection_pk, amount=10, last_media_pk=0):
+        self.calls.append(("reels_timeline_media", collection_pk, amount, last_media_pk))
+        return [_media_payload(34)]
+
     async def location_search(self, lat, lng):
         self.calls.append(("location_search", lat, lng))
         return [_location_payload()]
@@ -988,6 +1004,27 @@ async def test_discovery_user_routes(storage):
     assert ("user_unblock", "1", "profile") in storage.client.calls
     assert ("user_pinned_medias", 1) in storage.client.calls
     assert ("user_guides_v1", 1) in storage.client.calls
+
+
+@pytest.mark.asyncio
+async def test_reels_routes(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        connected = await ac.get("/reels", params={"sessionid": "sid", "amount": "3", "last_media_pk": "10"})
+        friends = await ac.get("/reels/friends", params={"sessionid": "sid", "amount": "4", "last_media_pk": "11"})
+        explore = await ac.get("/reels/explore", params={"sessionid": "sid", "amount": "5", "last_media_pk": "12"})
+        timeline = await ac.get(
+            "/reels/timeline",
+            params={"sessionid": "sid", "collection_pk": "collection1", "amount": "6", "last_media_pk": "13"},
+        )
+
+    assert connected.status_code == 200 and connected.json()[0]["pk"] == 31
+    assert friends.status_code == 200 and friends.json()[0]["pk"] == 32
+    assert explore.status_code == 200 and explore.json()[0]["pk"] == 33
+    assert timeline.status_code == 200 and timeline.json()[0]["pk"] == 34
+    assert ("reels", 3, 10) in storage.client.calls
+    assert ("friends_reels", 4, 11) in storage.client.calls
+    assert ("explore_reels", 5, 12) in storage.client.calls
+    assert ("reels_timeline_media", "collection1", 6, 13) in storage.client.calls
 
 
 @pytest.mark.asyncio

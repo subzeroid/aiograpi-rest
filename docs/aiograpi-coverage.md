@@ -9,16 +9,16 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 ## Summary
 
 - Public `aiograpi.Client` methods: **500**
-- Methods reached by REST routes: **170**
-- Methods not exposed as REST routes: **330**
-- Candidate REST backlog: **145**
+- Methods reached by REST routes: **174**
+- Methods not exposed as REST routes: **326**
+- Candidate REST backlog: **141**
 
 ## REST Relevance
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `exposed` | 170 | Already used by public REST routes. |
-| `candidate` | 145 | Likely useful as a future user-facing REST endpoint. |
+| `exposed` | 174 | Already used by public REST routes. |
+| `candidate` | 141 | Likely useful as a future user-facing REST endpoint. |
 | `duplicate` | 89 | Variant of an already exposed method, such as `_v1`, `_gql`, `_a1`, chunk, or origin helpers. |
 | `internal` | 96 | Low-level auth/request/configuration/signup/challenge helpers that should not be mirrored blindly. |
 
@@ -56,7 +56,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `share` | 0 | 3 | 0 | 0 | 3 |
 | `signup` | 0 | 0 | 0 | 15 | 15 |
 | `story` | 11 | 3 | 7 | 0 | 21 |
-| `timeline` | 0 | 4 | 0 | 0 | 4 |
+| `timeline` | 4 | 0 | 0 | 0 | 4 |
 | `totp` | 2 | 2 | 0 | 0 | 4 |
 | `track` | 0 | 5 | 0 | 0 | 5 |
 | `user` | 20 | 30 | 20 | 4 | 74 |
@@ -85,7 +85,6 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `photo` | `photo_upload_with_music` |
 | `share` | `share_code_from_url`, `share_info`, `share_info_by_url` |
 | `story` | `archive_stories`, `sticker_tray`, `users_stories_gql` |
-| `timeline` | `explore_reels`, `friends_reels`, `reels`, `reels_timeline_media` |
 | `totp` | `totp_generate_code`, `totp_generate_seed` |
 | `track` | `music_in_feed_audio_browser`, `track_download_by_url`, `track_info_by_canonical_id`, `track_info_by_id`, `track_stream_info_by_id` |
 | `user` | `chaining`, `close_friend_add`, `close_friend_remove`, `creator_info`, `disable_posts_notifications`, `disable_reels_notifications`, `disable_stories_notifications`, `disable_videos_notifications`, `discover_recommended_accounts_for_category_v1`, `enable_posts_notifications`, `enable_reels_notifications`, `enable_stories_notifications`, `enable_videos_notifications`, `feed_user_stream_item`, `fetch_suggestion_details`, `new_feed_exist`, `user_follow_request_approve`, `user_follow_request_decline`, `user_follow_requests_approve`, `user_follow_requests_decline`, `user_friendships_v1`, `user_id_from_username`, `user_related_profiles_gql`, `user_short_gql`, `user_stream_by_id_flat`, `user_stream_by_id_v1`, `user_stream_by_username_flat`, `user_stream_by_username_v1`, `user_web_profile_info_v1`, `username_from_user_id` |
@@ -209,6 +208,10 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `GET /photo/download/by/url` | `photo_download_by_url` |
 | `POST /photo/upload` | `photo_upload` |
 | `POST /photo/upload/by/url` | `photo_upload` |
+| `GET /reels` | `reels` |
+| `GET /reels/explore` | `explore_reels` |
+| `GET /reels/friends` | `friends_reels` |
+| `GET /reels/timeline` | `reels_timeline_media` |
 | `GET /search/accounts` | `fbsearch_accounts_v2` |
 | `GET /search/followers` | `search_followers_v1` |
 | `GET /search/following` | `search_following_v1` |
@@ -393,7 +396,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `enable_videos_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
 | `explore_page(self)` | `explore` | - | `candidate` | potential user-facing REST endpoint |
 | `explore_page_media_info(self, media_pk: int)` | `explore` | - | `candidate` | potential user-facing REST endpoint |
-| `explore_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - | `candidate` | potential user-facing REST endpoint |
+| `explore_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | `GET /reels/explore` | `exposed` | used by at least one public REST route |
 | `expose(self) -> Dict` | `auth` | `PATCH /auth/settings` | `exposed` | used by at least one public REST route |
 | `fbsearch_accounts_v2(self, query: str, page_token: Optional[str] = None) -> dict` | `fbsearch` | `GET /search/accounts` | `exposed` | used by at least one public REST route |
 | `fbsearch_item(self, item_id: str, search_surface: str, query: str, timezone_offset: int = 0, count: int = 30, reels_page_index: int = None, has_more_reels: str = None, reels_max_id: str = None, next_max_id: str = None, rank_token: str = None, page_index: int = None, page_token: str = None, paging_token: str = None) -> dict` | `fbsearch` | - | `candidate` | potential user-facing REST endpoint |
@@ -410,7 +413,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `feed_user_stream_item(self, item_id: str, is_pull_to_refresh: bool = False) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
 | `fetch_fb_dtsg(self)` | `graphql` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
 | `fetch_suggestion_details(self, user_id: str, chained_ids: Union[str, List[Union[str, int]]]) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `friends_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - | `candidate` | potential user-facing REST endpoint |
+| `friends_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | `GET /reels/friends` | `exposed` | used by at least one public REST route |
 | `gen_user_breadcrumb(self, size: int) -> str` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
 | `generate_android_device_id(self) -> str` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
 | `generate_mutation_token(self) -> str` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
@@ -606,8 +609,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `public_graphql_request(self, variables, query_hash=None, query_id=None, data=None, params=None, headers=None)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
 | `public_head(self, url: str, follow_redirects: bool = False)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
 | `public_request(self, url, data=None, params=None, headers=None, update_headers=None, return_json=False, retries_count=None, retries_timeout=None)` | `public` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
-| `reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - | `candidate` | potential user-facing REST endpoint |
-| `reels_timeline_media(self, collection_pk: str, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | - | `candidate` | potential user-facing REST endpoint |
+| `reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | `GET /reels` | `exposed` | used by at least one public REST route |
+| `reels_timeline_media(self, collection_pk: str, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | `GET /reels/timeline` | `exposed` | used by at least one public REST route |
 | `relogin(self) -> bool` | `auth` | `PATCH /auth/relogin` | `exposed` | used by at least one public REST route |
 | `remove_bio_links(self, link_ids: list) -> dict` | `account` | - | `candidate` | potential user-facing REST endpoint |
 | `report_explore_media(self, media_pk: int)` | `explore` | - | `candidate` | potential user-facing REST endpoint |
