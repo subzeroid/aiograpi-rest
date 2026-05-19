@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import List, Literal, Optional
 
-from aiograpi.types import DirectMessage, DirectThread
+from aiograpi.types import DirectMessage, DirectThread, UserShort
 from fastapi import APIRouter, Depends, Form, HTTPException, Query
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
@@ -16,8 +16,8 @@ router = APIRouter(
 @router.get("/inbox", response_model=DirectThreadPage)
 async def direct_inbox(
     sessionid: str = Depends(get_sessionid),
-    selected_filter: str = Query(""),
-    box: str = Query(""),
+    selected_filter: Literal["", "flagged", "unread"] = Query(""),
+    box: Literal["", "general", "primary"] = Query(""),
     thread_message_limit: Optional[int] = Query(None),
     cursor: str = Query(""),
     clients: ClientStorage = Depends(get_clients),
@@ -34,6 +34,21 @@ async def direct_inbox(
     return DirectThreadPage(items=items, next_cursor=next_cursor or "")
 
 
+@router.get("/threads", response_model=List[DirectThread])
+async def direct_threads(
+    sessionid: str = Depends(get_sessionid),
+    amount: int = Query(20),
+    selected_filter: Literal["", "flagged", "unread"] = Query(""),
+    box: Literal["", "general", "primary"] = Query(""),
+    thread_message_limit: Optional[int] = Query(None),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[DirectThread]:
+    """List direct threads
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_threads(amount, selected_filter, box, thread_message_limit)
+
+
 @router.get("/thread", response_model=DirectThread)
 async def direct_thread(
     sessionid: str = Depends(get_sessionid),
@@ -45,6 +60,59 @@ async def direct_thread(
     """
     cl = await clients.get(sessionid)
     return await cl.direct_thread(thread_id, amount)
+
+
+@router.get("/messages", response_model=List[DirectMessage])
+async def direct_messages(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Query(...),
+    amount: int = Query(20),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[DirectMessage]:
+    """List messages in a direct thread
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_messages(thread_id, amount)
+
+
+@router.get("/message", response_model=DirectMessage)
+async def direct_message(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Query(...),
+    message_id: int = Query(...),
+    amount: int = Query(20),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectMessage:
+    """Get a direct message
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_message(thread_id, message_id, amount)
+
+
+@router.get("/pending", response_model=DirectThreadPage)
+async def direct_pending(
+    sessionid: str = Depends(get_sessionid),
+    cursor: str = Query(""),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectThreadPage:
+    """List pending direct thread requests
+    """
+    cl = await clients.get(sessionid)
+    items, next_cursor = await cl.direct_pending_chunk(cursor or None)
+    return DirectThreadPage(items=items, next_cursor=next_cursor or "")
+
+
+@router.get("/search", response_model=List[UserShort])
+async def direct_search(
+    sessionid: str = Depends(get_sessionid),
+    query: str = Query(...),
+    mode: Literal["raven", "universal"] = Query("universal"),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[UserShort]:
+    """Search direct recipients
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_search(query, mode)
 
 
 @router.post("/thread", response_model=str)

@@ -226,6 +226,22 @@ class FakeExpandedClient:
         self.calls.append(("direct_thread", thread_id, amount))
         return _direct_thread_payload()
 
+    async def direct_messages(self, thread_id, amount=20):
+        self.calls.append(("direct_messages", thread_id, amount))
+        return [_direct_message_payload()]
+
+    async def direct_message(self, thread_id, message_id, amount=20):
+        self.calls.append(("direct_message", thread_id, message_id, amount))
+        return _direct_message_payload(str(message_id))
+
+    async def direct_pending_chunk(self, cursor=None):
+        self.calls.append(("direct_pending_chunk", cursor))
+        return [_direct_thread_payload()], "next-pending"
+
+    async def direct_search(self, query, mode="universal"):
+        self.calls.append(("direct_search", query, mode))
+        return [_user_short(2)]
+
     async def direct_thread_create(self, user_ids, title=""):
         self.calls.append(("direct_thread_create", user_ids, title))
         return "100"
@@ -506,7 +522,24 @@ async def test_media_comment_save_pin_routes(storage):
 async def test_direct_routes(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         inbox = await ac.get("/direct/inbox", params={"sessionid": "sid", "cursor": "direct-cursor"})
+        threads = await ac.get(
+            "/direct/threads",
+            params={
+                "sessionid": "sid",
+                "amount": "3",
+                "selected_filter": "unread",
+                "box": "primary",
+                "thread_message_limit": "2",
+            },
+        )
         thread = await ac.get("/direct/thread", params={"sessionid": "sid", "thread_id": "100", "amount": "5"})
+        messages = await ac.get("/direct/messages", params={"sessionid": "sid", "thread_id": "100", "amount": "4"})
+        message_lookup = await ac.get(
+            "/direct/message",
+            params={"sessionid": "sid", "thread_id": "100", "message_id": "1", "amount": "6"},
+        )
+        pending = await ac.get("/direct/pending", params={"sessionid": "sid", "cursor": "pending-cursor"})
+        search = await ac.get("/direct/search", params={"sessionid": "sid", "query": "user", "mode": "raven"})
         created = await ac.post("/direct/thread", data={"sessionid": "sid", "user_ids": ["1", "2"], "title": "Team"})
         message = await ac.post(
             "/direct/message",
@@ -529,7 +562,14 @@ async def test_direct_routes(storage):
         )
         single = await ac.post("/direct/thread", data={"sessionid": "sid", "user_ids": ["1"]})
 
-    assert inbox.status_code == 200 and thread.status_code == 200
+    assert inbox.status_code == 200 and threads.status_code == 200 and thread.status_code == 200
+    assert messages.status_code == 200 and message_lookup.status_code == 200
+    assert pending.status_code == 200 and search.status_code == 200
+    assert threads.json()[0]["id"] == "100"
+    assert messages.json()[0]["text"] == "hello"
+    assert message_lookup.json()["id"] == "1"
+    assert pending.json()["next_cursor"] == "next-pending"
+    assert search.json()[0]["username"] == "user2"
     assert created.status_code == 200 and created.json() == "100"
     assert message.status_code == 200 and message.json()["text"] == "hello"
     assert deleted.status_code == 200 and seen.status_code == 200
@@ -537,6 +577,11 @@ async def test_direct_routes(storage):
     assert single.status_code == 422
     assert inbox.json()["next_cursor"] == "next-direct"
     assert ("direct_threads_chunk", "", "", None, "direct-cursor") in storage.client.calls
+    assert ("direct_threads", 3, "unread", "primary", 2) in storage.client.calls
+    assert ("direct_messages", 100, 4) in storage.client.calls
+    assert ("direct_message", 100, 1, 6) in storage.client.calls
+    assert ("direct_pending_chunk", "pending-cursor") in storage.client.calls
+    assert ("direct_search", "user", "raven") in storage.client.calls
     assert ("direct_thread_create", [1, 2], "Team") in storage.client.calls
     assert ("direct_message_seen", 100, 1) in storage.client.calls
 

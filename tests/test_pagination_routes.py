@@ -164,6 +164,10 @@ class FakePaginationClient:
         self.calls.append(("direct_threads_chunk", selected_filter, box, thread_message_limit, cursor))
         return [_direct_thread_payload()], "next-direct-inbox"
 
+    async def direct_pending_chunk(self, cursor=None):
+        self.calls.append(("direct_pending_chunk", cursor))
+        return [_direct_thread_payload()], "next-direct-pending"
+
 
 class FakeStorage:
     def __init__(self):
@@ -281,6 +285,7 @@ async def test_user_discovery_story_and_direct_list_routes_return_items_and_next
             {"selected_filter": "unread", "box": "primary", "thread_message_limit": "3", "cursor": "di1"},
             "next-direct-inbox",
         ),
+        ("/direct/pending", {"cursor": "dp1"}, "next-direct-pending"),
     ]
 
     for path, params, next_cursor in checks:
@@ -299,6 +304,7 @@ async def test_user_discovery_story_and_direct_list_routes_return_items_and_next
     assert ("story_viewers_chunk", "100", 18, "sv1") in storage.client.calls
     assert ("archive_story_days_paginated_v1", 19, "sa1", False, "archive") in storage.client.calls
     assert ("direct_threads_chunk", "unread", "primary", 3, "di1") in storage.client.calls
+    assert ("direct_pending_chunk", "dp1") in storage.client.calls
 
 
 @pytest.mark.asyncio
@@ -324,6 +330,7 @@ async def test_openapi_read_list_routes_use_page_schemas_and_cursor_parameter():
         "/story/viewers": "ViewerPage",
         "/story/archive": "StoryArchiveDayPage",
         "/direct/inbox": "DirectThreadPage",
+        "/direct/pending": "DirectThreadPage",
     }
     for path, schema_name in expected_refs.items():
         operation = schema["paths"][path]["get"]
