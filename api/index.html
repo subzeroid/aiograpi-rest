@@ -408,6 +408,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -601,6 +612,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -736,6 +758,16 @@ be passed directly into OpenAPI client generators.</p>
 <p><code>/search/top</code>, <code>/search/reels</code>, <code>/search/accounts</code>, and <code>/search/typeahead</code>
 return raw Instagram-shaped objects because their payloads vary by ranking
 surface and cursor state.</p>
+<h2 id="reels">Reels</h2>
+<p>Global Reels feed routes live under the <code>Reels</code> tag and return arrays of media
+objects. They accept <code>amount</code> and <code>last_media_pk</code> where the underlying
+<code>aiograpi</code> method supports feed continuation.</p>
+<ul>
+<li><code>GET /reels</code> returns connected Reels media.</li>
+<li><code>GET /reels/friends</code> returns Friends tab Reels media.</li>
+<li><code>GET /reels/explore</code> returns Explore Reels media.</li>
+<li><code>GET /reels/timeline</code> returns Reels media for a <code>collection_pk</code>.</li>
+</ul>
 <h2 id="pagination">Pagination</h2>
 <p>Paginated read-list routes return an object with <code>items</code> and <code>next_cursor</code>.
 Pass the returned <code>next_cursor</code> as <code>cursor</code> on the next request to continue

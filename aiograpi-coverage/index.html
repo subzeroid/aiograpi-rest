@@ -582,9 +582,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <h2 id="summary">Summary</h2>
 <ul>
 <li>Public <code>aiograpi.Client</code> methods: <strong>500</strong></li>
-<li>Methods reached by REST routes: <strong>170</strong></li>
-<li>Methods not exposed as REST routes: <strong>330</strong></li>
-<li>Candidate REST backlog: <strong>145</strong></li>
+<li>Methods reached by REST routes: <strong>174</strong></li>
+<li>Methods not exposed as REST routes: <strong>326</strong></li>
+<li>Candidate REST backlog: <strong>141</strong></li>
 </ul>
 <h2 id="rest-relevance">REST Relevance</h2>
 <table>
@@ -598,12 +598,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tbody>
 <tr>
 <td><code>exposed</code></td>
-<td style="text-align: right;">170</td>
+<td style="text-align: right;">174</td>
 <td>Already used by public REST routes.</td>
 </tr>
 <tr>
 <td><code>candidate</code></td>
-<td style="text-align: right;">145</td>
+<td style="text-align: right;">141</td>
 <td>Likely useful as a future user-facing REST endpoint.</td>
 </tr>
 <tr>
@@ -873,8 +873,8 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>timeline</code></td>
-<td style="text-align: right;">0</td>
 <td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">4</td>
@@ -997,10 +997,6 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>story</code></td>
 <td><code>archive_stories</code>, <code>sticker_tray</code>, <code>users_stories_gql</code></td>
-</tr>
-<tr>
-<td><code>timeline</code></td>
-<td><code>explore_reels</code>, <code>friends_reels</code>, <code>reels</code>, <code>reels_timeline_media</code></td>
 </tr>
 <tr>
 <td><code>totp</code></td>
@@ -1484,6 +1480,22 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>POST /photo/upload/by/url</code></td>
 <td><code>photo_upload</code></td>
+</tr>
+<tr>
+<td><code>GET /reels</code></td>
+<td><code>reels</code></td>
+</tr>
+<tr>
+<td><code>GET /reels/explore</code></td>
+<td><code>explore_reels</code></td>
+</tr>
+<tr>
+<td><code>GET /reels/friends</code></td>
+<td><code>friends_reels</code></td>
+</tr>
+<tr>
+<td><code>GET /reels/timeline</code></td>
+<td><code>reels_timeline_media</code></td>
 </tr>
 <tr>
 <td><code>GET /search/accounts</code></td>
@@ -2608,9 +2620,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>explore_reels(self, amount: int = 10, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>timeline</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /reels/explore</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>expose(self) -&gt; Dict</code></td>
@@ -2727,9 +2739,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>friends_reels(self, amount: int = 10, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>timeline</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /reels/friends</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>gen_user_breadcrumb(self, size: int) -&gt; str</code></td>
@@ -4099,16 +4111,16 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>reels(self, amount: int = 10, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>timeline</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /reels</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>reels_timeline_media(self, collection_pk: str, amount: int = 10, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
 <td><code>timeline</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /reels/timeline</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>relogin(self) -&gt; bool</code></td>
