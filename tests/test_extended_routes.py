@@ -1,10 +1,13 @@
 from pathlib import Path
 
 import pytest
+from aiograpi.exceptions import CollectionNotFound
+from aiograpi.types import Collection
 from httpx import ASGITransport, AsyncClient
 
 from aiograpi_rest.dependencies import get_clients
 from aiograpi_rest.main import app
+from aiograpi_rest.routers.account import _collection_value
 
 
 def _user_short(pk=1):
@@ -154,6 +157,15 @@ def _note_payload(note_id="n1"):
         "is_emoji_only": False,
         "has_translation": False,
         "note_style": 0,
+    }
+
+
+def _collection_payload(collection_id="collection1", name="Saved"):
+    return {
+        "id": collection_id,
+        "name": name,
+        "type": "MEDIA",
+        "media_count": 2,
     }
 
 
@@ -465,6 +477,32 @@ class FakeExpandedClient:
     async def reels_timeline_media(self, collection_pk, amount=10, last_media_pk=0):
         self.calls.append(("reels_timeline_media", collection_pk, amount, last_media_pk))
         return [_media_payload(34)]
+
+    async def collections(self):
+        self.calls.append(("collections",))
+        return [_collection_payload()]
+
+    async def collection_pk_by_name(self, name):
+        self.calls.append(("collection_pk_by_name", name))
+        if name == "Missing":
+            raise CollectionNotFound(name=name)
+        return "collection1"
+
+    async def collection_medias(self, collection_pk, amount=21, last_media_pk=0):
+        self.calls.append(("collection_medias", collection_pk, amount, last_media_pk))
+        return [_media_payload(35)]
+
+    async def collection_medias_by_name(self, name):
+        self.calls.append(("collection_medias_by_name", name))
+        return [_media_payload(36)]
+
+    async def explore_page(self):
+        self.calls.append(("explore_page",))
+        return {"sections": [{"layout_type": "media_grid"}], "more_available": True}
+
+    async def explore_page_media_info(self, media_pk):
+        self.calls.append(("explore_page_media_info", media_pk))
+        return {"media_or_ad": _media_payload(37), "source": "explore"}
 
     async def location_search(self, lat, lng):
         self.calls.append(("location_search", lat, lng))
@@ -1025,6 +1063,64 @@ async def test_reels_routes(storage):
     assert ("friends_reels", 4, 11) in storage.client.calls
     assert ("explore_reels", 5, 12) in storage.client.calls
     assert ("reels_timeline_media", "collection1", 6, 13) in storage.client.calls
+
+
+@pytest.mark.asyncio
+async def test_collection_and_explore_routes(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        collections = await ac.get("/account/collections", params={"sessionid": "sid"})
+        collection_by_pk = await ac.get(
+            "/account/collection",
+            params={"sessionid": "sid", "collection_pk": "collection1"},
+        )
+        collection_by_name = await ac.get(
+            "/account/collection",
+            params={"sessionid": "sid", "name": "Saved"},
+        )
+        collection_media_by_pk = await ac.get(
+            "/account/collection/media",
+            params={"sessionid": "sid", "collection_pk": "collection1", "amount": "7", "last_media_pk": "14"},
+        )
+        collection_media_by_name = await ac.get(
+            "/account/collection/media",
+            params={"sessionid": "sid", "name": "Saved"},
+        )
+        collection_missing_selector = await ac.get("/account/collection", params={"sessionid": "sid"})
+        collection_media_missing_selector = await ac.get("/account/collection/media", params={"sessionid": "sid"})
+        collection_conflicting_selector = await ac.get(
+            "/account/collection",
+            params={"sessionid": "sid", "collection_pk": "collection1", "name": "Saved"},
+        )
+        collection_not_found = await ac.get(
+            "/account/collection",
+            params={"sessionid": "sid", "collection_pk": "missing"},
+        )
+        collection_name_not_found = await ac.get(
+            "/account/collection",
+            params={"sessionid": "sid", "name": "Missing"},
+        )
+        explore = await ac.get("/explore", params={"sessionid": "sid"})
+        explore_media = await ac.get("/explore/media", params={"sessionid": "sid", "media_pk": "37"})
+
+    assert _collection_value(Collection(id="collection2", name="Later", type="MEDIA", media_count=1), "id") == "collection2"
+    assert collections.status_code == 200 and collections.json()[0]["id"] == "collection1"
+    assert collection_by_pk.status_code == 200 and collection_by_pk.json()["name"] == "Saved"
+    assert collection_by_name.status_code == 200 and collection_by_name.json()["id"] == "collection1"
+    assert collection_media_by_pk.status_code == 200 and collection_media_by_pk.json()[0]["pk"] == 35
+    assert collection_media_by_name.status_code == 200 and collection_media_by_name.json()[0]["pk"] == 36
+    assert collection_missing_selector.status_code == 422
+    assert collection_media_missing_selector.status_code == 422
+    assert collection_conflicting_selector.status_code == 422
+    assert collection_not_found.status_code == 404
+    assert collection_name_not_found.status_code == 404
+    assert explore.status_code == 200 and explore.json()["more_available"] is True
+    assert explore_media.status_code == 200 and explore_media.json()["media_or_ad"]["pk"] == 37
+    assert ("collections",) in storage.client.calls
+    assert ("collection_pk_by_name", "Saved") in storage.client.calls
+    assert ("collection_medias", "collection1", 7, 14) in storage.client.calls
+    assert ("collection_medias_by_name", "Saved") in storage.client.calls
+    assert ("explore_page",) in storage.client.calls
+    assert ("explore_page_media_info", 37) in storage.client.calls
 
 
 @pytest.mark.asyncio

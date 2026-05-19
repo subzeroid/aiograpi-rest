@@ -49,15 +49,25 @@ def test_aiograpi_coverage_classifies_methods_by_rest_relevance():
     }
 
     assert classify_method(methods["user_about_v1"], covered).status == "exposed"
-    assert classify_method(methods["collections"], covered).status == "candidate"
-    assert classify_method(methods["collection_medias"], covered).status == "candidate"
+    assert classify_method(methods["collections"], covered).status == "exposed"
+    assert classify_method(methods["collection_medias"], covered).status == "exposed"
+    assert classify_method(methods["collection_medias_by_name"], covered).status == "exposed"
+    assert classify_method(methods["collection_pk_by_name"], covered).status == "exposed"
     assert classify_method(methods["collection_medias_v1"], covered).status == "duplicate"
     assert classify_method(methods["direct_message_like"], covered).status == "exposed"
     assert classify_method(methods["direct_message_search"], covered).status == "exposed"
     assert classify_method(methods["reels"], covered).status == "exposed"
     assert classify_method(methods["friends_reels"], covered).status == "exposed"
     assert classify_method(methods["explore_reels"], covered).status == "exposed"
+    assert classify_method(methods["explore_page"], covered).status == "exposed"
+    assert classify_method(methods["explore_page_media_info"], covered).status == "exposed"
+    assert classify_method(methods["report_explore_media"], covered).status == "candidate"
     assert classify_method(methods["reels_timeline_media"], covered).status == "exposed"
+    assert classify_method(methods["track_info_by_id"], covered).status == "exposed"
+    assert classify_method(methods["track_info_by_canonical_id"], covered).status == "exposed"
+    assert classify_method(methods["track_stream_info_by_id"], covered).status == "exposed"
+    assert classify_method(methods["track_download_by_url"], covered).status == "exposed"
+    assert classify_method(methods["music_in_feed_audio_browser"], covered).status == "exposed"
     assert classify_method(methods["comment_likers_gql"], covered).status == "candidate"
     assert classify_method(methods["comment_likers_gql_chunk"], covered).status == "duplicate"
     assert classify_method(methods["hashtag_medias_a1"], covered).status == "duplicate"
@@ -99,7 +109,9 @@ def test_aiograpi_coverage_markdown_summarizes_candidate_backlog():
 
     assert "## REST Relevance" in markdown
     assert "## Candidate Backlog By Area" in markdown
-    assert "| `collection` |" in markdown
+    assert "| `explore` | `report_explore_media` |" in markdown
+    assert "| `track` |" in markdown
+    assert "`track_info_by_id`" in markdown
     assert "`collections`" in markdown
     assert "`collection_medias_v1`" not in markdown.split("## Full Method Matrix", 1)[0]
     assert "`direct_message_like`" in markdown

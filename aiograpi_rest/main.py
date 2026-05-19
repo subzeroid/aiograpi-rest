@@ -21,6 +21,7 @@ from aiograpi_rest.routers import (
     auth,
     clip,
     direct,
+    explore,
     hashtag,
     highlight,
     igtv,
@@ -33,6 +34,7 @@ from aiograpi_rest.routers import (
     reels,
     search,
     story,
+    track,
     user,
     video,
 )
@@ -100,6 +102,7 @@ OPENAPI_TAGS = [
     {"name": "User", "description": "Profile lookup and user relationship operations."},
     {"name": "Search", "description": "Cross-resource search operations."},
     {"name": "Reels", "description": "Connected, friends, explore, and collection Reels feeds."},
+    {"name": "Explore", "description": "Instagram Explore page and Explore media metadata."},
     {"name": "Media (Post)", "description": "Generic media/post lookup, edits, and interactions."},
     {"name": "Direct", "description": "Instagram Direct inbox, thread, and message operations."},
     {"name": "Hashtag", "description": "Hashtag lookup, media discovery, and follow operations."},
@@ -114,6 +117,7 @@ OPENAPI_TAGS = [
     {"name": "Story", "description": "Story lookup, upload, download, and interactions."},
     {"name": "IGTV (Legacy)", "description": "Legacy IGTV operations still exposed by aiograpi."},
     {"name": "Insights", "description": "Account and media insights."},
+    {"name": "Track (Music)", "description": "Music track lookup, stream, download, and browser operations."},
     {"name": "System", "description": "Runtime service metadata."},
 ]
 OPERATION_SUMMARIES = {
@@ -126,6 +130,9 @@ OPERATION_SUMMARIES = {
     "deleteAuthTotp": "Disable TOTP two-factor authentication",
     "postAuthChallengeResolve": "Resolve an Instagram login challenge",
     "getAccount": "Get authenticated account info",
+    "getAccountCollections": "List saved collections",
+    "getAccountCollection": "Get a saved collection",
+    "getAccountCollectionMedia": "List saved collection media",
     "getAccountFeedTimeline": "Get authenticated timeline feed",
     "getAccountFollowRequests": "List paginated pending follow requests",
     "getAccountLikedMedia": "List media liked by the authenticated account",
@@ -157,6 +164,7 @@ OPERATION_SUMMARIES = {
     "deleteMediaSave": "Unsave media",
     "postMediaPin": "Pin media",
     "deleteMediaPin": "Unpin media",
+    "getMusicFeedBrowser": "Get feed music browser",
     "getReels": "List connected Reels",
     "getReelsFriends": "List friends Reels",
     "getReelsExplore": "List explore Reels",
@@ -198,6 +206,8 @@ OPERATION_SUMMARIES = {
     "postDirectVideo": "Send a direct video",
     "postDirectVoice": "Send a direct voice message",
     "postDirectFile": "Send a direct file",
+    "getExplore": "Get Explore page",
+    "getExploreMedia": "Get Explore media details",
     "getHashtag": "Get hashtag details",
     "getHashtagMediaTop": "List paginated top hashtag media",
     "getHashtagMediaRecent": "List paginated recent hashtag media",
@@ -252,6 +262,9 @@ OPERATION_SUMMARIES = {
     "getStoryArchive": "List paginated story archive days",
     "getStoryDownload": "Download story media",
     "getStoryDownloadByUrl": "Download story media from a URL",
+    "getTrack": "Get music track details",
+    "getTrackStream": "Get track stream media",
+    "getTrackDownloadByUrl": "Download track audio from a URL",
     "getUser": "Get user profile",
     "getUserFollowers": "List paginated user followers",
     "getUserFollowing": "List paginated accounts a user follows",
@@ -480,6 +493,7 @@ app.include_router(auth.router)
 app.include_router(account.router)
 app.include_router(search.router)
 app.include_router(reels.router)
+app.include_router(explore.router)
 app.include_router(media.router)
 app.include_router(media.user_router)
 app.include_router(direct.router)
@@ -497,6 +511,8 @@ app.include_router(album.router)
 app.include_router(story.router)
 app.include_router(story.user_router)
 app.include_router(insights.router)
+app.include_router(track.router)
+app.include_router(track.music_router)
 
 
 @app.get("/", include_in_schema=False)

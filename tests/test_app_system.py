@@ -217,6 +217,9 @@ async def test_openapi_uses_sessionid_authorize_button_for_protected_routes():
 async def test_openapi_uses_rest_http_methods():
     expected_methods = {
         "/account": {"get", "patch"},
+        "/account/collection": {"get"},
+        "/account/collection/media": {"get"},
+        "/account/collections": {"get"},
         "/account/feed/timeline": {"get"},
         "/account/follow/requests": {"get"},
         "/account/picture": {"patch"},
@@ -262,6 +265,8 @@ async def test_openapi_uses_rest_http_methods():
         "/direct/threads": {"get"},
         "/direct/video": {"post"},
         "/direct/voice": {"post"},
+        "/explore": {"get"},
+        "/explore/media": {"get"},
         "/hashtag": {"get"},
         "/hashtag/follow": {"delete", "post"},
         "/hashtag/media/recent": {"get"},
@@ -297,6 +302,7 @@ async def test_openapi_uses_rest_http_methods():
         "/media/save": {"delete", "post"},
         "/media/seen": {"patch"},
         "/media/author": {"get"},
+        "/music/feed/browser": {"get"},
         "/note": {"delete", "post"},
         "/notes": {"get"},
         "/notifications": {"get"},
@@ -331,6 +337,9 @@ async def test_openapi_uses_rest_http_methods():
         "/story/upload": {"post"},
         "/story/upload/by/url": {"post"},
         "/story/viewers": {"get"},
+        "/track": {"get"},
+        "/track/download/by/url": {"get"},
+        "/track/stream": {"get"},
         "/user": {"get"},
         "/user/about": {"get"},
         "/user/block": {"delete", "post"},
@@ -495,6 +504,7 @@ async def test_openapi_uses_human_friendly_tag_names():
         "Insights",
         "Account",
         "Direct",
+        "Explore",
         "Hashtag",
         "Highlight",
         "Location",
@@ -506,6 +516,7 @@ async def test_openapi_uses_human_friendly_tag_names():
         "Search",
         "Story",
         "System",
+        "Track (Music)",
         "User",
         "Video",
     }
@@ -515,6 +526,7 @@ async def test_openapi_uses_human_friendly_tag_names():
         "User",
         "Search",
         "Reels",
+        "Explore",
         "Media (Post)",
         "Direct",
         "Hashtag",
@@ -529,6 +541,7 @@ async def test_openapi_uses_human_friendly_tag_names():
         "Story",
         "IGTV (Legacy)",
         "Insights",
+        "Track (Music)",
         "System",
     ]
 
@@ -546,6 +559,9 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/auth/settings"]["patch"]["summary"] == "Save auth settings"
     assert paths["/account"]["get"]["summary"] == "Get authenticated account info"
     assert paths["/account"]["patch"]["summary"] == "Update authenticated account profile"
+    assert paths["/account/collections"]["get"]["summary"] == "List saved collections"
+    assert paths["/account/collection"]["get"]["summary"] == "Get a saved collection"
+    assert paths["/account/collection/media"]["get"]["summary"] == "List saved collection media"
     assert paths["/account/follow/requests"]["get"]["summary"] == "List paginated pending follow requests"
     assert paths["/direct/thread"]["patch"]["summary"] == "Update direct thread state"
     assert paths["/direct/thread/user"]["post"]["summary"] == "Add users to a direct thread"
@@ -570,6 +586,8 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/direct/video"]["post"]["summary"] == "Send a direct video"
     assert paths["/direct/voice"]["post"]["summary"] == "Send a direct voice message"
     assert paths["/direct/file"]["post"]["summary"] == "Send a direct file"
+    assert paths["/explore"]["get"]["summary"] == "Get Explore page"
+    assert paths["/explore/media"]["get"]["summary"] == "Get Explore media details"
     assert paths["/hashtag"]["get"]["summary"] == "Get hashtag details"
     assert paths["/hashtag/media/top"]["get"]["summary"] == "List paginated top hashtag media"
     assert paths["/hashtag/related"]["get"]["summary"] == "List related hashtags"
@@ -584,6 +602,7 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/media/comments"]["get"]["summary"] == "List paginated media comments"
     assert paths["/media/comment/replies"]["get"]["summary"] == "List media comment replies"
     assert paths["/media/likers"]["get"]["summary"] == "List media likers"
+    assert paths["/music/feed/browser"]["get"]["summary"] == "Get feed music browser"
     assert paths["/notes"]["get"]["summary"] == "List notes"
     assert paths["/reels"]["get"]["summary"] == "List connected Reels"
     assert paths["/reels/friends"]["get"]["summary"] == "List friends Reels"
@@ -603,6 +622,9 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/search/users"]["get"]["summary"] == "Search users"
     assert paths["/story"]["get"]["summary"] == "Get story details"
     assert paths["/story/viewers"]["get"]["summary"] == "List paginated story viewers"
+    assert paths["/track"]["get"]["summary"] == "Get music track details"
+    assert paths["/track/stream"]["get"]["summary"] == "Get track stream media"
+    assert paths["/track/download/by/url"]["get"]["summary"] == "Download track audio from a URL"
     assert paths["/user"]["get"]["summary"] == "Get user profile"
     assert paths["/user/followers"]["get"]["summary"] == "List paginated user followers"
     assert paths["/user/guides"]["get"]["summary"] == "List user guides"

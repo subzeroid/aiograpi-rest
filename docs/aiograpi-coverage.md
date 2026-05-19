@@ -9,16 +9,16 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 ## Summary
 
 - Public `aiograpi.Client` methods: **500**
-- Methods reached by REST routes: **174**
-- Methods not exposed as REST routes: **326**
-- Candidate REST backlog: **141**
+- Methods reached by REST routes: **185**
+- Methods not exposed as REST routes: **315**
+- Candidate REST backlog: **130**
 
 ## REST Relevance
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `exposed` | 174 | Already used by public REST routes. |
-| `candidate` | 141 | Likely useful as a future user-facing REST endpoint. |
+| `exposed` | 185 | Already used by public REST routes. |
+| `candidate` | 130 | Likely useful as a future user-facing REST endpoint. |
 | `duplicate` | 89 | Variant of an already exposed method, such as `_v1`, `_gql`, `_a1`, chunk, or origin helpers. |
 | `internal` | 96 | Low-level auth/request/configuration/signup/challenge helpers that should not be mirrored blindly. |
 
@@ -33,10 +33,10 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `bloks` | 0 | 0 | 0 | 2 | 2 |
 | `challenge` | 1 | 0 | 0 | 5 | 6 |
 | `clip` | 3 | 6 | 0 | 1 | 10 |
-| `collection` | 3 | 4 | 2 | 0 | 9 |
+| `collection` | 7 | 0 | 2 | 0 | 9 |
 | `comment` | 6 | 6 | 10 | 0 | 22 |
 | `direct` | 39 | 6 | 0 | 0 | 45 |
-| `explore` | 0 | 3 | 0 | 0 | 3 |
+| `explore` | 2 | 1 | 0 | 0 | 3 |
 | `fbsearch` | 9 | 7 | 0 | 0 | 16 |
 | `fundraiser` | 0 | 1 | 0 | 0 | 1 |
 | `graphql` | 0 | 0 | 0 | 8 | 8 |
@@ -58,7 +58,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `story` | 11 | 3 | 7 | 0 | 21 |
 | `timeline` | 4 | 0 | 0 | 0 | 4 |
 | `totp` | 2 | 2 | 0 | 0 | 4 |
-| `track` | 0 | 5 | 0 | 0 | 5 |
+| `track` | 5 | 0 | 0 | 0 | 5 |
 | `user` | 20 | 30 | 20 | 4 | 74 |
 | `video` | 4 | 1 | 1 | 4 | 10 |
 
@@ -69,10 +69,9 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `account` | `account_security_info`, `account_set_biography`, `change_password`, `remove_bio_links`, `reset_password`, `send_confirm_email`, `send_confirm_phone_number`, `set_external_url` |
 | `album` | `album_upload_with_music` |
 | `clip` | `clip_info_for_creation`, `clip_pin`, `clip_share_to_fb_config`, `clip_trial_eligible`, `clip_unpin`, `clip_upload_as_reel_with_music` |
-| `collection` | `collection_medias`, `collection_medias_by_name`, `collection_pk_by_name`, `collections` |
 | `comment` | `comment_likers_gql`, `comment_pin`, `comment_unpin`, `media_check_offensive_comment`, `media_comment_infos`, `media_stream_comments_v1_chunk` |
 | `direct` | `direct_answer`, `direct_message_unsend`, `direct_pending_inbox`, `direct_request_approve`, `direct_send_cutout_sticker`, `direct_spam_inbox` |
-| `explore` | `explore_page`, `explore_page_media_info`, `report_explore_media` |
+| `explore` | `report_explore_media` |
 | `fbsearch` | `fbsearch_item`, `fbsearch_suggested_profiles`, `fbsearch_topsearch_flat`, `fbsearch_typeahead_stream`, `fbsearch_typehead`, `web_search_topsearch`, `web_search_topsearch_hashtags` |
 | `fundraiser` | `standalone_fundraiser_info_v1` |
 | `hashtag` | `hashtag_medias_recent`, `hashtag_medias_top` |
@@ -86,7 +85,6 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `share` | `share_code_from_url`, `share_info`, `share_info_by_url` |
 | `story` | `archive_stories`, `sticker_tray`, `users_stories_gql` |
 | `totp` | `totp_generate_code`, `totp_generate_seed` |
-| `track` | `music_in_feed_audio_browser`, `track_download_by_url`, `track_info_by_canonical_id`, `track_info_by_id`, `track_stream_info_by_id` |
 | `user` | `chaining`, `close_friend_add`, `close_friend_remove`, `creator_info`, `disable_posts_notifications`, `disable_reels_notifications`, `disable_stories_notifications`, `disable_videos_notifications`, `discover_recommended_accounts_for_category_v1`, `enable_posts_notifications`, `enable_reels_notifications`, `enable_stories_notifications`, `enable_videos_notifications`, `feed_user_stream_item`, `fetch_suggestion_details`, `new_feed_exist`, `user_follow_request_approve`, `user_follow_request_decline`, `user_follow_requests_approve`, `user_follow_requests_decline`, `user_friendships_v1`, `user_id_from_username`, `user_related_profiles_gql`, `user_short_gql`, `user_stream_by_id_flat`, `user_stream_by_id_v1`, `user_stream_by_username_flat`, `user_stream_by_username_v1`, `user_web_profile_info_v1`, `username_from_user_id` |
 | `video` | `video_upload_to_direct` |
 
@@ -96,6 +94,9 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 |---|---|
 | `GET /account` | `account_info` |
 | `PATCH /account` | `account_edit` |
+| `GET /account/collection` | `collection_pk_by_name`, `collections` |
+| `GET /account/collection/media` | `collection_medias`, `collection_medias_by_name` |
+| `GET /account/collections` | `collections` |
 | `GET /account/feed/timeline` | `get_timeline_feed` |
 | `GET /account/follow/requests` | `user_follow_requests_chunk` |
 | `GET /account/liked/media` | `liked_medias` |
@@ -153,6 +154,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `GET /direct/threads` | `direct_threads` |
 | `POST /direct/video` | `direct_send_video` |
 | `POST /direct/voice` | `direct_send_voice` |
+| `GET /explore` | `explore_page` |
+| `GET /explore/media` | `explore_page_media_info` |
 | `GET /hashtag` | `hashtag_info` |
 | `DELETE /hashtag/follow` | `hashtag_unfollow` |
 | `POST /hashtag/follow` | `hashtag_follow` |
@@ -198,6 +201,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `DELETE /media/save` | `media_unsave` |
 | `POST /media/save` | `media_save` |
 | `PATCH /media/seen` | `media_seen` |
+| `GET /music/feed/browser` | `music_in_feed_audio_browser` |
 | `DELETE /note` | `delete_note` |
 | `POST /note` | `create_note` |
 | `GET /notes` | `get_notes` |
@@ -235,6 +239,9 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `POST /story/upload` | `photo_upload_to_story`, `user_stories`, `video_upload_to_story` |
 | `POST /story/upload/by/url` | `photo_upload_to_story`, `user_stories`, `video_upload_to_story` |
 | `GET /story/viewers` | `story_viewers_chunk` |
+| `GET /track` | `track_info_by_canonical_id`, `track_info_by_id` |
+| `GET /track/download/by/url` | `track_download_by_url` |
+| `GET /track/stream` | `track_stream_info_by_id` |
 | `GET /user` | `user_info`, `user_info_by_username` |
 | `GET /user/about` | `user_about_v1` |
 | `DELETE /user/block` | `user_unblock` |
@@ -321,12 +328,12 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `clip_upload_as_reel_with_music(self, path: pathlib._local.Path, caption: str, track: aiograpi.types.Track, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `clip` | - | `candidate` | potential user-facing REST endpoint |
 | `close_friend_add(self, user_id: str)` | `user` | - | `candidate` | potential user-facing REST endpoint |
 | `close_friend_remove(self, user_id: str)` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `collection_medias(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | - | `candidate` | potential user-facing REST endpoint |
-| `collection_medias_by_name(self, name: str) -> List[aiograpi.types.Collection]` | `collection` | - | `candidate` | potential user-facing REST endpoint |
-| `collection_medias_v1(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | - | `duplicate` | variant of candidate `collection_medias` |
-| `collection_medias_v1_chunk(self, collection_pk: str, max_id: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `collection` | - | `duplicate` | variant of candidate `collection_medias` |
-| `collection_pk_by_name(self, name: str) -> int` | `collection` | - | `candidate` | potential user-facing REST endpoint |
-| `collections(self) -> List[aiograpi.types.Collection]` | `collection` | - | `candidate` | potential user-facing REST endpoint |
+| `collection_medias(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | `GET /account/collection/media` | `exposed` | used by at least one public REST route |
+| `collection_medias_by_name(self, name: str) -> List[aiograpi.types.Collection]` | `collection` | `GET /account/collection/media` | `exposed` | used by at least one public REST route |
+| `collection_medias_v1(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | - | `duplicate` | variant of already exposed `collection_medias` route family |
+| `collection_medias_v1_chunk(self, collection_pk: str, max_id: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `collection` | - | `duplicate` | variant of already exposed `collection_medias` route family |
+| `collection_pk_by_name(self, name: str) -> int` | `collection` | `GET /account/collection` | `exposed` | used by at least one public REST route |
+| `collections(self) -> List[aiograpi.types.Collection]` | `collection` | `GET /account/collection`<br>`GET /account/collections` | `exposed` | used by at least one public REST route |
 | `comment_bulk_delete(self, media_id: str, comment_pks: List[int]) -> bool` | `comment` | `DELETE /media/comment` | `exposed` | used by at least one public REST route |
 | `comment_like(self, comment_pk: int, revert: bool = False) -> bool` | `comment` | `POST /media/comment/like` | `exposed` | used by at least one public REST route |
 | `comment_likers_gql(self, comment_pk: str, amount: int = 0) -> List[dict]` | `comment` | - | `candidate` | potential user-facing REST endpoint |
@@ -394,8 +401,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `enable_reels_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
 | `enable_stories_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
 | `enable_videos_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `explore_page(self)` | `explore` | - | `candidate` | potential user-facing REST endpoint |
-| `explore_page_media_info(self, media_pk: int)` | `explore` | - | `candidate` | potential user-facing REST endpoint |
+| `explore_page(self)` | `explore` | `GET /explore` | `exposed` | used by at least one public REST route |
+| `explore_page_media_info(self, media_pk: int)` | `explore` | `GET /explore/media` | `exposed` | used by at least one public REST route |
 | `explore_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | `GET /reels/explore` | `exposed` | used by at least one public REST route |
 | `expose(self) -> Dict` | `auth` | `PATCH /auth/settings` | `exposed` | used by at least one public REST route |
 | `fbsearch_accounts_v2(self, query: str, page_token: Optional[str] = None) -> dict` | `fbsearch` | `GET /search/accounts` | `exposed` | used by at least one public REST route |
@@ -543,7 +550,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `media_unpin(self, media_pk)` | `media` | `DELETE /media/pin` | `exposed` | used by at least one public REST route |
 | `media_unsave(self, media_id: str, collection_pk: int = None) -> bool` | `collection` | `DELETE /media/save` | `exposed` | used by at least one public REST route |
 | `media_user(self, media_pk: str) -> aiograpi.types.UserShort` | `media` | `GET /media/author` | `exposed` | used by at least one public REST route |
-| `music_in_feed_audio_browser(self, browse_session_id: Optional[str] = None) -> Dict` | `track` | - | `candidate` | potential user-facing REST endpoint |
+| `music_in_feed_audio_browser(self, browse_session_id: Optional[str] = None) -> Dict` | `track` | `GET /music/feed/browser` | `exposed` | used by at least one public REST route |
 | `mute_posts_from_follow(self, user_id: str, revert: bool = False) -> bool` | `user` | `POST /user/mute/posts` | `exposed` | used by at least one public REST route |
 | `mute_stories_from_follow(self, user_id: str, revert: bool = False) -> bool` | `user` | `POST /user/mute/stories` | `exposed` | used by at least one public REST route |
 | `new_feed_exist(self) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
@@ -668,10 +675,10 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `totp_enable(self, verification_code: str) -> List[str]` | `totp` | `POST /auth/totp` | `exposed` | used by at least one public REST route |
 | `totp_generate_code(seed: str) -> str` | `totp` | - | `candidate` | potential user-facing REST endpoint |
 | `totp_generate_seed(self) -> str` | `totp` | - | `candidate` | potential user-facing REST endpoint |
-| `track_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> pathlib._local.Path` | `track` | - | `candidate` | potential user-facing REST endpoint |
-| `track_info_by_canonical_id(self, music_canonical_id: str) -> aiograpi.types.Track` | `track` | - | `candidate` | potential user-facing REST endpoint |
-| `track_info_by_id(self, track_id: str, max_id: str = '') -> Dict` | `track` | - | `candidate` | potential user-facing REST endpoint |
-| `track_stream_info_by_id(self, track_id: str, max_id: str = '') -> Dict` | `track` | - | `candidate` | potential user-facing REST endpoint |
+| `track_download_by_url(self, url: str, filename: str = '', folder: pathlib._local.Path = '') -> pathlib._local.Path` | `track` | `GET /track/download/by/url` | `exposed` | used by at least one public REST route |
+| `track_info_by_canonical_id(self, music_canonical_id: str) -> aiograpi.types.Track` | `track` | `GET /track` | `exposed` | used by at least one public REST route |
+| `track_info_by_id(self, track_id: str, max_id: str = '') -> Dict` | `track` | `GET /track` | `exposed` | used by at least one public REST route |
+| `track_stream_info_by_id(self, track_id: str, max_id: str = '') -> Dict` | `track` | `GET /track/stream` | `exposed` | used by at least one public REST route |
 | `unmute_posts_from_follow(self, user_id: str) -> bool` | `user` | `DELETE /user/mute/posts` | `exposed` | used by at least one public REST route |
 | `unmute_stories_from_follow(self, user_id: str) -> bool` | `user` | `DELETE /user/mute/stories` | `exposed` | used by at least one public REST route |
 | `user_about_v1(self, user_id: str) -> aiograpi.types.About` | `user` | `GET /user/about` | `exposed` | used by at least one public REST route |

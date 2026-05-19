@@ -1,9 +1,10 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
-from aiograpi.types import Account, Media, UserShort
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
+from aiograpi.exceptions import CollectionNotFound
+from aiograpi.types import Account, Collection, Media, UserShort
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 from aiograpi_rest.pagination import UserShortPage
@@ -13,6 +14,33 @@ router = APIRouter(
     tags=["Account"],
     responses={404: {"description": "Not found"}},
 )
+
+
+def _collection_value(collection: Collection | dict[str, Any], key: str) -> Any:
+    if isinstance(collection, dict):
+        return collection.get(key)
+    return getattr(collection, key)
+
+
+def _ensure_single_collection_selector(collection_pk: Optional[str], name: Optional[str]) -> None:
+    if not collection_pk and not name:
+        raise HTTPException(status_code=422, detail="Provide collection_pk or name")
+    if collection_pk and name:
+        raise HTTPException(status_code=422, detail="Provide only one of collection_pk or name")
+
+
+async def _get_collection_by_selector(cl: Any, collection_pk: Optional[str], name: Optional[str]) -> Collection:
+    _ensure_single_collection_selector(collection_pk, name)
+    if name:
+        try:
+            collection_pk = str(await cl.collection_pk_by_name(name))
+        except CollectionNotFound as exc:
+            raise HTTPException(status_code=404, detail="Collection not found") from exc
+
+    for collection in await cl.collections():
+        if str(_collection_value(collection, "id")) == str(collection_pk):
+            return collection
+    raise HTTPException(status_code=404, detail="Collection not found")
 
 
 @router.get("", response_model=Account)
@@ -62,6 +90,48 @@ async def liked_medias(
     """
     cl = await clients.get(sessionid)
     return await cl.liked_medias(amount, last_media_pk)
+
+
+@router.get("/collections", response_model=List[Collection])
+async def account_collections(
+    sessionid: str = Depends(get_sessionid),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[Collection]:
+    """List saved collections
+    """
+    cl = await clients.get(sessionid)
+    return await cl.collections()
+
+
+@router.get("/collection", response_model=Collection)
+async def account_collection(
+    sessionid: str = Depends(get_sessionid),
+    collection_pk: Optional[str] = Query(None),
+    name: Optional[str] = Query(None),
+    clients: ClientStorage = Depends(get_clients),
+) -> Collection:
+    """Get a saved collection by collection PK or name
+    """
+    cl = await clients.get(sessionid)
+    return await _get_collection_by_selector(cl, collection_pk, name)
+
+
+@router.get("/collection/media", response_model=List[Media])
+async def account_collection_media(
+    sessionid: str = Depends(get_sessionid),
+    collection_pk: Optional[str] = Query(None),
+    name: Optional[str] = Query(None),
+    amount: int = Query(21, ge=1, le=200),
+    last_media_pk: int = Query(0, ge=0),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[Media]:
+    """List media in a saved collection
+    """
+    _ensure_single_collection_selector(collection_pk, name)
+    cl = await clients.get(sessionid)
+    if name:
+        return await cl.collection_medias_by_name(name)
+    return await cl.collection_medias(collection_pk, amount, last_media_pk)
 
 
 @router.patch("", response_model=Account)

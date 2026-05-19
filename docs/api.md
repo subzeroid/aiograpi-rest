@@ -107,6 +107,34 @@ objects. They accept `amount` and `last_media_pk` where the underlying
 - `GET /reels/explore` returns Explore Reels media.
 - `GET /reels/timeline` returns Reels media for a `collection_pk`.
 
+## Saved Collections
+
+Saved collection routes live under the authenticated account context because
+they read the current account's saved Instagram collections.
+
+- `GET /account/collections` lists saved collections.
+- `GET /account/collection` gets one saved collection by `collection_pk` or `name`.
+- `GET /account/collection/media` lists media in one saved collection by
+  `collection_pk` or `name`.
+
+## Explore
+
+Explore routes return raw Instagram-shaped objects because the Explore payload
+depends on ranking, layout, and media type.
+
+- `GET /explore` returns the authenticated account's Explore page.
+- `GET /explore/media` returns Explore metadata for one `media_pk`.
+
+## Tracks And Music
+
+Track routes return Instagram music track data for Reels and post creation
+workflows.
+
+- `GET /track` gets a track by `id` or `canonical_id`.
+- `GET /track/stream` returns streamed media for a track `id`.
+- `GET /track/download/by/url` downloads track audio from a URL.
+- `GET /music/feed/browser` returns music candidates for feed posts.
+
 ## Pagination
 
 Paginated read-list routes return an object with `items` and `next_cursor`.
