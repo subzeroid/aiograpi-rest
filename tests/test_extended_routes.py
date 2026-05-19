@@ -684,3 +684,31 @@ async def test_highlight_story_note_notification_and_auth_routes(storage):
     assert bad_challenge.status_code == 422
     assert bad_content_type.status_code == 422
     assert bad_setting_value.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_story_viewers_returns_empty_page_when_instagram_omits_viewers(storage):
+    async def no_viewers(story_pk, max_amount=0, max_id=""):
+        storage.client.calls.append(("story_viewers_chunk", story_pk, max_amount, max_id))
+        raise KeyError("viewers")
+
+    storage.client.story_viewers_chunk = no_viewers
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/story/viewers", params={"sessionid": "sid", "story_pk": "1"})
+
+    assert response.status_code == 200
+    assert response.json() == {"items": [], "next_cursor": ""}
+    assert ("story_viewers_chunk", "1", 50, "") in storage.client.calls
+
+
+@pytest.mark.asyncio
+async def test_story_viewers_keeps_unexpected_key_errors_visible(storage):
+    async def missing_other_key(story_pk, max_amount=0, max_id=""):
+        raise KeyError("unexpected")
+
+    storage.client.story_viewers_chunk = missing_other_key
+
+    with pytest.raises(KeyError, match="unexpected"):
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+            await ac.get("/story/viewers", params={"sessionid": "sid", "story_pk": "1"})

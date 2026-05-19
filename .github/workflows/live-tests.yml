@@ -79,6 +79,8 @@ jobs:
       TEST_ACCOUNTS_URL: ${{ secrets.TEST_ACCOUNTS_URL }}
       TEST_ACCOUNTS_COUNT: "5"
       LIVE_ACCOUNT_TIMEOUT: "90"
+      LIVE_STORY_ACCOUNTS_COUNT: "5"
+      LIVE_STORY_TIMEOUT: "240"
       LIVE_API_BASE_URL: http://127.0.0.1:8000
 
     steps:

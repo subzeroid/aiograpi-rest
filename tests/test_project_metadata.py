@@ -644,7 +644,15 @@ def test_live_tests_cover_published_image_and_paginated_read_lists():
     ):
         assert endpoint in live_smoke
 
-    for endpoint in ("/user/posts", "/media/comments", "/hashtag/media/top", "/direct/inbox"):
+    for endpoint in (
+        "/user/posts",
+        "/media/comments",
+        "/hashtag/media/top",
+        "/direct/inbox",
+        "/story/upload",
+        "/story/download",
+        "/user/stories",
+    ):
         assert endpoint in http_smoke
 
     assert "published Docker image" in readme

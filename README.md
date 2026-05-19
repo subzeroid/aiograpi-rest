@@ -454,13 +454,13 @@ GitHub Actions also has a scheduled **Live Tests** workflow that runs nightly
 and can be launched manually. It starts the Docker Compose API service, creates
 a real session from `TEST_ACCOUNTS_URL`, sends it through `X-Session-ID`, and
 checks `/user/about`, `/media/comments`, and paginated read-list routes. A
-second nightly job runs
-the same HTTP smoke against the published Docker image
+second nightly job runs the same HTTP smoke against the published Docker image
 `subzeroid/aiograpi-rest:latest`, so the public `docker run` path is exercised
-with a real session too. The direct ASGI live smoke also uploads a real JPEG to
-`/story/upload`, verifies the created story through `/story`,
-`/user/stories`, and `/story/viewers`, downloads the media through
-`/story/download`, validates that it is an image, and deletes the story.
+with a real session too. Both the direct ASGI live smoke and the published
+image HTTP smoke upload a real JPEG to `/story/upload`, verify the created
+story through `/story`, `/user/stories`, and `/story/viewers`, download the
+media through `/story/download`, validate that it is an image, and delete the
+story.
 
 Generate and validate docs:
 

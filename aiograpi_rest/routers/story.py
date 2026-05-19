@@ -235,7 +235,12 @@ async def story_viewers(sessionid: str = Depends(get_sessionid),
     """Get a page of story viewers
     """
     cl = await clients.get(sessionid)
-    items, next_cursor = await cl.story_viewers_chunk(story_pk, amount, cursor or "")
+    try:
+        items, next_cursor = await cl.story_viewers_chunk(story_pk, amount, cursor or "")
+    except KeyError as exc:
+        if exc.args != ("viewers",):
+            raise
+        items, next_cursor = [], ""
     return ViewerPage(items=items, next_cursor=next_cursor or "")
 
 
