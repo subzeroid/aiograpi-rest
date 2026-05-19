@@ -113,8 +113,8 @@ def _create_session(base_url, account):
 
 def _assert_published_http_pagination(base_url, headers, public_user_id):
     for path in (
-        f"/user/medias?user_id={public_user_id}&amount=2",
-        "/hashtag/medias/top?name=instagram&amount=2",
+        f"/user/posts?user_id={public_user_id}&amount=2",
+        "/hashtag/media/top?name=instagram&amount=2",
         "/direct/inbox?thread_message_limit=1",
     ):
         _assert_paginated_page(
@@ -148,7 +148,7 @@ def test_live_http_login_authorize_and_user_about_flow():
             user = _request_json(
                 base_url,
                 "GET",
-                "/user/info/by/username?username=instagram",
+                "/user?username=instagram",
                 headers=headers,
             )
             assert user["username"] == "instagram"

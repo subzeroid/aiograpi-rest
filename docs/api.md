@@ -17,9 +17,10 @@ parameters, form data, or a `sessionid` cookie for backwards compatibility.
 
 ### Session Client Options
 
-`POST /auth/login` accepts optional `proxy`, `locale`, and `timezone` form
-fields. The service persists the proxy separately from `aiograpi` settings
-because `Client.get_settings()` does not include proxy transport state.
+`POST /auth/login` and `POST /auth/login/by/sessionid` accept optional `proxy`,
+`locale`, and `timezone` form fields. The service persists the proxy separately
+from `aiograpi` settings because `Client.get_settings()` does not include proxy
+transport state.
 
 Use `PATCH /auth/settings` to update an existing session after login. Send the
 session through `X-Session-ID` or the legacy `sessionid` form field, then pass
@@ -71,6 +72,30 @@ check account and proxy health before retrying.
 The schema uses client-friendly operation IDs and request schema names so it can
 be passed directly into OpenAPI client generators.
 
+## Search
+
+Search routes live under the `Search` tag and hide Instagram's internal
+`fbsearch` naming behind resource-oriented paths:
+
+- `GET /search/users` searches accounts by query.
+- `GET /search/accounts` searches accounts through Instagram's newer search
+  surface and supports `page_token`.
+- `GET /search/followers` searches inside a user's followers.
+- `GET /search/following` searches inside accounts a user follows.
+- `GET /search/hashtags` searches hashtags.
+- `GET /search/music` searches music tracks.
+- `GET /search/locations` searches locations by name or coordinates.
+- `GET /search/places` searches places by query with optional `lat` and `lng`
+  ranking context.
+- `GET /search/top` returns Instagram's blended top search results.
+- `GET /search/reels` returns Reel search results.
+- `GET /search/recent` returns the authenticated account's recent searches.
+- `GET /search/typeahead` returns autocomplete suggestions for a partial query.
+
+`/search/top`, `/search/reels`, `/search/accounts`, and `/search/typeahead`
+return raw Instagram-shaped objects because their payloads vary by ranking
+surface and cursor state.
+
 ## Pagination
 
 Paginated read-list routes return an object with `items` and `next_cursor`.
@@ -78,21 +103,21 @@ Pass the returned `next_cursor` as `cursor` on the next request to continue
 from the previous page. This shape is used for:
 
 - `GET /direct/inbox`
-- `GET /hashtag/medias/recent`
-- `GET /hashtag/medias/top`
-- `GET /location/medias/recent`
-- `GET /location/medias/top`
+- `GET /hashtag/media/recent`
+- `GET /hashtag/media/top`
+- `GET /location/media/recent`
+- `GET /location/media/top`
 - `GET /story/archive`
 - `GET /story/viewers`
-- `GET /user/clips`
-- `GET /user/follow/requests`
+- `GET /user/reels`
+- `GET /account/follow/requests`
 - `GET /user/followers`
 - `GET /user/following`
-- `GET /user/medias`
-- `GET /user/tagged/medias`
+- `GET /user/posts`
+- `GET /user/tagged/posts`
 - `GET /user/videos`
 
-User media collection routes accept either `user_id` for numeric Instagram
+User post collection routes accept either `user_id` for numeric Instagram
 user PKs or `username` for usernames. If a legacy client passes a username in
 `user_id`, the service resolves it before calling `aiograpi`.
 

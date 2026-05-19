@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.get("/media/feed/all", response_model=List[Dict])
+@router.get("/media/feed", response_model=List[Dict])
 async def media_feed_all(sessionid: str = Depends(get_sessionid),
                          post_type: POST_TYPE = Query("ALL"),
                          time_frame: TIME_FRAME = Query("TWO_YEARS"),

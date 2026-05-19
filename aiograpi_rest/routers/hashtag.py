@@ -11,8 +11,8 @@ router = APIRouter(
 )
 
 
-@router.get("/info", response_model=Hashtag)
-async def hashtag_info(
+@router.get("", response_model=Hashtag)
+async def hashtag(
     sessionid: str = Depends(get_sessionid),
     name: str = Query(...),
     clients: ClientStorage = Depends(get_clients),
@@ -23,7 +23,7 @@ async def hashtag_info(
     return await cl.hashtag_info(name)
 
 
-@router.get("/medias/top", response_model=MediaPage)
+@router.get("/media/top", response_model=MediaPage)
 async def hashtag_medias_top(
     sessionid: str = Depends(get_sessionid),
     name: str = Query(...),
@@ -38,7 +38,7 @@ async def hashtag_medias_top(
     return MediaPage(items=items, next_cursor=next_cursor or "")
 
 
-@router.get("/medias/recent", response_model=MediaPage)
+@router.get("/media/recent", response_model=MediaPage)
 async def hashtag_medias_recent(
     sessionid: str = Depends(get_sessionid),
     name: str = Query(...),

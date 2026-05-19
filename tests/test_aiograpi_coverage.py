@@ -59,11 +59,11 @@ from fastapi import APIRouter
 router = APIRouter(prefix="/media")
 user_router = APIRouter(prefix="/user")
 
-@router.get("/info")
+@router.get("")
 async def media_info():
     pass
 
-@user_router.get("/medias")
+@user_router.get("/posts")
 async def user_medias():
     pass
 
@@ -73,8 +73,8 @@ async def hidden_alias():
 """
     analyzer.visit(ast.parse(source))
 
-    assert ("GET", "/media/info", "media_info") in analyzer.routes
-    assert ("GET", "/user/medias", "user_medias") in analyzer.routes
+    assert ("GET", "/media", "media_info") in analyzer.routes
+    assert ("GET", "/user/posts", "user_medias") in analyzer.routes
     assert ("GET", "/media/hidden", "hidden_alias") not in analyzer.routes
 
 

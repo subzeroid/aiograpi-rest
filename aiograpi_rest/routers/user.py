@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional
 
 from aiograpi.extractors import json_value
 from aiograpi.types import About, Highlight, Relationship, User, UserShort
-from fastapi import APIRouter, Depends, Form, Query
+from fastapi import APIRouter, Depends, Form, HTTPException, Query
 from pydantic import ValidationError
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
@@ -79,26 +79,23 @@ async def user_following(sessionid: str = Depends(get_sessionid),
     return UserShortPage(items=items, next_cursor=next_cursor or "")
 
 
-@router.get("/info", response_model=User)
-async def user_info(sessionid: str = Depends(get_sessionid),
-                    user_id: str = Query(...),
-                    use_cache: Optional[bool] = Query(True),
-                    clients: ClientStorage = Depends(get_clients)) -> User:
-    """Get user object from user id
+@router.get("", response_model=User)
+async def user(sessionid: str = Depends(get_sessionid),
+               user_id: Optional[str] = Query(None),
+               username: Optional[str] = Query(None),
+               use_cache: Optional[bool] = Query(True),
+               clients: ClientStorage = Depends(get_clients)) -> User:
+    """Get user profile by user id or username
     """
-    cl = await clients.get(sessionid)
-    return await cl.user_info(user_id)
+    if user_id and username:
+        raise HTTPException(status_code=422, detail="Provide either user_id or username, not both")
+    if not user_id and not username:
+        raise HTTPException(status_code=422, detail="Provide user_id or username")
 
-
-@router.get("/info/by/username", response_model=User)
-async def user_info_by_username(sessionid: str = Depends(get_sessionid),
-                                username: str = Query(...),
-                                use_cache: Optional[bool] = Query(True),
-                                clients: ClientStorage = Depends(get_clients)) -> User:
-    """Get user object from username
-    """
     cl = await clients.get(sessionid)
-    return await cl.user_info_by_username(username)
+    if username:
+        return await cl.user_info_by_username(username.strip().lstrip("@"))
+    return await cl.user_info(user_id.strip())
 
 
 @router.get("/about", response_model=About)
@@ -136,26 +133,6 @@ async def user_unfollow(sessionid: str = Depends(get_sessionid),
     """
     cl = await clients.get(sessionid)
     return await cl.user_unfollow(user_id)
-
-
-@router.get("/id/from/username", response_model=int)
-async def user_id_from_username(sessionid: str = Depends(get_sessionid),
-                                username: str = Query(...),
-                                clients: ClientStorage = Depends(get_clients)) -> int:
-    """Get user id from username
-    """
-    cl = await clients.get(sessionid)
-    return await cl.user_id_from_username(username)
-
-
-@router.get("/username/from/id", response_model=str)
-async def username_from_user_id(sessionid: str = Depends(get_sessionid),
-                                user_id: int = Query(...),
-                                clients: ClientStorage = Depends(get_clients)) -> str:
-    """Get username from user id
-    """
-    cl = await clients.get(sessionid)
-    return await cl.username_from_user_id(user_id)
 
 
 @router.delete("/follower", response_model=bool)
@@ -210,16 +187,6 @@ async def unmute_stories_from_follow(sessionid: str = Depends(get_sessionid),
     return await cl.unmute_stories_from_follow(user_id)
 
 
-@router.get("/search", response_model=List[UserShort])
-async def user_search(sessionid: str = Depends(get_sessionid),
-                      query: str = Query(...),
-                      clients: ClientStorage = Depends(get_clients)) -> List[UserShort]:
-    """Search users
-    """
-    cl = await clients.get(sessionid)
-    return await cl.search_users(query)
-
-
 @router.get("/friendship", response_model=Relationship)
 async def user_friendship(sessionid: str = Depends(get_sessionid),
                           user_id: str = Query(...),
@@ -250,18 +217,6 @@ async def user_unblock(sessionid: str = Depends(get_sessionid),
     """
     cl = await clients.get(sessionid)
     return await cl.user_unblock(user_id, surface)
-
-
-@router.get("/follow/requests", response_model=UserShortPage)
-async def user_follow_requests(sessionid: str = Depends(get_sessionid),
-                               amount: int = Query(50, ge=1, le=200),
-                               cursor: str = Query(""),
-                               clients: ClientStorage = Depends(get_clients)) -> UserShortPage:
-    """Get a page of pending follow requests
-    """
-    cl = await clients.get(sessionid)
-    items, next_cursor = await cl.user_follow_requests_chunk(amount, cursor or "")
-    return UserShortPage(items=items, next_cursor=next_cursor or "")
 
 
 @router.get("/highlights", response_model=List[Highlight])

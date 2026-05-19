@@ -167,9 +167,9 @@ async def _get(path, params):
 @pytest.mark.asyncio
 async def test_media_read_list_routes_return_items_and_next_cursor(storage):
     routes = [
-        ("/user/medias", {"user_id": "10", "amount": "7", "cursor": "m1"}, "next-user-medias"),
-        ("/user/tagged/medias", {"user_id": "10", "amount": "8", "cursor": "t1"}, "next-usertag-medias"),
-        ("/user/clips", {"user_id": "10", "amount": "9", "cursor": "c1"}, "next-user-clips"),
+        ("/user/posts", {"user_id": "10", "amount": "7", "cursor": "m1"}, "next-user-medias"),
+        ("/user/tagged/posts", {"user_id": "10", "amount": "8", "cursor": "t1"}, "next-usertag-medias"),
+        ("/user/reels", {"user_id": "10", "amount": "9", "cursor": "c1"}, "next-user-clips"),
         ("/user/videos", {"user_id": "10", "amount": "10", "cursor": "v1"}, "next-user-videos"),
     ]
 
@@ -189,9 +189,9 @@ async def test_media_read_list_routes_return_items_and_next_cursor(storage):
 @pytest.mark.asyncio
 async def test_user_media_read_list_routes_resolve_username(storage):
     routes = [
-        ("/user/medias", {"username": "instagram", "amount": "7"}, "user_medias_paginated"),
-        ("/user/tagged/medias", {"username": "instagram", "amount": "8"}, "usertag_medias_paginated"),
-        ("/user/clips", {"username": "instagram", "amount": "9"}, "user_clips_paginated_v1"),
+        ("/user/posts", {"username": "instagram", "amount": "7"}, "user_medias_paginated"),
+        ("/user/tagged/posts", {"username": "instagram", "amount": "8"}, "usertag_medias_paginated"),
+        ("/user/reels", {"username": "instagram", "amount": "9"}, "user_clips_paginated_v1"),
         ("/user/videos", {"username": "instagram", "amount": "10"}, "user_videos_paginated_v1"),
     ]
 
@@ -205,11 +205,11 @@ async def test_user_media_read_list_routes_resolve_username(storage):
 
 
 @pytest.mark.asyncio
-async def test_legacy_media_user_paths_resolve_username_in_user_id(storage):
+async def test_user_media_read_list_routes_resolve_username_in_user_id(storage):
     checks = [
-        ("/media/user/medias", "user_medias_paginated"),
-        ("/media/user/clips", "user_clips_paginated_v1"),
-        ("/media/user/videos", "user_videos_paginated_v1"),
+        ("/user/posts", "user_medias_paginated"),
+        ("/user/reels", "user_clips_paginated_v1"),
+        ("/user/videos", "user_videos_paginated_v1"),
     ]
 
     for path, method_name in checks:
@@ -222,8 +222,8 @@ async def test_legacy_media_user_paths_resolve_username_in_user_id(storage):
 
 @pytest.mark.asyncio
 async def test_user_media_read_list_routes_require_one_user_identifier(storage):
-    missing = await _get("/user/medias", {"amount": "2"})
-    both = await _get("/user/medias", {"user_id": "10", "username": "instagram", "amount": "2"})
+    missing = await _get("/user/posts", {"amount": "2"})
+    both = await _get("/user/posts", {"user_id": "10", "username": "instagram", "amount": "2"})
 
     assert missing.status_code == 422
     assert missing.json()["detail"] == "Provide user_id or username"
@@ -236,11 +236,11 @@ async def test_user_discovery_story_and_direct_list_routes_return_items_and_next
     checks = [
         ("/user/followers", {"user_id": "10", "amount": "11", "cursor": "f1"}, "next-followers"),
         ("/user/following", {"user_id": "10", "amount": "12", "cursor": "g1"}, "next-following"),
-        ("/user/follow/requests", {"amount": "13", "cursor": "r1"}, "next-follow-requests"),
-        ("/hashtag/medias/top", {"name": "python", "amount": "14", "cursor": "ht1"}, "next-hashtag-top"),
-        ("/hashtag/medias/recent", {"name": "python", "amount": "15", "cursor": "hr1"}, "next-hashtag-recent"),
-        ("/location/medias/top", {"location_pk": "1", "amount": "16", "cursor": "lt1"}, "next-location-ranked"),
-        ("/location/medias/recent", {"location_pk": "1", "amount": "17", "cursor": "lr1"}, "next-location-recent"),
+        ("/account/follow/requests", {"amount": "13", "cursor": "r1"}, "next-follow-requests"),
+        ("/hashtag/media/top", {"name": "python", "amount": "14", "cursor": "ht1"}, "next-hashtag-top"),
+        ("/hashtag/media/recent", {"name": "python", "amount": "15", "cursor": "hr1"}, "next-hashtag-recent"),
+        ("/location/media/top", {"location_pk": "1", "amount": "16", "cursor": "lt1"}, "next-location-ranked"),
+        ("/location/media/recent", {"location_pk": "1", "amount": "17", "cursor": "lr1"}, "next-location-recent"),
         ("/story/viewers", {"story_pk": "100", "amount": "18", "cursor": "sv1"}, "next-story-viewers"),
         (
             "/story/archive",
@@ -279,17 +279,17 @@ async def test_openapi_read_list_routes_use_page_schemas_and_cursor_parameter():
     assert response.status_code == 200
     schema = response.json()
     expected_refs = {
-        "/user/medias": "MediaPage",
-        "/user/tagged/medias": "MediaPage",
-        "/user/clips": "MediaPage",
+        "/user/posts": "MediaPage",
+        "/user/tagged/posts": "MediaPage",
+        "/user/reels": "MediaPage",
         "/user/videos": "MediaPage",
         "/user/followers": "UserShortPage",
         "/user/following": "UserShortPage",
-        "/user/follow/requests": "UserShortPage",
-        "/hashtag/medias/top": "MediaPage",
-        "/hashtag/medias/recent": "MediaPage",
-        "/location/medias/top": "MediaPage",
-        "/location/medias/recent": "MediaPage",
+        "/account/follow/requests": "UserShortPage",
+        "/hashtag/media/top": "MediaPage",
+        "/hashtag/media/recent": "MediaPage",
+        "/location/media/top": "MediaPage",
+        "/location/media/recent": "MediaPage",
         "/story/viewers": "ViewerPage",
         "/story/archive": "StoryArchiveDayPage",
         "/direct/inbox": "DirectThreadPage",
@@ -307,3 +307,7 @@ async def test_openapi_read_list_routes_use_page_schemas_and_cursor_parameter():
     assert "/media/usertag/medias" not in schema["paths"]
     assert "/media/user/clips" not in schema["paths"]
     assert "/media/user/videos" not in schema["paths"]
+    assert "/user/clips" not in schema["paths"]
+    assert "/user/video" not in schema["paths"]
+    assert "/user/media" not in schema["paths"]
+    assert "/user/tagged/media" not in schema["paths"]

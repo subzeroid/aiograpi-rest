@@ -137,10 +137,10 @@ async def test_user_following_returns_paginated_items(storage):
 
 
 @pytest.mark.asyncio
-async def test_user_info_awaits_client(storage):
+async def test_user_returns_profile_by_id(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/user/info",
+            "/user",
             params={"sessionid": "sid", "user_id": "55"},
         )
     assert response.status_code == 200
@@ -149,15 +149,36 @@ async def test_user_info_awaits_client(storage):
 
 
 @pytest.mark.asyncio
-async def test_user_info_by_username_awaits_client(storage):
+async def test_user_returns_profile_by_username(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/user/info/by/username",
+            "/user",
             params={"sessionid": "sid", "username": "instagram"},
         )
     assert response.status_code == 200
     assert response.json()["username"] == "instagram"
     assert ("user_info_by_username", "instagram") in storage.client_instance.calls
+
+
+@pytest.mark.asyncio
+async def test_user_rejects_missing_identifier(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/user", params={"sessionid": "sid"})
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Provide user_id or username"
+
+
+@pytest.mark.asyncio
+async def test_user_rejects_conflicting_identifiers(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get(
+            "/user",
+            params={"sessionid": "sid", "user_id": "55", "username": "instagram"},
+        )
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Provide either user_id or username, not both"
 
 
 @pytest.mark.asyncio
@@ -298,28 +319,6 @@ async def test_user_unfollow_awaits_client_method(storage):
         response = await ac.delete("/user/follow", params={"sessionid": "sid", "user_id": "1"})
     assert response.status_code == 200
     assert ("user_unfollow", 1) in storage.client_instance.calls
-
-
-@pytest.mark.asyncio
-async def test_user_id_from_username_returns_int(storage):
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get(
-            "/user/id/from/username",
-            params={"sessionid": "sid", "username": "instagram"},
-        )
-    assert response.status_code == 200
-    assert response.json() == 42
-
-
-@pytest.mark.asyncio
-async def test_username_from_user_id_returns_string(storage):
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get(
-            "/user/username/from/id",
-            params={"sessionid": "sid", "user_id": "1"},
-        )
-    assert response.status_code == 200
-    assert response.json() == "instagram"
 
 
 @pytest.mark.asyncio

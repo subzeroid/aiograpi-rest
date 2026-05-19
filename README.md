@@ -14,8 +14,8 @@ for package managers, Docker images, OpenAPI clients, and repository discovery:
 this project is the REST/HTTP boundary for `aiograpi`.
 
 `aiograpi-rest` starts its own semver line at `1.0.0`. It is the renamed
-successor of `instagrapi-rest 3.1.1`, not a continuation of the old package name
-as `4.0.0`.
+successor of `instagrapi-rest 3.1.1`; the first aiograpi-rest release did not
+continue the old package version number.
 
 ## Why this exists
 
@@ -39,7 +39,7 @@ If those line items sound like work you don't want, the same team behind `instag
 ## 30-second quick start
 
 The API version is declared once in `pyproject.toml` and exposed through
-`/build` and `/openapi.json`. Version 3 keeps the API intentionally strict:
+`/build` and `/openapi.json`. The API keeps route semantics intentionally strict:
 `GET` for reads/downloads, `POST` for login and creates/uploads, `PATCH` for
 state changes, and `DELETE` for removals or state reversal. Undo-style paths
 such as `/media/unlike`, `/user/unfollow`, and `/media/unarchive` were removed
@@ -60,8 +60,10 @@ SESSIONID=$(curl -fsS -X POST http://localhost:8000/auth/login \
 
 If you already have an Instagram `sessionid` cookie, import it with
 `POST /auth/login/by/sessionid` instead of logging in with username/password.
+It accepts the same `proxy`, `locale`, and `timezone` client options as
+`POST /auth/login`.
 
-Proxy, locale, and timezone can be set during login or patched later:
+Proxy, locale, and timezone can be set during login, session import, or patched later:
 
 ```bash
 curl -fsS -X PATCH http://localhost:8000/auth/settings \
@@ -77,7 +79,7 @@ Fetch Instagram's public profile and about data over the same authorized
 session:
 
 ```bash
-curl "http://localhost:8000/user/info/by/username?username=instagram" \
+curl "http://localhost:8000/user?username=instagram" \
   -H "X-Session-ID: $SESSIONID"
 
 curl "http://localhost:8000/user/about?user_id=25025320" \
@@ -92,13 +94,24 @@ Large read lists are paginated with the same response shape:
 curl "http://localhost:8000/user/followers?user_id=25025320&amount=50" \
   -H "X-Session-ID: $SESSIONID"
 
-curl "http://localhost:8000/user/medias?username=instagram&amount=12" \
+curl "http://localhost:8000/user/posts?username=instagram&amount=12" \
   -H "X-Session-ID: $SESSIONID"
 ```
 
-User media collection routes such as `/user/medias`, `/user/clips`,
-`/user/videos`, and `/user/tagged/medias` accept either `user_id` or
+User post collection routes such as `/user/posts`, `/user/reels`,
+`/user/videos`, and `/user/tagged/posts` accept either `user_id` or
 `username`.
+
+Search routes live under `/search` for users, accounts, followers/following,
+hashtags, music, places, top results, Reels, recent searches, and typeahead:
+
+```bash
+curl "http://localhost:8000/search/hashtags?query=python" \
+  -H "X-Session-ID: $SESSIONID"
+
+curl "http://localhost:8000/search/followers?user_id=25025320&query=meta" \
+  -H "X-Session-ID: $SESSIONID"
+```
 
 Story upload decoration fields are form fields. For mentions, pass JSON as a
 form value. If `x`, `y`, `width`, `height`, or `rotation` are omitted for a
@@ -151,7 +164,7 @@ through `POST /auth/login/by/sessionid`, can create a new session through
 **Node.js / TypeScript:**
 
 ```js
-const r = await fetch("http://localhost:8000/user/info/by/username?username=instagram", {
+const r = await fetch("http://localhost:8000/user?username=instagram", {
   headers: { "X-Session-ID": SID },
 });
 const user = await r.json();
@@ -161,7 +174,7 @@ console.log(user.full_name, user.follower_count);
 **Go** (full example: [`golang/client.go`](golang/client.go)):
 
 ```go
-req, _ := http.NewRequest("GET", "http://localhost:8000/user/info/by/username?username=instagram", nil)
+req, _ := http.NewRequest("GET", "http://localhost:8000/user?username=instagram", nil)
 req.Header.Set("X-Session-ID", sid)
 resp, _ := http.DefaultClient.Do(req)
 defer resp.Body.Close()
@@ -174,7 +187,7 @@ json.NewDecoder(resp.Body).Decode(&user)
 ```php
 $ctx = stream_context_create(["http" => ["header" => "X-Session-ID: $sid\r\n"]]);
 $user = json_decode(file_get_contents(
-  "http://localhost:8000/user/info/by/username?username=instagram",
+  "http://localhost:8000/user?username=instagram",
   false,
   $ctx
 ), true);
@@ -184,7 +197,7 @@ $user = json_decode(file_get_contents(
 
 ```java
 HttpResponse<String> r = HttpClient.newHttpClient().send(
-  HttpRequest.newBuilder(URI.create("http://localhost:8000/user/info/by/username?username=instagram"))
+  HttpRequest.newBuilder(URI.create("http://localhost:8000/user?username=instagram"))
     .header("X-Session-ID", sid)
     .build(),
   HttpResponse.BodyHandlers.ofString());
@@ -194,7 +207,7 @@ HttpResponse<String> r = HttpClient.newHttpClient().send(
 
 ```ruby
 require "net/http"; require "json"
-uri = URI("http://localhost:8000/user/info/by/username?username=instagram")
+uri = URI("http://localhost:8000/user?username=instagram")
 req = Net::HTTP::Get.new(uri); req["X-Session-ID"] = sid
 user = JSON.parse(Net::HTTP.start(uri.hostname, uri.port) { |http| http.request(req) }.body)
 ```
@@ -209,7 +222,7 @@ For typed client generation in C++, C#, F#, D, Erlang, Elixir, Nim, Haskell, Lis
 2. **Account** — account info, profile, profile picture, privacy
 3. **Media** — info, comments, likes, saves, pins, archive, edit, delete
 4. **Direct** — inbox, threads, messages, seen state
-5. **Discovery** — hashtags, locations, user search, friendship, blocks, follow requests
+5. **Discovery** — user, account, follower, following, hashtag, music, place, top, Reel, recent, and typeahead search; friendship, blocks, follow requests
 6. **Video / Photo / IGTV / Reels / Album** — upload to feed and story, download
 7. **Story / Highlights / Notes** — archive, viewers, highlights, notes
 8. **Notifications / Insights** — inbox, notification settings, media and account insights
@@ -428,8 +441,8 @@ checks `/user/about` plus paginated read-list routes. A second nightly job runs
 the same HTTP smoke against the published Docker image
 `subzeroid/aiograpi-rest:latest`, so the public `docker run` path is exercised
 with a real session too. The direct ASGI live smoke also uploads a real JPEG to
-`/story/upload`, verifies the created story through `/story/info`,
-`/story/user/stories`, and `/story/viewers`, downloads the media through
+`/story/upload`, verifies the created story through `/story`,
+`/user/stories`, and `/story/viewers`, downloads the media through
 `/story/download`, validates that it is an image, and deletes the story.
 
 Generate and validate docs:

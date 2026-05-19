@@ -161,78 +161,127 @@ def storage():
     app.dependency_overrides.clear()
 
 
-# Pure helper routes (no auth, no storage)
 @pytest.mark.asyncio
-async def test_media_pk_from_code_uses_aiograpi_helper():
+async def test_media_info_accepts_pk(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/media/pk/from/code", params={"code": "B1LbfVPlwIA"})
+        response = await ac.get("/media", params={"sessionid": "sid", "pk": "1"})
+
     assert response.status_code == 200
-    assert response.json() == "2110901750722920960"
+    assert response.json()["pk"] == 1
+    assert ("media_info", 1, True) in storage.client.calls
 
 
 @pytest.mark.asyncio
-async def test_media_pk_uses_aiograpi_helper():
+async def test_media_info_accepts_id(monkeypatch, storage):
+    class PkOnlyClient:
+        def media_pk(self, media_id):
+            assert media_id == "2110901750722920960_8572539084"
+            return 2110901750722920960
+
+    monkeypatch.setattr(media_router, "Client", lambda: PkOnlyClient())
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/media/pk", params={"media_id": "2110901750722920960_8572539084"}
+            "/media",
+            params={"sessionid": "sid", "id": "2110901750722920960_8572539084"},
         )
+
     assert response.status_code == 200
-    assert response.json() == "2110901750722920960"
+    assert str(response.json()["pk"]) == "2110901750722920960"
+    assert ("media_info", 2110901750722920960, True) in storage.client.calls
 
 
 @pytest.mark.asyncio
-async def test_media_pk_from_url_uses_aiograpi_helper():
+async def test_media_info_accepts_code(monkeypatch, storage):
+    class CodeOnlyClient:
+        def media_pk_from_code(self, code):
+            assert code == "B1LbfVPlwIA"
+            return 2110901750722920960
+
+    monkeypatch.setattr(media_router, "Client", lambda: CodeOnlyClient())
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/media", params={"sessionid": "sid", "code": "B1LbfVPlwIA"})
+
+    assert response.status_code == 200
+    assert response.json()["pk"] == 2110901750722920960
+    assert ("media_info", 2110901750722920960, True) in storage.client.calls
+
+
+@pytest.mark.asyncio
+async def test_media_info_accepts_url(monkeypatch, storage):
+    class UrlOnlyClient:
+        async def media_pk_from_url(self, url):
+            assert url == "https://instagram.com/p/B1LbfVPlwIA/"
+            return 2110901750722920960
+
+    monkeypatch.setattr(media_router, "Client", lambda: UrlOnlyClient())
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/media/pk/from/url",
-            params={"url": "https://instagram.com/p/B1LbfVPlwIA/"},
+            "/media",
+            params={"sessionid": "sid", "url": "https://instagram.com/p/B1LbfVPlwIA/"},
         )
+
     assert response.status_code == 200
-    assert response.json() == "2110901750722920960"
+    assert response.json()["pk"] == 2110901750722920960
+    assert ("media_info", 2110901750722920960, True) in storage.client.calls
 
 
 @pytest.mark.asyncio
-async def test_media_id_route_uses_client_factory(monkeypatch):
-    class IdOnlyClient:
-        async def media_id(self, media_pk):
-            return f"{media_pk}_42"
-
-    monkeypatch.setattr(media_router, "Client", lambda: IdOnlyClient())
+async def test_media_info_requires_one_identifier(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/media/id", params={"media_pk": "100"})
-    assert response.status_code == 200
-    assert response.json() == "100_42"
+        missing = await ac.get("/media", params={"sessionid": "sid"})
+        conflicting = await ac.get("/media", params={"sessionid": "sid", "pk": "1", "code": "abc"})
+
+    assert missing.status_code == 422
+    assert missing.json()["detail"] == "Provide exactly one of pk, id, code, or url"
+    assert conflicting.status_code == 422
+    assert conflicting.json()["detail"] == "Provide exactly one of pk, id, code, or url"
 
 
 @pytest.mark.asyncio
-async def test_story_pk_from_url_uses_aiograpi_helper():
+async def test_story_info_accepts_url(monkeypatch, storage):
+    class StoryPkOnlyClient:
+        def story_pk_from_url(self, url):
+            assert url == "https://instagram.com/stories/instagram/2110901750722920960/"
+            return 2110901750722920960
+
+    monkeypatch.setattr(story_router, "Client", lambda: StoryPkOnlyClient())
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/story/pk/from/url",
+            "/story",
             params={
+                "sessionid": "sid",
                 "url": "https://instagram.com/stories/instagram/2110901750722920960/"
             },
         )
     assert response.status_code == 200
-    assert response.json() == 2110901750722920960
+    assert str(response.json()["pk"]) == "2110901750722920960"
+    assert ("story_info", 2110901750722920960, True) in storage.client.calls
 
 
-# Authenticated media routes
 @pytest.mark.asyncio
-async def test_media_info_awaits_client(storage):
+async def test_story_info_requires_one_identifier(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get(
-            "/media/info", params={"sessionid": "sid", "pk": "1"}
+        missing = await ac.get("/story", params={"sessionid": "sid"})
+        conflicting = await ac.get(
+            "/story",
+            params={
+                "sessionid": "sid",
+                "story_pk": "1",
+                "url": "https://instagram.com/stories/instagram/2110901750722920960/",
+            },
         )
-    assert response.status_code == 200
-    assert response.json()["pk"] == 1
+
+    assert missing.status_code == 422
+    assert missing.json()["detail"] == "Provide exactly one of story_pk or url"
+    assert conflicting.status_code == 422
+    assert conflicting.json()["detail"] == "Provide exactly one of story_pk or url"
 
 
 @pytest.mark.asyncio
 async def test_user_medias_returns_items_and_cursor(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/media/user/medias",
+            "/user/posts",
             params={
                 "sessionid": "sid",
                 "user_id": "1",
@@ -251,7 +300,7 @@ async def test_user_medias_returns_items_and_cursor(storage):
 async def test_usertag_medias_returns_items_and_cursor(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/media/usertag/medias",
+            "/user/tagged/posts",
             params={"sessionid": "sid", "user_id": "1", "cursor": "tag-cursor"},
         )
     assert response.status_code == 200
@@ -367,7 +416,7 @@ async def test_media_edit_rejects_invalid_location_json(storage):
 async def test_media_user_returns_author(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/media/user", params={"sessionid": "sid", "media_pk": "7"}
+            "/media/author", params={"sessionid": "sid", "media_pk": "7"}
         )
     assert response.status_code == 200
     assert response.json()["pk"] == "7"
@@ -446,7 +495,7 @@ async def test_media_archive_and_unarchive(storage):
 async def test_story_user_stories_awaits_client(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/story/user/stories", params={"sessionid": "sid", "user_id": "1"}
+            "/user/stories", params={"sessionid": "sid", "user_id": "1"}
         )
     assert response.status_code == 200
     assert len(response.json()) == 1
@@ -456,7 +505,7 @@ async def test_story_user_stories_awaits_client(storage):
 async def test_story_info_awaits_client(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get(
-            "/story/info", params={"sessionid": "sid", "story_pk": "1"}
+            "/story", params={"sessionid": "sid", "story_pk": "1"}
         )
     assert response.status_code == 200
     assert str(response.json()["pk"]) == "1"

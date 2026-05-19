@@ -30,6 +30,7 @@ from aiograpi_rest.routers import (
     note,
     notifications,
     photo,
+    search,
     story,
     user,
     video,
@@ -96,7 +97,8 @@ OPENAPI_TAGS = [
     {"name": "Auth", "description": "Login, session settings, and relogin operations."},
     {"name": "Account", "description": "Authenticated account profile and privacy operations."},
     {"name": "User", "description": "Profile lookup and user relationship operations."},
-    {"name": "Media", "description": "Generic media lookup, edits, and interactions."},
+    {"name": "Search", "description": "Cross-resource search operations."},
+    {"name": "Media (Post)", "description": "Generic media/post lookup, edits, and interactions."},
     {"name": "Direct", "description": "Instagram Direct inbox, thread, and message operations."},
     {"name": "Hashtag", "description": "Hashtag lookup, media discovery, and follow operations."},
     {"name": "Location", "description": "Location lookup and media discovery operations."},
@@ -118,30 +120,24 @@ OPERATION_SUMMARIES = {
     "patchAuthRelogin": "Refresh the current login session",
     "getAuthSettings": "Get saved auth settings",
     "patchAuthSettings": "Save auth settings",
-    "getAuthTimelineFeed": "Get authenticated timeline feed",
-    "postAuthTotpEnable": "Enable TOTP two-factor authentication",
+    "postAuthTotp": "Enable TOTP two-factor authentication",
     "deleteAuthTotp": "Disable TOTP two-factor authentication",
     "postAuthChallengeResolve": "Resolve an Instagram login challenge",
-    "getAccountInfo": "Get authenticated account info",
-    "patchAccountProfile": "Update authenticated account profile",
+    "getAccount": "Get authenticated account info",
+    "getAccountFeedTimeline": "Get authenticated timeline feed",
+    "getAccountFollowRequests": "List paginated pending follow requests",
+    "getAccountLikedMedia": "List media liked by the authenticated account",
+    "patchAccount": "Update authenticated account profile",
     "patchAccountPicture": "Update authenticated account picture",
     "patchAccountPrivacy": "Set authenticated account privacy",
-    "getMediaId": "Build a media ID from media PK",
-    "getMediaPk": "Extract media PK from media ID",
-    "getMediaPkFromCode": "Get media PK from shortcode",
-    "getMediaPkFromUrl": "Get media PK from URL",
-    "getMediaInfo": "Get media details",
-    "getMediaUserMedias": "List paginated user media",
-    "getMediaUsertagMedias": "List paginated tagged media",
-    "getMediaUserClips": "List paginated user Reels",
-    "getMediaUserVideos": "List paginated user videos",
-    "getUserMedias": "List paginated user media",
-    "getUserTaggedMedias": "List paginated tagged media",
-    "getUserClips": "List paginated user Reels",
+    "getMedia": "Get media details",
+    "getUserPosts": "List paginated user posts",
+    "getUserTaggedPosts": "List paginated tagged posts",
+    "getUserReels": "List paginated user Reels",
     "getUserVideos": "List paginated user videos",
     "deleteMedia": "Delete media",
     "patchMedia": "Edit media caption",
-    "getMediaUser": "Get media author",
+    "getMediaAuthor": "Get media author",
     "getMediaOembed": "Get media oEmbed data",
     "postMediaLike": "Like media",
     "deleteMediaLike": "Unlike media",
@@ -155,7 +151,6 @@ OPERATION_SUMMARIES = {
     "getMediaCommentReplies": "List media comment replies",
     "postMediaCommentLike": "Like a media comment",
     "deleteMediaCommentLike": "Unlike a media comment",
-    "getMediaLiked": "List liked media",
     "postMediaSave": "Save media",
     "deleteMediaSave": "Unsave media",
     "postMediaPin": "Pin media",
@@ -166,15 +161,26 @@ OPERATION_SUMMARIES = {
     "postDirectMessage": "Send a direct message",
     "deleteDirectMessage": "Delete a direct message",
     "patchDirectMessageSeen": "Mark a direct message as seen",
-    "getHashtagInfo": "Get hashtag details",
-    "getHashtagMediasTop": "List paginated top hashtag media",
-    "getHashtagMediasRecent": "List paginated recent hashtag media",
+    "getHashtag": "Get hashtag details",
+    "getHashtagMediaTop": "List paginated top hashtag media",
+    "getHashtagMediaRecent": "List paginated recent hashtag media",
     "postHashtagFollow": "Follow a hashtag",
     "deleteHashtagFollow": "Unfollow a hashtag",
-    "getLocationSearch": "Search locations",
-    "getLocationInfo": "Get location details",
-    "getLocationMediasTop": "List paginated top location media",
-    "getLocationMediasRecent": "List paginated recent location media",
+    "getLocation": "Get location details",
+    "getLocationMediaTop": "List paginated top location media",
+    "getLocationMediaRecent": "List paginated recent location media",
+    "getSearchAccounts": "Search accounts",
+    "getSearchFollowers": "Search a user's followers",
+    "getSearchFollowing": "Search accounts a user follows",
+    "getSearchHashtags": "Search hashtags",
+    "getSearchUsers": "Search users",
+    "getSearchLocations": "Search locations",
+    "getSearchMusic": "Search music tracks",
+    "getSearchPlaces": "Search places",
+    "getSearchRecent": "List recent searches",
+    "getSearchReels": "Search Reels",
+    "getSearchTop": "Search top results",
+    "getSearchTypeahead": "Get search autocomplete suggestions",
     "getPhotoDownload": "Download feed photo",
     "getPhotoDownloadByUrl": "Download feed photo from a URL",
     "postPhotoUpload": "Upload a feed photo",
@@ -196,50 +202,44 @@ OPERATION_SUMMARIES = {
     "postAlbumUpload": "Upload a carousel album",
     "postStoryUpload": "Upload a story",
     "postStoryUploadByUrl": "Upload a story from a URL",
-    "getStoryUserStories": "List user stories",
-    "getStoryInfo": "Get story details",
+    "getUserStories": "List user stories",
+    "getStory": "Get story details",
     "deleteStory": "Delete a story",
     "patchStorySeen": "Mark stories as seen",
     "postStoryLike": "Like a story",
     "deleteStoryLike": "Unlike a story",
     "getStoryViewers": "List paginated story viewers",
     "getStoryArchive": "List paginated story archive days",
-    "getStoryPkFromUrl": "Get story PK from URL",
     "getStoryDownload": "Download story media",
     "getStoryDownloadByUrl": "Download story media from a URL",
+    "getUser": "Get user profile",
     "getUserFollowers": "List paginated user followers",
     "getUserFollowing": "List paginated accounts a user follows",
-    "getUserInfo": "Get user profile by ID",
-    "getUserInfoByUsername": "Get user profile by username",
     "getUserAbout": "Get user about details",
     "postUserFollow": "Follow a user",
     "deleteUserFollow": "Unfollow a user",
-    "getUserIdFromUsername": "Get user ID from username",
-    "getUserUsernameFromId": "Get username from user ID",
     "deleteUserFollower": "Remove a follower",
     "postUserMutePosts": "Mute posts from a followed user",
     "deleteUserMutePosts": "Unmute posts from a followed user",
     "postUserMuteStories": "Mute stories from a followed user",
     "deleteUserMuteStories": "Unmute stories from a followed user",
-    "getUserSearch": "Search users",
     "getUserFriendship": "Get user relationship",
     "postUserBlock": "Block a user",
     "deleteUserBlock": "Unblock a user",
-    "getUserFollowRequests": "List paginated pending follow requests",
     "getUserHighlights": "List user highlights",
-    "getHighlightInfo": "Get highlight details",
+    "getHighlight": "Get highlight details",
     "postHighlight": "Create a highlight",
     "patchHighlight": "Update a highlight",
     "deleteHighlight": "Delete a highlight",
-    "postHighlightStories": "Add stories to a highlight",
-    "deleteHighlightStories": "Remove stories from a highlight",
+    "postHighlightStory": "Add stories to a highlight",
+    "deleteHighlightStory": "Remove stories from a highlight",
     "getNotifications": "Get notification inbox",
     "getNotificationsSettings": "Get supported notification settings",
     "patchNotificationsSettings": "Update notification settings",
     "getNotes": "List notes",
     "postNote": "Create a note",
     "deleteNote": "Delete a note",
-    "getInsightsMediaFeedAll": "Get account media insights feed",
+    "getInsightsMediaFeed": "Get account media insights feed",
     "getInsightsAccount": "Get account insights",
     "getInsightsMedia": "Get media insights",
     "getBuild": "Get build metadata",
@@ -399,6 +399,32 @@ def _polish_operation_summaries(openapi_schema: dict[str, Any]) -> None:
                 operation["summary"] = summary
 
 
+def _move_paths_after(openapi_schema: dict[str, Any], anchor_path: str, moved_paths: list[str]) -> None:
+    paths = openapi_schema.get("paths")
+    if not isinstance(paths, dict) or anchor_path not in paths:
+        return
+
+    moved = [(path, paths[path]) for path in moved_paths if path in paths]
+    if not moved:
+        return
+
+    moved_names = {path for path, _ in moved}
+    reordered = {}
+    for path, methods in paths.items():
+        if path in moved_names:
+            continue
+        reordered[path] = methods
+        if path == anchor_path:
+            reordered.update(moved)
+
+    paths.clear()
+    paths.update(reordered)
+
+
+def _order_openapi_paths(openapi_schema: dict[str, Any]) -> None:
+    _move_paths_after(openapi_schema, "/user/videos", ["/user/highlights", "/user/stories"])
+
+
 app = FastAPI(
     generate_unique_id_function=generate_operation_id,
     openapi_version=OPENAPI_VERSION,
@@ -406,6 +432,7 @@ app = FastAPI(
 )
 app.include_router(auth.router)
 app.include_router(account.router)
+app.include_router(search.router)
 app.include_router(media.router)
 app.include_router(media.user_router)
 app.include_router(direct.router)
@@ -421,6 +448,7 @@ app.include_router(igtv.router)
 app.include_router(clip.router)
 app.include_router(album.router)
 app.include_router(story.router)
+app.include_router(story.user_router)
 app.include_router(insights.router)
 
 
@@ -624,6 +652,7 @@ def custom_openapi():
     _extract_inline_response_schemas(openapi_schema)
     _convert_nullable_schemas_to_openapi_30(openapi_schema)
     _polish_operation_summaries(openapi_schema)
+    _order_openapi_paths(openapi_schema)
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 

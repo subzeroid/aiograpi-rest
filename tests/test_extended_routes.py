@@ -412,9 +412,9 @@ def storage():
 @pytest.mark.asyncio
 async def test_account_routes(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        info = await ac.get("/account/info", params={"sessionid": "sid"})
+        info = await ac.get("/account", params={"sessionid": "sid"})
         profile = await ac.patch(
-            "/account/profile",
+            "/account",
             data={"sessionid": "sid", "full_name": "New Name", "biography": "bio"},
         )
         picture = await ac.patch(
@@ -447,7 +447,7 @@ async def test_media_comment_save_pin_routes(storage):
         )
         like = await ac.post("/media/comment/like", data={"sessionid": "sid", "comment_pk": "10"})
         unlike = await ac.delete("/media/comment/like", params={"sessionid": "sid", "comment_pk": "10"})
-        liked = await ac.get("/media/liked", params={"sessionid": "sid", "amount": "1", "last_media_pk": "5"})
+        liked = await ac.get("/account/liked/media", params={"sessionid": "sid", "amount": "1", "last_media_pk": "5"})
         save = await ac.post("/media/save", data={"sessionid": "sid", "media_id": "m1", "collection_pk": "7"})
         unsave = await ac.delete(
             "/media/save", params={"sessionid": "sid", "media_id": "m1", "collection_pk": "7"}
@@ -509,23 +509,23 @@ async def test_direct_routes(storage):
 @pytest.mark.asyncio
 async def test_discovery_user_routes(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        hashtag = await ac.get("/hashtag/info", params={"sessionid": "sid", "name": "python"})
-        top = await ac.get("/hashtag/medias/top", params={"sessionid": "sid", "name": "python", "amount": "1"})
-        recent = await ac.get("/hashtag/medias/recent", params={"sessionid": "sid", "name": "python", "amount": "1"})
+        hashtag = await ac.get("/hashtag", params={"sessionid": "sid", "name": "python"})
+        top = await ac.get("/hashtag/media/top", params={"sessionid": "sid", "name": "python", "amount": "1"})
+        recent = await ac.get("/hashtag/media/recent", params={"sessionid": "sid", "name": "python", "amount": "1"})
         follow = await ac.post("/hashtag/follow", data={"sessionid": "sid", "hashtag": "python"})
         unfollow = await ac.delete("/hashtag/follow", params={"sessionid": "sid", "hashtag": "python"})
-        location_by_name = await ac.get("/location/search", params={"sessionid": "sid", "name": "Berlin"})
-        location_by_coords = await ac.get("/location/search", params={"sessionid": "sid", "lat": "1", "lng": "2"})
-        location_missing = await ac.get("/location/search", params={"sessionid": "sid"})
-        location_partial = await ac.get("/location/search", params={"sessionid": "sid", "lat": "1"})
-        location = await ac.get("/location/info", params={"sessionid": "sid", "location_pk": "1"})
-        location_top = await ac.get("/location/medias/top", params={"sessionid": "sid", "location_pk": "1"})
-        location_recent = await ac.get("/location/medias/recent", params={"sessionid": "sid", "location_pk": "1"})
-        users = await ac.get("/user/search", params={"sessionid": "sid", "query": "insta"})
+        location_by_name = await ac.get("/search/locations", params={"sessionid": "sid", "name": "Berlin"})
+        location_by_coords = await ac.get("/search/locations", params={"sessionid": "sid", "lat": "1", "lng": "2"})
+        location_missing = await ac.get("/search/locations", params={"sessionid": "sid"})
+        location_partial = await ac.get("/search/locations", params={"sessionid": "sid", "lat": "1"})
+        location = await ac.get("/location", params={"sessionid": "sid", "location_pk": "1"})
+        location_top = await ac.get("/location/media/top", params={"sessionid": "sid", "location_pk": "1"})
+        location_recent = await ac.get("/location/media/recent", params={"sessionid": "sid", "location_pk": "1"})
+        users = await ac.get("/search/users", params={"sessionid": "sid", "query": "insta"})
         friendship = await ac.get("/user/friendship", params={"sessionid": "sid", "user_id": "1"})
         block = await ac.post("/user/block", data={"sessionid": "sid", "user_id": "1"})
         unblock = await ac.delete("/user/block", params={"sessionid": "sid", "user_id": "1"})
-        requests = await ac.get("/user/follow/requests", params={"sessionid": "sid", "amount": "1"})
+        requests = await ac.get("/account/follow/requests", params={"sessionid": "sid", "amount": "1"})
 
     for response in (
         hashtag,
@@ -556,7 +556,7 @@ async def test_discovery_user_routes(storage):
 async def test_highlight_story_note_notification_and_auth_routes(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         user_highlights = await ac.get("/user/highlights", params={"sessionid": "sid", "user_id": "1"})
-        highlight = await ac.get("/highlight/info", params={"sessionid": "sid", "highlight_pk": "h1"})
+        highlight = await ac.get("/highlight", params={"sessionid": "sid", "highlight_pk": "h1"})
         created = await ac.post("/highlight", data={"sessionid": "sid", "title": "Trip", "story_ids": ["s1"]})
         edited = await ac.patch(
             "/highlight",
@@ -564,10 +564,10 @@ async def test_highlight_story_note_notification_and_auth_routes(storage):
         )
         deleted = await ac.delete("/highlight", params={"sessionid": "sid", "highlight_pk": "h1"})
         add_stories = await ac.post(
-            "/highlight/stories", data={"sessionid": "sid", "highlight_pk": "h1", "story_ids": ["s1"]}
+            "/highlight/story", data={"sessionid": "sid", "highlight_pk": "h1", "story_ids": ["s1"]}
         )
         remove_stories = await ac.delete(
-            "/highlight/stories", params={"sessionid": "sid", "highlight_pk": "h1", "story_ids": ["s1"]}
+            "/highlight/story", params={"sessionid": "sid", "highlight_pk": "h1", "story_ids": ["s1"]}
         )
         viewers = await ac.get("/story/viewers", params={"sessionid": "sid", "story_pk": "1"})
         archive = await ac.get("/story/archive", params={"sessionid": "sid", "include_memories": "false"})
@@ -580,7 +580,7 @@ async def test_highlight_story_note_notification_and_auth_routes(storage):
         notes = await ac.get("/notes", params={"sessionid": "sid"})
         note = await ac.post("/note", data={"sessionid": "sid", "text": "note", "audience": "1"})
         delete_note = await ac.delete("/note", params={"sessionid": "sid", "note_id": "1"})
-        totp = await ac.post("/auth/totp/enable", data={"sessionid": "sid", "verification_code": "123456"})
+        totp = await ac.post("/auth/totp", data={"sessionid": "sid", "verification_code": "123456"})
         disable_totp = await ac.delete("/auth/totp", params={"sessionid": "sid"})
         challenge = await ac.post(
             "/auth/challenge/resolve",

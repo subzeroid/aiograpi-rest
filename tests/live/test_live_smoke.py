@@ -62,7 +62,7 @@ async def try_settings_import_user_about(account, tmp_path):
         sessionid = settings_response.json()
 
         rest_user_response = await api.get(
-            "/user/info/by/username",
+            "/user",
             params={"username": "instagram"},
             headers={"X-Session-ID": sessionid},
         )
@@ -131,7 +131,7 @@ async def _import_session_from_account_settings(api, account):
 async def _wait_for_story(api, headers, user_id, story_pk):
     for _ in range(12):
         stories_response = await api.get(
-            "/story/user/stories",
+            "/user/stories",
             params={"user_id": user_id},
             headers=headers,
         )
@@ -141,7 +141,7 @@ async def _wait_for_story(api, headers, user_id, story_pk):
             if str(story["pk"]) == str(story_pk):
                 return story
         await asyncio.sleep(5)
-    raise AssertionError(f"Uploaded story {story_pk} was not found in /story/user/stories")
+    raise AssertionError(f"Uploaded story {story_pk} was not found in /user/stories")
 
 
 async def try_settings_import_paginated_read_lists(account, tmp_path):
@@ -149,12 +149,12 @@ async def try_settings_import_paginated_read_lists(account, tmp_path):
         sessionid = await _import_session_from_account_settings(api, account)
         headers = {"X-Session-ID": sessionid}
 
-        account_response = await api.get("/account/info", headers=headers)
+        account_response = await api.get("/account", headers=headers)
         assert account_response.status_code == 200, account_response.text
         account_user_id = account_response.json()["pk"]
 
         public_user_response = await api.get(
-            "/user/info/by/username",
+            "/user",
             params={"username": "instagram"},
             headers=headers,
         )
@@ -163,32 +163,32 @@ async def try_settings_import_paginated_read_lists(account, tmp_path):
 
         media_page = _assert_paginated_page(
             await api.get(
-                "/user/medias",
+                "/user/posts",
                 params={"user_id": public_user_id, "amount": 2},
                 headers=headers,
             )
         )
         hashtag_top_page = _assert_paginated_page(
             await api.get(
-                "/hashtag/medias/top",
+                "/hashtag/media/top",
                 params={"name": "instagram", "amount": 2},
                 headers=headers,
             )
         )
         hashtag_recent_page = _assert_paginated_page(
             await api.get(
-                "/hashtag/medias/recent",
+                "/hashtag/media/recent",
                 params={"name": "instagram", "amount": 2},
                 headers=headers,
             )
         )
 
         for path, params in (
-            ("/user/clips", {"user_id": public_user_id, "amount": 2}),
+            ("/user/reels", {"user_id": public_user_id, "amount": 2}),
             ("/user/videos", {"user_id": public_user_id, "amount": 2}),
             ("/user/followers", {"user_id": account_user_id, "amount": 2}),
             ("/user/following", {"user_id": account_user_id, "amount": 2}),
-            ("/user/follow/requests", {"amount": 2}),
+            ("/account/follow/requests", {"amount": 2}),
             ("/direct/inbox", {"thread_message_limit": 1}),
             ("/story/archive", {"amount": 2, "include_memories": False}),
         ):
@@ -196,7 +196,7 @@ async def try_settings_import_paginated_read_lists(account, tmp_path):
 
         location_pk = _first_location_pk(media_page, hashtag_top_page, hashtag_recent_page)
         if location_pk:
-            for path in ("/location/medias/top", "/location/medias/recent"):
+            for path in ("/location/media/top", "/location/media/recent"):
                 _assert_paginated_page(
                     await api.get(
                         path,
@@ -211,7 +211,7 @@ async def try_settings_import_story_upload_image(account, tmp_path):
         sessionid = await _import_session_from_account_settings(api, account)
         headers = {"X-Session-ID": sessionid}
 
-        account_response = await api.get("/account/info", headers=headers)
+        account_response = await api.get("/account", headers=headers)
         assert account_response.status_code == 200, account_response.text
         user_id = account_response.json()["pk"]
 
@@ -229,7 +229,7 @@ async def try_settings_import_story_upload_image(account, tmp_path):
 
         try:
             story_info_response = await api.get(
-                "/story/info",
+                "/story",
                 params={"story_pk": story_pk},
                 headers=headers,
             )

@@ -13,8 +13,10 @@ boundary.
 - Login, relogin, session import, settings export/import, and runtime proxy,
   locale, and timezone updates.
 - Account profile, privacy, profile picture, and authenticated account info.
-- User profile, follower, following, follow, mute, block, search, friendship,
-  follow request, highlight, and about endpoints.
+- User profile, follower, following, follow, mute, block, friendship, follow
+  request, highlight, and about endpoints.
+- Search endpoints for users, accounts, followers/following, hashtags, music,
+  places, top results, Reels, recent searches, and typeahead suggestions.
 - Paginated media, user, hashtag, location, story viewer/archive, and Direct
   inbox list endpoints.
 - Media comments, likes, saves, pins, archive, photo, video, Reel, carousel

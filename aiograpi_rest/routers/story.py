@@ -25,6 +25,11 @@ router = APIRouter(
     tags=["Story"],
     responses={404: {"description": "Not found"}},
 )
+user_router = APIRouter(
+    prefix="/user",
+    tags=["User"],
+    responses={404: {"description": "Not found"}},
+)
 
 STORY_POSITION_DEFAULTS = {
     "x": 0.5,
@@ -152,7 +157,7 @@ async def story_upload_by_url(sessionid: str = Depends(get_sessionid),
         stickers=_parse_json_form_models(stickers, StorySticker, "stickers"))
 
 
-@router.get("/user/stories", response_model=List[Story])
+@user_router.get("/stories", response_model=List[Story])
 async def story_user_stories(sessionid: str = Depends(get_sessionid),
                             user_id: str = Query(...),
                             amount: Optional[int] = Query(None),
@@ -163,13 +168,20 @@ async def story_user_stories(sessionid: str = Depends(get_sessionid),
     return await cl.user_stories(user_id, amount)
 
 
-@router.get("/info", response_model=Story)
+@router.get("", response_model=Story)
 async def story_info(sessionid: str = Depends(get_sessionid),
-                     story_pk: int = Query(...),
+                     story_pk: Optional[int] = Query(None),
+                     url: Optional[str] = Query(None),
                      use_cache: Optional[bool] = Query(True),
                      clients: ClientStorage = Depends(get_clients)) -> Story:
-    """Get Story by pk or id
+    """Get Story by pk or URL
     """
+    identifiers = [value is not None for value in (story_pk, url)]
+    if identifiers.count(True) != 1:
+        raise HTTPException(status_code=422, detail="Provide exactly one of story_pk or url")
+    if url is not None:
+        story_pk = Client().story_pk_from_url(url)
+
     cl = await clients.get(sessionid)
     return await cl.story_info(story_pk, use_cache)
 
@@ -244,13 +256,6 @@ async def story_archive(sessionid: str = Depends(get_sessionid),
         reel_id,
     )
     return StoryArchiveDayPage(items=items, next_cursor=next_cursor or "")
-
-
-@router.get("/pk/from/url")
-async def story_pk_from_url(url: str) -> int:
-    """Get Story (media) PK from URL
-    """
-    return Client().story_pk_from_url(url)
 
 
 @router.get("/download")

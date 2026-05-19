@@ -258,6 +258,28 @@ async def test_login_by_sessionid_persists_session(fake_storage):
 
 
 @pytest.mark.asyncio
+async def test_login_by_sessionid_accepts_client_options(fake_storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.post(
+            "/auth/login/by/sessionid",
+            data={
+                "sessionid": "sid",
+                "proxy": "http://proxy.example:8080",
+                "locale": "en_US",
+                "timezone": "10800",
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.json() == "sid"
+    assert fake_storage.created.proxy == "http://proxy.example:8080"
+    assert fake_storage.created.locale == "en_US"
+    assert fake_storage.created.timezone == "10800"
+    assert ("login_by_sessionid", "sid") in fake_storage.created.calls
+    assert fake_storage.saved == [fake_storage.created]
+
+
+@pytest.mark.asyncio
 async def test_login_by_sessionid_returns_false_without_persisting(fake_storage):
     async def failing_login_by_sessionid(sessionid):
         fake_storage.created.calls.append(("login_by_sessionid", sessionid))
@@ -401,7 +423,7 @@ async def test_challenge_resolve_without_security_code_returns_actionable_403(fa
 @pytest.mark.asyncio
 async def test_timeline_feed_awaits_aiograpi(fake_storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/auth/timeline/feed", params={"sessionid": "sid"})
+        response = await ac.get("/account/feed/timeline", params={"sessionid": "sid"})
 
     assert response.status_code == 200
     assert response.json() == {"feed": []}

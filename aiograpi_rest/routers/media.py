@@ -15,7 +15,7 @@ from aiograpi_rest.pagination import MediaPage
 
 router = APIRouter(
     prefix="/media",
-    tags=["Media"],
+    tags=["Media (Post)"],
     responses={404: {"description": "Not found"}}
 )
 user_router = APIRouter(
@@ -25,43 +25,30 @@ user_router = APIRouter(
 )
 
 
-@router.get("/id")
-async def media_id(media_pk: int) -> str:
-    """Get full media id
-    """
-    return await Client().media_id(media_pk)
-
-
-@router.get("/pk")
-async def media_pk(media_id: str) -> str:
-    """Get short media id
-    """
-    return str(Client().media_pk(media_id))
-
-
-@router.get("/pk/from/code")
-async def media_pk_from_code(code: str) -> str:
-    """Get media pk from code
-    """
-    return str(Client().media_pk_from_code(code))
-
-
-@router.get("/pk/from/url")
-async def media_pk_from_url(url: str) -> str:
-    """Get Media PK from URL
-    """
-    return str(await Client().media_pk_from_url(url))
-
-
-@router.get("/info", response_model=Media)
+@router.get("", response_model=Media)
 async def media_info(sessionid: str = Depends(get_sessionid),
-                     pk: int = Query(...),
+                     pk: Optional[int] = Query(None),
+                     media_id: Optional[str] = Query(None, alias="id"),
+                     code: Optional[str] = Query(None),
+                     url: Optional[str] = Query(None),
                      use_cache: Optional[bool] = Query(True),
                      clients: ClientStorage = Depends(get_clients)) -> Media:
-    """Get media info by pk
+    """Get media info by pk, media id, shortcode, or URL
     """
+    identifiers = [value is not None for value in (pk, media_id, code, url)]
+    if identifiers.count(True) != 1:
+        raise HTTPException(status_code=422, detail="Provide exactly one of pk, id, code, or url")
+
+    media_pk = pk
+    if media_id is not None:
+        media_pk = Client().media_pk(media_id)
+    elif code is not None:
+        media_pk = Client().media_pk_from_code(code)
+    elif url is not None:
+        media_pk = await Client().media_pk_from_url(url)
+
     cl = await clients.get(sessionid)
-    return await cl.media_info(pk, use_cache)
+    return await cl.media_info(int(media_pk), use_cache)
 
 
 async def _resolve_user_id(cl, user_id: Optional[str], username: Optional[str]) -> str:
@@ -118,7 +105,7 @@ async def _user_videos_page(cl,
     return MediaPage(items=items, next_cursor=next_cursor or "")
 
 
-@user_router.get("/medias", response_model=MediaPage)
+@user_router.get("/posts", response_model=MediaPage)
 async def user_medias(sessionid: str = Depends(get_sessionid),
                       user_id: Optional[str] = Query(None, description="Instagram numeric user PK."),
                       username: Optional[str] = Query(None, description="Instagram username."),
@@ -131,7 +118,7 @@ async def user_medias(sessionid: str = Depends(get_sessionid),
     return await _user_medias_page(cl, user_id, username, amount, cursor)
 
 
-@user_router.get("/tagged/medias", response_model=MediaPage)
+@user_router.get("/tagged/posts", response_model=MediaPage)
 async def user_tagged_medias(sessionid: str = Depends(get_sessionid),
                              user_id: Optional[str] = Query(None, description="Instagram numeric user PK."),
                              username: Optional[str] = Query(None, description="Instagram username."),
@@ -144,7 +131,7 @@ async def user_tagged_medias(sessionid: str = Depends(get_sessionid),
     return await _user_tagged_medias_page(cl, user_id, username, amount, cursor)
 
 
-@user_router.get("/clips", response_model=MediaPage)
+@user_router.get("/reels", response_model=MediaPage)
 async def user_clips(sessionid: str = Depends(get_sessionid),
                      user_id: Optional[str] = Query(None, description="Instagram numeric user PK."),
                      username: Optional[str] = Query(None, description="Instagram username."),
@@ -166,50 +153,6 @@ async def user_videos(sessionid: str = Depends(get_sessionid),
                       clients: ClientStorage = Depends(get_clients)) -> MediaPage:
     """Get a user's video page with the next pagination cursor
     """
-    cl = await clients.get(sessionid)
-    return await _user_videos_page(cl, user_id, username, amount, cursor)
-
-
-@router.get("/user/medias", response_model=MediaPage, include_in_schema=False)
-async def media_user_medias_alias(sessionid: str = Depends(get_sessionid),
-                                  user_id: Optional[str] = Query(None),
-                                  username: Optional[str] = Query(None),
-                                  amount: int = Query(50, ge=1, le=200),
-                                  cursor: str = Query(""),
-                                  clients: ClientStorage = Depends(get_clients)) -> MediaPage:
-    cl = await clients.get(sessionid)
-    return await _user_medias_page(cl, user_id, username, amount, cursor)
-
-
-@router.get("/usertag/medias", response_model=MediaPage, include_in_schema=False)
-async def media_usertag_medias_alias(sessionid: str = Depends(get_sessionid),
-                                     user_id: Optional[str] = Query(None),
-                                     username: Optional[str] = Query(None),
-                                     amount: int = Query(50, ge=1, le=200),
-                                     cursor: str = Query(""),
-                                     clients: ClientStorage = Depends(get_clients)) -> MediaPage:
-    cl = await clients.get(sessionid)
-    return await _user_tagged_medias_page(cl, user_id, username, amount, cursor)
-
-
-@router.get("/user/clips", response_model=MediaPage, include_in_schema=False)
-async def media_user_clips_alias(sessionid: str = Depends(get_sessionid),
-                                 user_id: Optional[str] = Query(None),
-                                 username: Optional[str] = Query(None),
-                                 amount: int = Query(50, ge=1, le=200),
-                                 cursor: str = Query(""),
-                                 clients: ClientStorage = Depends(get_clients)) -> MediaPage:
-    cl = await clients.get(sessionid)
-    return await _user_clips_page(cl, user_id, username, amount, cursor)
-
-
-@router.get("/user/videos", response_model=MediaPage, include_in_schema=False)
-async def media_user_videos_alias(sessionid: str = Depends(get_sessionid),
-                                  user_id: Optional[str] = Query(None),
-                                  username: Optional[str] = Query(None),
-                                  amount: int = Query(50, ge=1, le=200),
-                                  cursor: str = Query(""),
-                                  clients: ClientStorage = Depends(get_clients)) -> MediaPage:
     cl = await clients.get(sessionid)
     return await _user_videos_page(cl, user_id, username, amount, cursor)
 
@@ -244,7 +187,7 @@ async def media_edit(sessionid: str = Depends(get_sessionid),
     )
 
 
-@router.get("/user", response_model=UserShort)
+@router.get("/author", response_model=UserShort)
 async def media_user(sessionid: str = Depends(get_sessionid),
                      media_pk: int = Query(...),
                      clients: ClientStorage = Depends(get_clients)) -> UserShort:
@@ -392,17 +335,6 @@ async def media_comment_unlike(sessionid: str = Depends(get_sessionid),
     """
     cl = await clients.get(sessionid)
     return await cl.comment_unlike(comment_pk)
-
-
-@router.get("/liked", response_model=List[Media])
-async def liked_medias(sessionid: str = Depends(get_sessionid),
-                       amount: Optional[int] = Query(21),
-                       last_media_pk: Optional[int] = Query(0),
-                       clients: ClientStorage = Depends(get_clients)) -> List[Media]:
-    """Get liked media
-    """
-    cl = await clients.get(sessionid)
-    return await cl.liked_medias(amount, last_media_pk)
 
 
 @router.post("/save", response_model=bool)

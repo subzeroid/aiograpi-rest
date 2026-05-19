@@ -1,11 +1,12 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Optional
+from typing import Dict, List, Optional
 
-from aiograpi.types import Account, UserShort
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from aiograpi.types import Account, Media, UserShort
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
+from aiograpi_rest.pagination import UserShortPage
 
 router = APIRouter(
     prefix="/account",
@@ -14,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.get("/info", response_model=Account)
+@router.get("", response_model=Account)
 async def account_info(
     sessionid: str = Depends(get_sessionid),
     clients: ClientStorage = Depends(get_clients),
@@ -25,7 +26,45 @@ async def account_info(
     return await cl.account_info()
 
 
-@router.patch("/profile", response_model=Account)
+@router.get("/feed/timeline", response_model=Dict)
+async def timeline_feed(
+    sessionid: str = Depends(get_sessionid),
+    clients: ClientStorage = Depends(get_clients),
+) -> Dict:
+    """Get your timeline feed
+    """
+    cl = await clients.get(sessionid)
+    return await cl.get_timeline_feed()
+
+
+@router.get("/follow/requests", response_model=UserShortPage)
+async def account_follow_requests(
+    sessionid: str = Depends(get_sessionid),
+    amount: int = Query(50, ge=1, le=200),
+    cursor: str = Query(""),
+    clients: ClientStorage = Depends(get_clients),
+) -> UserShortPage:
+    """Get a page of pending follow requests for the authenticated account
+    """
+    cl = await clients.get(sessionid)
+    items, next_cursor = await cl.user_follow_requests_chunk(amount, cursor or "")
+    return UserShortPage(items=items, next_cursor=next_cursor or "")
+
+
+@router.get("/liked/media", response_model=List[Media])
+async def liked_medias(
+    sessionid: str = Depends(get_sessionid),
+    amount: Optional[int] = Query(21),
+    last_media_pk: Optional[int] = Query(0),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[Media]:
+    """Get media liked by the authenticated account
+    """
+    cl = await clients.get(sessionid)
+    return await cl.liked_medias(amount, last_media_pk)
+
+
+@router.patch("", response_model=Account)
 async def account_profile(
     sessionid: str = Depends(get_sessionid),
     external_url: Optional[str] = Form(None),

@@ -13,8 +13,8 @@ router = APIRouter(
 )
 
 
-@router.get("/info", response_model=Highlight)
-async def highlight_info(
+@router.get("", response_model=Highlight)
+async def highlight(
     sessionid: str = Depends(get_sessionid),
     highlight_pk: str = Query(...),
     clients: ClientStorage = Depends(get_clients),
@@ -81,8 +81,8 @@ async def highlight_delete(
     return await cl.highlight_delete(highlight_pk)
 
 
-@router.post("/stories", response_model=Highlight)
-async def highlight_stories_add(
+@router.post("/story", response_model=Highlight)
+async def highlight_story_add(
     sessionid: str = Depends(get_sessionid),
     highlight_pk: str = Form(...),
     story_ids: List[str] = Form(...),
@@ -94,8 +94,8 @@ async def highlight_stories_add(
     return await cl.highlight_add_stories(highlight_pk, story_ids)
 
 
-@router.delete("/stories", response_model=Highlight)
-async def highlight_stories_remove(
+@router.delete("/story", response_model=Highlight)
+async def highlight_story_remove(
     sessionid: str = Depends(get_sessionid),
     highlight_pk: str = Query(...),
     story_ids: List[str] = Query(...),

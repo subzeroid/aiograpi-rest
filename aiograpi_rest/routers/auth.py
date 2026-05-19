@@ -13,6 +13,22 @@ router = APIRouter(
 )
 
 
+def _apply_client_options(
+    cl,
+    proxy: Optional[str] = "",
+    locale: Optional[str] = "",
+    timezone: Optional[str] = "",
+) -> None:
+    if proxy != "":
+        cl.set_proxy(proxy)
+
+    if locale != "":
+        cl.set_locale(locale)
+
+    if timezone != "":
+        cl.set_timezone_offset(timezone)
+
+
 @router.post("/login")
 async def auth_login(username: str = Form(...),
                      password: str = Form(...),
@@ -31,14 +47,7 @@ async def auth_login(username: str = Form(...),
     """Login by username and password with 2FA
     """
     cl = clients.client()
-    if proxy != "":
-        cl.set_proxy(proxy)
-
-    if locale != "":
-        cl.set_locale(locale)
-
-    if timezone != "":
-        cl.set_timezone_offset(timezone)
+    _apply_client_options(cl, proxy, locale, timezone)
 
     # Handle 2FA if verification code is provided
     if verification_code:
@@ -61,10 +70,14 @@ async def auth_login(username: str = Form(...),
 
 @router.post("/login/by/sessionid")
 async def auth_login_by_sessionid(sessionid: str = Form(...),
+                                  proxy: Optional[str] = Form(""),
+                                  locale: Optional[str] = Form(""),
+                                  timezone: Optional[str] = Form(""),
                                   clients: ClientStorage = Depends(get_clients)) -> Union[str, bool]:
     """Login by sessionid
     """
     cl = clients.client()
+    _apply_client_options(cl, proxy, locale, timezone)
     result = await cl.login_by_sessionid(sessionid)
     if result:
         clients.set(cl)
@@ -135,16 +148,7 @@ async def settings_set(settings: Optional[str] = Form(
     return cl.sessionid
 
 
-@router.get("/timeline/feed")
-async def timeline_feed(sessionid: str = Depends(get_sessionid),
-                        clients: ClientStorage = Depends(get_clients)) -> Dict:
-    """Get your timeline feed
-    """
-    cl = await clients.get(sessionid)
-    return await cl.get_timeline_feed()
-
-
-@router.post("/totp/enable", response_model=List[str])
+@router.post("/totp", response_model=List[str])
 async def totp_enable(verification_code: str = Form(...),
                       sessionid: str = Depends(get_sessionid),
                       clients: ClientStorage = Depends(get_clients)) -> List[str]:

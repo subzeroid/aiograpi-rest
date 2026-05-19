@@ -52,9 +52,9 @@ async def test_insights_account_awaits_client(storage):
 
 
 @pytest.mark.asyncio
-async def test_insights_media_feed_all_uses_defaults_and_awaits(storage):
+async def test_insights_media_feed_uses_defaults_and_awaits(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/insights/media/feed/all", params={"sessionid": "sid"})
+        response = await ac.get("/insights/media/feed", params={"sessionid": "sid"})
     assert response.status_code == 200
     assert response.json()[0]["pk"] == "1"
     call = next(c for c in storage.client.calls if c[0] == "insights_media_feed_all")

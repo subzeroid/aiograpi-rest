@@ -35,9 +35,11 @@ SESSIONID=$(curl -fsS -X POST http://localhost:8000/auth/login \
 ```
 
 The response is the session ID. If you already have an Instagram `sessionid`
-cookie, use `POST /auth/login/by/sessionid` instead.
+cookie, use `POST /auth/login/by/sessionid` instead. Session import accepts the
+same optional `proxy`, `locale`, and `timezone` client options as password
+login.
 
-To use a proxy from the start, pass it during login:
+To use a proxy from the start, pass it during login or session import:
 
 ```bash
 SESSIONID=$(curl -fsS -X POST http://localhost:8000/auth/login \
@@ -57,7 +59,7 @@ In Swagger UI, click **Authorize** and paste the session id once. For direct
 HTTP calls, send it as `X-Session-ID`:
 
 ```bash
-curl "http://localhost:8000/user/info/by/username?username=instagram" \
+curl "http://localhost:8000/user?username=instagram" \
   -H "X-Session-ID: $SESSIONID"
 
 curl "http://localhost:8000/user/about?user_id=25025320" \

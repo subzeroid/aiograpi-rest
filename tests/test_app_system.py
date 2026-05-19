@@ -200,11 +200,6 @@ async def test_openapi_uses_sessionid_authorize_button_for_protected_routes():
         "/metrics",
         "/build",
         "/deps",
-        "/media/id",
-        "/media/pk",
-        "/media/pk/from/code",
-        "/media/pk/from/url",
-        "/story/pk/from/url",
     }
     for path, methods in schema["paths"].items():
         for operation in methods.values():
@@ -221,10 +216,11 @@ async def test_openapi_uses_sessionid_authorize_button_for_protected_routes():
 @pytest.mark.asyncio
 async def test_openapi_uses_rest_http_methods():
     expected_methods = {
-        "/account/info": {"get"},
+        "/account": {"get", "patch"},
+        "/account/feed/timeline": {"get"},
+        "/account/follow/requests": {"get"},
         "/account/picture": {"patch"},
         "/account/privacy": {"patch"},
-        "/account/profile": {"patch"},
         "/album/download": {"get"},
         "/album/download/by/urls": {"get"},
         "/album/upload": {"post"},
@@ -233,9 +229,7 @@ async def test_openapi_uses_rest_http_methods():
         "/auth/login/by/sessionid": {"post"},
         "/auth/relogin": {"patch"},
         "/auth/settings": {"get", "patch"},
-        "/auth/timeline/feed": {"get"},
-        "/auth/totp": {"delete"},
-        "/auth/totp/enable": {"post"},
+        "/auth/totp": {"delete", "post"},
         "/build": {"get"},
         "/clip/download": {"get"},
         "/clip/download/by/url": {"get"},
@@ -246,13 +240,12 @@ async def test_openapi_uses_rest_http_methods():
         "/direct/message": {"delete", "post"},
         "/direct/message/seen": {"patch"},
         "/direct/thread": {"get", "post"},
+        "/hashtag": {"get"},
         "/hashtag/follow": {"delete", "post"},
-        "/hashtag/info": {"get"},
-        "/hashtag/medias/recent": {"get"},
-        "/hashtag/medias/top": {"get"},
-        "/highlight": {"delete", "patch", "post"},
-        "/highlight/info": {"get"},
-        "/highlight/stories": {"delete", "post"},
+        "/hashtag/media/recent": {"get"},
+        "/hashtag/media/top": {"get"},
+        "/highlight": {"delete", "get", "patch", "post"},
+        "/highlight/story": {"delete", "post"},
         "/health": {"get"},
         "/igtv/download": {"get"},
         "/igtv/download/by/url": {"get"},
@@ -260,31 +253,25 @@ async def test_openapi_uses_rest_http_methods():
         "/igtv/upload/by/url": {"post"},
         "/insights/account": {"get"},
         "/insights/media": {"get"},
-        "/insights/media/feed/all": {"get"},
-        "/location/info": {"get"},
-        "/location/medias/recent": {"get"},
-        "/location/medias/top": {"get"},
-        "/location/search": {"get"},
+        "/insights/media/feed": {"get"},
+        "/location": {"get"},
+        "/location/media/recent": {"get"},
+        "/location/media/top": {"get"},
         "/metrics": {"get"},
-        "/media": {"delete", "patch"},
+        "/media": {"delete", "get", "patch"},
         "/media/archive": {"delete", "post"},
         "/media/comment": {"delete", "post"},
         "/media/comment/like": {"delete", "post"},
         "/media/comment/replies": {"get"},
         "/media/comments": {"get"},
-        "/media/id": {"get"},
-        "/media/info": {"get"},
         "/media/like": {"delete", "post"},
-        "/media/liked": {"get"},
+        "/account/liked/media": {"get"},
         "/media/likers": {"get"},
         "/media/oembed": {"get"},
         "/media/pin": {"delete", "post"},
-        "/media/pk": {"get"},
-        "/media/pk/from/code": {"get"},
-        "/media/pk/from/url": {"get"},
         "/media/save": {"delete", "post"},
         "/media/seen": {"patch"},
-        "/media/user": {"get"},
+        "/media/author": {"get"},
         "/note": {"delete", "post"},
         "/notes": {"get"},
         "/notifications": {"get"},
@@ -294,37 +281,42 @@ async def test_openapi_uses_rest_http_methods():
         "/photo/upload": {"post"},
         "/photo/upload/by/url": {"post"},
         "/ready": {"get"},
-        "/story": {"delete"},
+        "/search/accounts": {"get"},
+        "/search/followers": {"get"},
+        "/search/following": {"get"},
+        "/search/hashtags": {"get"},
+        "/search/locations": {"get"},
+        "/search/music": {"get"},
+        "/search/places": {"get"},
+        "/search/recent": {"get"},
+        "/search/reels": {"get"},
+        "/search/top": {"get"},
+        "/search/typeahead": {"get"},
+        "/search/users": {"get"},
+        "/story": {"delete", "get"},
         "/story/archive": {"get"},
         "/story/download": {"get"},
         "/story/download/by/url": {"get"},
-        "/story/info": {"get"},
         "/story/like": {"delete", "post"},
-        "/story/pk/from/url": {"get"},
         "/story/seen": {"patch"},
         "/story/upload": {"post"},
         "/story/upload/by/url": {"post"},
-        "/story/user/stories": {"get"},
         "/story/viewers": {"get"},
+        "/user": {"get"},
         "/user/about": {"get"},
         "/user/block": {"delete", "post"},
-        "/user/clips": {"get"},
-        "/user/follow/requests": {"get"},
+        "/user/follower": {"delete"},
         "/user/followers": {"get"},
         "/user/following": {"get"},
         "/user/friendship": {"get"},
         "/user/highlights": {"get"},
-        "/user/id/from/username": {"get"},
-        "/user/info": {"get"},
-        "/user/info/by/username": {"get"},
-        "/user/medias": {"get"},
+        "/user/posts": {"get"},
         "/user/mute/posts": {"delete", "post"},
         "/user/mute/stories": {"delete", "post"},
-        "/user/follower": {"delete"},
         "/user/follow": {"delete", "post"},
-        "/user/search": {"get"},
-        "/user/tagged/medias": {"get"},
-        "/user/username/from/id": {"get"},
+        "/user/reels": {"get"},
+        "/user/stories": {"get"},
+        "/user/tagged/posts": {"get"},
         "/user/videos": {"get"},
         "/video/download": {"get"},
         "/video/download/by/url": {"get"},
@@ -343,6 +335,17 @@ async def test_openapi_uses_rest_http_methods():
 
 
 @pytest.mark.asyncio
+async def test_openapi_orders_user_story_collections_after_user_videos():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.get("/openapi.json")
+
+    assert response.status_code == 200
+    paths = list(response.json()["paths"])
+    start = paths.index("/user/videos")
+    assert paths[start : start + 3] == ["/user/videos", "/user/highlights", "/user/stories"]
+
+
+@pytest.mark.asyncio
 async def test_openapi_removes_undo_style_paths():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/openapi.json")
@@ -352,14 +355,55 @@ async def test_openapi_removes_undo_style_paths():
     assert not {
         "/media/delete",
         "/media/edit",
+        "/media/id",
         "/media/unarchive",
         "/media/unlike",
+        "/media/pk",
+        "/media/pk/from/code",
+        "/media/pk/from/url",
+        "/account/info",
+        "/account/profile",
+        "/account/follow/request",
+        "/auth/timeline/feed",
+        "/auth/totp/enable",
         "/story/delete",
+        "/story/info",
+        "/story/pk/from/url",
         "/story/unlike",
+        "/story/viewer",
+        "/story/user/stories",
+        "/hashtag/info",
+        "/hashtag/medias/recent",
+        "/hashtag/medias/top",
+        "/highlight/info",
+        "/highlight/stories",
+        "/location/info",
+        "/location/medias/recent",
+        "/location/medias/top",
+        "/location/search",
+        "/media/info",
+        "/media/liked",
+        "/media/comment/reply",
+        "/media/liker",
+        "/media/user",
+        "/insights/media/feed/all",
+        "/user/id/from/username",
+        "/user/info",
+        "/user/info/by/username",
+        "/user/follow/requests",
+        "/user/highlight",
         "/user/remove/follower",
+        "/user/search",
+        "/user/medias",
+        "/user/media",
+        "/user/clips",
         "/user/unfollow",
         "/user/unmute/posts/from/follow",
         "/user/unmute/stories/from/follow",
+        "/user/tagged/medias",
+        "/user/tagged/media",
+        "/user/username/from/id",
+        "/user/video",
     } & set(paths)
 
 
@@ -417,10 +461,11 @@ async def test_openapi_uses_human_friendly_tag_names():
         "Hashtag",
         "Highlight",
         "Location",
-        "Media",
+        "Media (Post)",
         "Note",
         "Notifications",
         "Photo",
+        "Search",
         "Story",
         "System",
         "User",
@@ -430,7 +475,8 @@ async def test_openapi_uses_human_friendly_tag_names():
         "Auth",
         "Account",
         "User",
-        "Media",
+        "Search",
+        "Media (Post)",
         "Direct",
         "Hashtag",
         "Location",
@@ -459,8 +505,43 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/auth/login/by/sessionid"]["post"]["summary"] == "Create a session from an existing session ID"
     assert paths["/auth/settings"]["get"]["summary"] == "Get saved auth settings"
     assert paths["/auth/settings"]["patch"]["summary"] == "Save auth settings"
-    assert paths["/user/medias"]["get"]["summary"] == "List paginated user media"
-    assert paths["/user/info/by/username"]["get"]["summary"] == "Get user profile by username"
+    assert paths["/account"]["get"]["summary"] == "Get authenticated account info"
+    assert paths["/account"]["patch"]["summary"] == "Update authenticated account profile"
+    assert paths["/account/follow/requests"]["get"]["summary"] == "List paginated pending follow requests"
+    assert paths["/hashtag"]["get"]["summary"] == "Get hashtag details"
+    assert paths["/hashtag/media/top"]["get"]["summary"] == "List paginated top hashtag media"
+    assert paths["/highlight"]["get"]["summary"] == "Get highlight details"
+    assert paths["/highlight/story"]["post"]["summary"] == "Add stories to a highlight"
+    assert paths["/highlight/story"]["delete"]["summary"] == "Remove stories from a highlight"
+    assert paths["/location"]["get"]["summary"] == "Get location details"
+    assert paths["/location/media/recent"]["get"]["summary"] == "List paginated recent location media"
+    assert paths["/media"]["get"]["summary"] == "Get media details"
+    assert paths["/media/comments"]["get"]["summary"] == "List media comments"
+    assert paths["/media/comment/replies"]["get"]["summary"] == "List media comment replies"
+    assert paths["/media/likers"]["get"]["summary"] == "List media likers"
+    assert paths["/notes"]["get"]["summary"] == "List notes"
+    assert paths["/search/accounts"]["get"]["summary"] == "Search accounts"
+    assert paths["/search/followers"]["get"]["summary"] == "Search a user's followers"
+    assert paths["/search/following"]["get"]["summary"] == "Search accounts a user follows"
+    assert paths["/search/hashtags"]["get"]["summary"] == "Search hashtags"
+    assert paths["/search/locations"]["get"]["summary"] == "Search locations"
+    assert paths["/search/music"]["get"]["summary"] == "Search music tracks"
+    assert paths["/search/places"]["get"]["summary"] == "Search places"
+    assert paths["/search/recent"]["get"]["summary"] == "List recent searches"
+    assert paths["/search/reels"]["get"]["summary"] == "Search Reels"
+    assert paths["/search/top"]["get"]["summary"] == "Search top results"
+    assert paths["/search/typeahead"]["get"]["summary"] == "Get search autocomplete suggestions"
+    assert paths["/search/users"]["get"]["summary"] == "Search users"
+    assert paths["/story"]["get"]["summary"] == "Get story details"
+    assert paths["/story/viewers"]["get"]["summary"] == "List paginated story viewers"
+    assert paths["/user"]["get"]["summary"] == "Get user profile"
+    assert paths["/user/followers"]["get"]["summary"] == "List paginated user followers"
+    assert paths["/user/highlights"]["get"]["summary"] == "List user highlights"
+    assert paths["/user/posts"]["get"]["summary"] == "List paginated user posts"
+    assert paths["/user/reels"]["get"]["summary"] == "List paginated user Reels"
+    assert paths["/user/stories"]["get"]["summary"] == "List user stories"
+    assert paths["/user/tagged/posts"]["get"]["summary"] == "List paginated tagged posts"
+    assert paths["/user/videos"]["get"]["summary"] == "List paginated user videos"
     assert paths["/story/upload/by/url"]["post"]["summary"] == "Upload a story from a URL"
     assert paths["/clip/upload/by/url"]["post"]["summary"] == "Upload a Reel from a URL"
     assert paths["/album/download/by/urls"]["get"]["summary"] == "Download carousel album media from URLs"
@@ -468,7 +549,9 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/deps"]["get"]["summary"] == "Get dependency versions"
     assert paths["/health"]["get"]["summary"] == "Check liveness"
     assert paths["/igtv/download"]["get"]["summary"] == "Download legacy IGTV video"
-    assert paths["/insights/media/feed/all"]["get"]["summary"] == "Get account media insights feed"
+    assert paths["/account/liked/media"]["get"]["summary"] == "List media liked by the authenticated account"
+    assert paths["/account/feed/timeline"]["get"]["summary"] == "Get authenticated timeline feed"
+    assert paths["/insights/media/feed"]["get"]["summary"] == "Get account media insights feed"
     assert paths["/metrics"]["get"]["summary"] == "Get Prometheus metrics"
     assert paths["/ready"]["get"]["summary"] == "Check readiness"
 
@@ -510,7 +593,7 @@ async def test_exception_handler_wraps_errors_in_envelope(monkeypatch):
     transport = ASGITransport(app=app, raise_app_exceptions=False)
     try:
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
-            response = await ac.get("/auth/timeline/feed", params={"sessionid": "x"})
+            response = await ac.get("/account/feed/timeline", params={"sessionid": "x"})
     finally:
         app.dependency_overrides.clear()
 
@@ -543,7 +626,7 @@ async def test_exception_handler_maps_instagram_throttling_errors(monkeypatch, e
     transport = ASGITransport(app=app, raise_app_exceptions=False)
     try:
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
-            response = await ac.get("/auth/timeline/feed", params={"sessionid": "x"})
+            response = await ac.get("/account/feed/timeline", params={"sessionid": "x"})
     finally:
         app.dependency_overrides.clear()
 
@@ -635,7 +718,7 @@ async def test_authorized_routes_accept_sessionid_header(monkeypatch):
     app.dependency_overrides[get_clients] = lambda: storage
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-            response = await ac.get("/auth/timeline/feed", headers={"X-Session-ID": "sid-from-header"})
+            response = await ac.get("/account/feed/timeline", headers={"X-Session-ID": "sid-from-header"})
     finally:
         app.dependency_overrides.clear()
 
@@ -669,7 +752,7 @@ async def test_authorized_routes_accept_sessionid_cookie(monkeypatch):
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
             ac.cookies.set("sessionid", "sid-from-cookie")
-            response = await ac.get("/auth/timeline/feed")
+            response = await ac.get("/account/feed/timeline")
     finally:
         app.dependency_overrides.clear()
 
@@ -681,7 +764,7 @@ async def test_authorized_routes_accept_sessionid_cookie(monkeypatch):
 @pytest.mark.asyncio
 async def test_authorized_routes_reject_missing_sessionid():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.get("/auth/timeline/feed")
+        response = await ac.get("/account/feed/timeline")
 
     assert response.status_code == 401
     assert response.json() == {"detail": "Session ID required"}
@@ -691,3 +774,17 @@ def test_custom_openapi_caches_schema():
     first = app.openapi()
     second = app.openapi()
     assert first is second
+
+
+def test_openapi_path_order_helper_ignores_missing_inputs():
+    schema_without_paths = {}
+    main._move_paths_after(schema_without_paths, "/anchor", ["/moved"])
+    assert schema_without_paths == {}
+
+    schema_without_anchor = {"paths": {"/moved": {"get": {}}}}
+    main._move_paths_after(schema_without_anchor, "/anchor", ["/moved"])
+    assert list(schema_without_anchor["paths"]) == ["/moved"]
+
+    schema_without_moved_paths = {"paths": {"/anchor": {"get": {}}, "/other": {"get": {}}}}
+    main._move_paths_after(schema_without_moved_paths, "/anchor", ["/missing"])
+    assert list(schema_without_moved_paths["paths"]) == ["/anchor", "/other"]
