@@ -386,6 +386,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#relationship-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship Actions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#openapi" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -634,6 +645,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#relationship-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship Actions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#openapi" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -816,6 +838,26 @@ check account and proxy health before retrying.</p>
 <li>Paths use slash-separated resources such as <code>/story/upload/by/url</code>.</li>
 <li>State reversals use the same resource path with <code>DELETE</code>: for example,
   <code>POST /media/like</code> likes media and <code>DELETE /media/like</code> unlikes it.</li>
+</ul>
+<h2 id="relationship-actions">Relationship Actions</h2>
+<p>User relationship routes use <code>POST</code> to create or enable a relationship state and
+<code>DELETE</code> to remove or disable it.</p>
+<ul>
+<li><code>POST /user/follow</code> follows a user.</li>
+<li><code>DELETE /user/follow</code> unfollows a user.</li>
+<li><code>DELETE /user/follower</code> removes a follower.</li>
+<li><code>POST /account/follow/request/approve</code> approves a pending follow request.</li>
+<li><code>DELETE /account/follow/request</code> declines a pending follow request.</li>
+<li><code>POST /user/close-friend</code> adds a user to close friends.</li>
+<li><code>DELETE /user/close-friend</code> removes a user from close friends.</li>
+<li><code>POST /user/notifications/posts</code> enables post notifications for a user.</li>
+<li><code>DELETE /user/notifications/posts</code> disables post notifications for a user.</li>
+<li><code>POST /user/notifications/stories</code> enables story notifications for a user.</li>
+<li><code>DELETE /user/notifications/stories</code> disables story notifications for a user.</li>
+<li><code>POST /user/notifications/reels</code> enables Reel notifications for a user.</li>
+<li><code>DELETE /user/notifications/reels</code> disables Reel notifications for a user.</li>
+<li><code>POST /user/notifications/videos</code> enables video notifications for a user.</li>
+<li><code>DELETE /user/notifications/videos</code> disables video notifications for a user.</li>
 </ul>
 <h2 id="openapi">OpenAPI</h2>
 <ul>

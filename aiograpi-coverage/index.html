@@ -582,9 +582,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <h2 id="summary">Summary</h2>
 <ul>
 <li>Public <code>aiograpi.Client</code> methods: <strong>500</strong></li>
-<li>Methods reached by REST routes: <strong>191</strong></li>
-<li>Methods not exposed as REST routes: <strong>309</strong></li>
-<li>Candidate REST backlog: <strong>124</strong></li>
+<li>Methods reached by REST routes: <strong>203</strong></li>
+<li>Methods not exposed as REST routes: <strong>297</strong></li>
+<li>Candidate REST backlog: <strong>112</strong></li>
 </ul>
 <h2 id="rest-relevance">REST Relevance</h2>
 <table>
@@ -598,12 +598,12 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tbody>
 <tr>
 <td><code>exposed</code></td>
-<td style="text-align: right;">191</td>
+<td style="text-align: right;">203</td>
 <td>Already used by public REST routes.</td>
 </tr>
 <tr>
 <td><code>candidate</code></td>
-<td style="text-align: right;">124</td>
+<td style="text-align: right;">112</td>
 <td>Likely useful as a future user-facing REST endpoint.</td>
 </tr>
 <tr>
@@ -897,8 +897,8 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>user</code></td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">30</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">18</td>
 <td style="text-align: right;">20</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: right;">74</td>
@@ -996,7 +996,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>user</code></td>
-<td><code>chaining</code>, <code>close_friend_add</code>, <code>close_friend_remove</code>, <code>creator_info</code>, <code>disable_posts_notifications</code>, <code>disable_reels_notifications</code>, <code>disable_stories_notifications</code>, <code>disable_videos_notifications</code>, <code>discover_recommended_accounts_for_category_v1</code>, <code>enable_posts_notifications</code>, <code>enable_reels_notifications</code>, <code>enable_stories_notifications</code>, <code>enable_videos_notifications</code>, <code>feed_user_stream_item</code>, <code>fetch_suggestion_details</code>, <code>new_feed_exist</code>, <code>user_follow_request_approve</code>, <code>user_follow_request_decline</code>, <code>user_follow_requests_approve</code>, <code>user_follow_requests_decline</code>, <code>user_friendships_v1</code>, <code>user_id_from_username</code>, <code>user_related_profiles_gql</code>, <code>user_short_gql</code>, <code>user_stream_by_id_flat</code>, <code>user_stream_by_id_v1</code>, <code>user_stream_by_username_flat</code>, <code>user_stream_by_username_v1</code>, <code>user_web_profile_info_v1</code>, <code>username_from_user_id</code></td>
+<td><code>chaining</code>, <code>creator_info</code>, <code>discover_recommended_accounts_for_category_v1</code>, <code>feed_user_stream_item</code>, <code>fetch_suggestion_details</code>, <code>new_feed_exist</code>, <code>user_follow_requests_approve</code>, <code>user_follow_requests_decline</code>, <code>user_friendships_v1</code>, <code>user_id_from_username</code>, <code>user_related_profiles_gql</code>, <code>user_short_gql</code>, <code>user_stream_by_id_flat</code>, <code>user_stream_by_id_v1</code>, <code>user_stream_by_username_flat</code>, <code>user_stream_by_username_v1</code>, <code>user_web_profile_info_v1</code>, <code>username_from_user_id</code></td>
 </tr>
 <tr>
 <td><code>video</code></td>
@@ -1036,6 +1036,14 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>GET /account/feed/timeline</code></td>
 <td><code>get_timeline_feed</code></td>
+</tr>
+<tr>
+<td><code>DELETE /account/follow/request</code></td>
+<td><code>user_follow_request_decline</code></td>
+</tr>
+<tr>
+<td><code>POST /account/follow/request/approve</code></td>
+<td><code>user_follow_request_approve</code></td>
 </tr>
 <tr>
 <td><code>GET /account/follow/requests</code></td>
@@ -1654,6 +1662,14 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>user_block</code></td>
 </tr>
 <tr>
+<td><code>DELETE /user/close-friend</code></td>
+<td><code>close_friend_remove</code></td>
+</tr>
+<tr>
+<td><code>POST /user/close-friend</code></td>
+<td><code>close_friend_add</code></td>
+</tr>
+<tr>
 <td><code>DELETE /user/follow</code></td>
 <td><code>user_unfollow</code></td>
 </tr>
@@ -1700,6 +1716,38 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>POST /user/mute/stories</code></td>
 <td><code>mute_stories_from_follow</code></td>
+</tr>
+<tr>
+<td><code>DELETE /user/notifications/posts</code></td>
+<td><code>disable_posts_notifications</code></td>
+</tr>
+<tr>
+<td><code>POST /user/notifications/posts</code></td>
+<td><code>enable_posts_notifications</code></td>
+</tr>
+<tr>
+<td><code>DELETE /user/notifications/reels</code></td>
+<td><code>disable_reels_notifications</code></td>
+</tr>
+<tr>
+<td><code>POST /user/notifications/reels</code></td>
+<td><code>enable_reels_notifications</code></td>
+</tr>
+<tr>
+<td><code>DELETE /user/notifications/stories</code></td>
+<td><code>disable_stories_notifications</code></td>
+</tr>
+<tr>
+<td><code>POST /user/notifications/stories</code></td>
+<td><code>enable_stories_notifications</code></td>
+</tr>
+<tr>
+<td><code>DELETE /user/notifications/videos</code></td>
+<td><code>disable_videos_notifications</code></td>
+</tr>
+<tr>
+<td><code>POST /user/notifications/videos</code></td>
+<td><code>enable_videos_notifications</code></td>
 </tr>
 <tr>
 <td><code>GET /user/pinned/posts</code></td>
@@ -2129,16 +2177,16 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>close_friend_add(self, user_id: str)</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /user/close-friend</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>close_friend_remove(self, user_id: str)</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>DELETE /user/close-friend</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>collection_medias(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -&gt; List[aiograpi.types.Media]</code></td>
@@ -2577,30 +2625,30 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>disable_posts_notifications(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>DELETE /user/notifications/posts</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>disable_reels_notifications(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>DELETE /user/notifications/reels</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>disable_stories_notifications(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>DELETE /user/notifications/stories</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>disable_videos_notifications(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>DELETE /user/notifications/videos</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>discover_recommended_accounts_for_category_v1(self, user_id: str) -&gt; dict</code></td>
@@ -2626,30 +2674,30 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>enable_posts_notifications(self, user_id: str, disable: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /user/notifications/posts</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>enable_reels_notifications(self, user_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /user/notifications/reels</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>enable_stories_notifications(self, user_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /user/notifications/stories</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>enable_videos_notifications(self, user_id: str, revert: bool = False) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /user/notifications/videos</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>explore_page(self)</code></td>
@@ -4663,16 +4711,16 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>user_follow_request_approve(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>POST /account/follow/request/approve</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_follow_request_decline(self, user_id: str) -&gt; bool</code></td>
 <td><code>user</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>DELETE /account/follow/request</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>user_follow_requests(self, amount: int = 0) -&gt; List[aiograpi.types.UserShort]</code></td>
