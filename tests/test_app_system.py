@@ -244,6 +244,8 @@ async def test_openapi_uses_rest_http_methods():
         "/hashtag/follow": {"delete", "post"},
         "/hashtag/media/recent": {"get"},
         "/hashtag/media/top": {"get"},
+        "/hashtag/related": {"get"},
+        "/hashtag/reels": {"get"},
         "/highlight": {"delete", "get", "patch", "post"},
         "/highlight/story": {"delete", "post"},
         "/health": {"get"},
@@ -255,6 +257,7 @@ async def test_openapi_uses_rest_http_methods():
         "/insights/media": {"get"},
         "/insights/media/feed": {"get"},
         "/location": {"get"},
+        "/location/guides": {"get"},
         "/location/media/recent": {"get"},
         "/location/media/top": {"get"},
         "/metrics": {"get"},
@@ -309,8 +312,10 @@ async def test_openapi_uses_rest_http_methods():
         "/user/followers": {"get"},
         "/user/following": {"get"},
         "/user/friendship": {"get"},
+        "/user/guides": {"get"},
         "/user/highlights": {"get"},
         "/user/posts": {"get"},
+        "/user/pinned/posts": {"get"},
         "/user/mute/posts": {"delete", "post"},
         "/user/mute/stories": {"delete", "post"},
         "/user/follow": {"delete", "post"},
@@ -342,7 +347,13 @@ async def test_openapi_orders_user_story_collections_after_user_videos():
     assert response.status_code == 200
     paths = list(response.json()["paths"])
     start = paths.index("/user/videos")
-    assert paths[start : start + 3] == ["/user/videos", "/user/highlights", "/user/stories"]
+    assert paths[start : start + 5] == [
+        "/user/videos",
+        "/user/pinned/posts",
+        "/user/highlights",
+        "/user/stories",
+        "/user/guides",
+    ]
 
 
 @pytest.mark.asyncio
@@ -510,13 +521,16 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/account/follow/requests"]["get"]["summary"] == "List paginated pending follow requests"
     assert paths["/hashtag"]["get"]["summary"] == "Get hashtag details"
     assert paths["/hashtag/media/top"]["get"]["summary"] == "List paginated top hashtag media"
+    assert paths["/hashtag/related"]["get"]["summary"] == "List related hashtags"
+    assert paths["/hashtag/reels"]["get"]["summary"] == "List hashtag Reels"
     assert paths["/highlight"]["get"]["summary"] == "Get highlight details"
     assert paths["/highlight/story"]["post"]["summary"] == "Add stories to a highlight"
     assert paths["/highlight/story"]["delete"]["summary"] == "Remove stories from a highlight"
     assert paths["/location"]["get"]["summary"] == "Get location details"
+    assert paths["/location/guides"]["get"]["summary"] == "List location guides"
     assert paths["/location/media/recent"]["get"]["summary"] == "List paginated recent location media"
     assert paths["/media"]["get"]["summary"] == "Get media details"
-    assert paths["/media/comments"]["get"]["summary"] == "List media comments"
+    assert paths["/media/comments"]["get"]["summary"] == "List paginated media comments"
     assert paths["/media/comment/replies"]["get"]["summary"] == "List media comment replies"
     assert paths["/media/likers"]["get"]["summary"] == "List media likers"
     assert paths["/notes"]["get"]["summary"] == "List notes"
@@ -536,7 +550,9 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/story/viewers"]["get"]["summary"] == "List paginated story viewers"
     assert paths["/user"]["get"]["summary"] == "Get user profile"
     assert paths["/user/followers"]["get"]["summary"] == "List paginated user followers"
+    assert paths["/user/guides"]["get"]["summary"] == "List user guides"
     assert paths["/user/highlights"]["get"]["summary"] == "List user highlights"
+    assert paths["/user/pinned/posts"]["get"]["summary"] == "List user pinned posts"
     assert paths["/user/posts"]["get"]["summary"] == "List paginated user posts"
     assert paths["/user/reels"]["get"]["summary"] == "List paginated user Reels"
     assert paths["/user/stories"]["get"]["summary"] == "List user stories"

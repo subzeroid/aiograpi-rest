@@ -120,6 +120,15 @@ def _highlight_payload(pk="h1"):
     }
 
 
+def _guide_payload(guide_id="g1"):
+    return {
+        "id": guide_id,
+        "title": "Guide",
+        "description": "Guide description",
+        "cover_media": _media_payload(),
+    }
+
+
 def _note_payload(note_id="n1"):
     return {
         "id": note_id,
@@ -161,9 +170,9 @@ class FakeExpandedClient:
         self.calls.append(("account_set_public",))
         return True
 
-    async def media_comments(self, media_id, amount=20):
-        self.calls.append(("media_comments", media_id, amount))
-        return [_comment_payload()]
+    async def media_comments_chunk(self, media_id, max_amount=20, min_id=None):
+        self.calls.append(("media_comments_chunk", media_id, max_amount, min_id))
+        return [_comment_payload()], "next-comments"
 
     async def media_comment(self, media_id, text, replied_to_comment_id=None):
         self.calls.append(("media_comment", media_id, text, replied_to_comment_id))
@@ -249,6 +258,14 @@ class FakeExpandedClient:
         self.calls.append(("hashtag_medias_v1_chunk", name, max_amount, tab_key, max_id))
         return [_media_payload()], f"next-hashtag-{tab_key}"
 
+    async def hashtag_related_hashtags(self, name):
+        self.calls.append(("hashtag_related_hashtags", name))
+        return [{"id": "tag-related", "name": f"{name}dev", "media_count": 2}]
+
+    async def hashtag_medias_reels_v1(self, name, amount=27):
+        self.calls.append(("hashtag_medias_reels_v1", name, amount))
+        return [_media_payload(7)]
+
     async def hashtag_follow(self, hashtag, unfollow=False):
         self.calls.append(("hashtag_follow", hashtag, unfollow))
         return True
@@ -281,6 +298,10 @@ class FakeExpandedClient:
         self.calls.append(("location_medias_v1_chunk", location_pk, max_amount, tab_key, max_id))
         return [_media_payload()], f"next-location-{tab_key}"
 
+    async def location_guides_v1(self, location_pk):
+        self.calls.append(("location_guides_v1", location_pk))
+        return [_guide_payload("location-guide")]
+
     async def search_users(self, query):
         self.calls.append(("search_users", query))
         return [_user_short(1)]
@@ -308,6 +329,14 @@ class FakeExpandedClient:
     async def user_highlights(self, user_id, amount=0):
         self.calls.append(("user_highlights", user_id, amount))
         return [_highlight_payload()]
+
+    async def user_pinned_medias(self, user_id):
+        self.calls.append(("user_pinned_medias", user_id))
+        return [_media_payload(9)]
+
+    async def user_guides_v1(self, user_id):
+        self.calls.append(("user_guides_v1", user_id))
+        return [_guide_payload("user-guide")]
 
     async def highlight_info(self, highlight_pk):
         self.calls.append(("highlight_info", highlight_pk))
@@ -436,7 +465,10 @@ async def test_account_routes(storage):
 @pytest.mark.asyncio
 async def test_media_comment_save_pin_routes(storage):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        comments = await ac.get("/media/comments", params={"sessionid": "sid", "media_id": "m1", "amount": "2"})
+        comments = await ac.get(
+            "/media/comments",
+            params={"sessionid": "sid", "media_id": "m1", "amount": "2", "cursor": "comments-cursor"},
+        )
         comment = await ac.post("/media/comment", data={"sessionid": "sid", "media_id": "m1", "text": "hello"})
         delete_comment = await ac.delete(
             "/media/comment", params={"sessionid": "sid", "media_id": "m1", "comment_pk": "10"}
@@ -455,13 +487,16 @@ async def test_media_comment_save_pin_routes(storage):
         pin = await ac.post("/media/pin", data={"sessionid": "sid", "media_pk": "1"})
         unpin = await ac.delete("/media/pin", params={"sessionid": "sid", "media_pk": "1"})
 
-    assert comments.status_code == 200 and len(comments.json()) == 1
+    assert comments.status_code == 200
+    assert comments.json()["items"][0]["pk"] == "10"
+    assert comments.json()["next_cursor"] == "next-comments"
     assert comment.status_code == 200 and comment.json()["text"] == "hello"
     assert delete_comment.status_code == 200 and delete_comment.json() is True
     assert replies.status_code == 200 and replies.json()[0]["pk"] == "11"
     assert like.status_code == 200 and unlike.status_code == 200
     assert liked.status_code == 200 and save.status_code == 200 and unsave.status_code == 200
     assert pin.status_code == 200 and unpin.status_code == 200
+    assert ("media_comments_chunk", "m1", 2, "comments-cursor") in storage.client.calls
     assert ("comment_bulk_delete", "m1", [10]) in storage.client.calls
     assert ("media_unsave", "m1", 7) in storage.client.calls
     assert ("media_unpin", "1") in storage.client.calls
@@ -512,6 +547,8 @@ async def test_discovery_user_routes(storage):
         hashtag = await ac.get("/hashtag", params={"sessionid": "sid", "name": "python"})
         top = await ac.get("/hashtag/media/top", params={"sessionid": "sid", "name": "python", "amount": "1"})
         recent = await ac.get("/hashtag/media/recent", params={"sessionid": "sid", "name": "python", "amount": "1"})
+        related = await ac.get("/hashtag/related", params={"sessionid": "sid", "name": "python"})
+        reels = await ac.get("/hashtag/reels", params={"sessionid": "sid", "name": "python", "amount": "2"})
         follow = await ac.post("/hashtag/follow", data={"sessionid": "sid", "hashtag": "python"})
         unfollow = await ac.delete("/hashtag/follow", params={"sessionid": "sid", "hashtag": "python"})
         location_by_name = await ac.get("/search/locations", params={"sessionid": "sid", "name": "Berlin"})
@@ -521,16 +558,21 @@ async def test_discovery_user_routes(storage):
         location = await ac.get("/location", params={"sessionid": "sid", "location_pk": "1"})
         location_top = await ac.get("/location/media/top", params={"sessionid": "sid", "location_pk": "1"})
         location_recent = await ac.get("/location/media/recent", params={"sessionid": "sid", "location_pk": "1"})
+        location_guides = await ac.get("/location/guides", params={"sessionid": "sid", "location_pk": "1"})
         users = await ac.get("/search/users", params={"sessionid": "sid", "query": "insta"})
         friendship = await ac.get("/user/friendship", params={"sessionid": "sid", "user_id": "1"})
         block = await ac.post("/user/block", data={"sessionid": "sid", "user_id": "1"})
         unblock = await ac.delete("/user/block", params={"sessionid": "sid", "user_id": "1"})
+        user_pinned = await ac.get("/user/pinned/posts", params={"sessionid": "sid", "user_id": "1"})
+        user_guides = await ac.get("/user/guides", params={"sessionid": "sid", "user_id": "1"})
         requests = await ac.get("/account/follow/requests", params={"sessionid": "sid", "amount": "1"})
 
     for response in (
         hashtag,
         top,
         recent,
+        related,
+        reels,
         follow,
         unfollow,
         location_by_name,
@@ -538,10 +580,13 @@ async def test_discovery_user_routes(storage):
         location,
         location_top,
         location_recent,
+        location_guides,
         users,
         friendship,
         block,
         unblock,
+        user_pinned,
+        user_guides,
         requests,
     ):
         assert response.status_code == 200
@@ -549,7 +594,12 @@ async def test_discovery_user_routes(storage):
     assert location_partial.status_code == 422
     assert ("location_search_name", "Berlin") in storage.client.calls
     assert ("location_search", 1.0, 2.0) in storage.client.calls
+    assert ("hashtag_related_hashtags", "python") in storage.client.calls
+    assert ("hashtag_medias_reels_v1", "python", 2) in storage.client.calls
+    assert ("location_guides_v1", 1) in storage.client.calls
     assert ("user_unblock", "1", "profile") in storage.client.calls
+    assert ("user_pinned_medias", 1) in storage.client.calls
+    assert ("user_guides_v1", 1) in storage.client.calls
 
 
 @pytest.mark.asyncio

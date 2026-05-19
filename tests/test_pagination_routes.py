@@ -24,6 +24,17 @@ def _media_payload(pk=1):
     }
 
 
+def _comment_payload(pk="10"):
+    return {
+        "pk": pk,
+        "text": "hello",
+        "user": _user_short(1),
+        "created_at_utc": "2026-01-01T00:00:00+00:00",
+        "content_type": "comment",
+        "status": "Active",
+    }
+
+
 def _viewer_payload(pk=1):
     return {**_user_short(pk), "has_liked": True}
 
@@ -114,6 +125,10 @@ class FakePaginationClient:
     async def location_medias_v1_chunk(self, location_pk, max_amount=63, tab_key="", max_id=None):
         self.calls.append(("location_medias_v1_chunk", location_pk, max_amount, tab_key, max_id))
         return [_media_payload(6)], f"next-location-{tab_key}"
+
+    async def media_comments_chunk(self, media_id, max_amount=20, min_id=None):
+        self.calls.append(("media_comments_chunk", media_id, max_amount, min_id))
+        return [_comment_payload()], "next-comments"
 
     async def story_viewers_chunk(self, story_pk, max_amount=0, max_id=""):
         self.calls.append(("story_viewers_chunk", story_pk, max_amount, max_id))
@@ -241,6 +256,7 @@ async def test_user_discovery_story_and_direct_list_routes_return_items_and_next
         ("/hashtag/media/recent", {"name": "python", "amount": "15", "cursor": "hr1"}, "next-hashtag-recent"),
         ("/location/media/top", {"location_pk": "1", "amount": "16", "cursor": "lt1"}, "next-location-ranked"),
         ("/location/media/recent", {"location_pk": "1", "amount": "17", "cursor": "lr1"}, "next-location-recent"),
+        ("/media/comments", {"media_id": "m1", "amount": "18", "cursor": "mc1"}, "next-comments"),
         ("/story/viewers", {"story_pk": "100", "amount": "18", "cursor": "sv1"}, "next-story-viewers"),
         (
             "/story/archive",
@@ -266,6 +282,7 @@ async def test_user_discovery_story_and_direct_list_routes_return_items_and_next
     assert ("hashtag_medias_v1_chunk", "python", 15, "recent", "hr1") in storage.client.calls
     assert ("location_medias_v1_chunk", 1, 16, "ranked", "lt1") in storage.client.calls
     assert ("location_medias_v1_chunk", 1, 17, "recent", "lr1") in storage.client.calls
+    assert ("media_comments_chunk", "m1", 18, "mc1") in storage.client.calls
     assert ("story_viewers_chunk", "100", 18, "sv1") in storage.client.calls
     assert ("archive_story_days_paginated_v1", 19, "sa1", False, "archive") in storage.client.calls
     assert ("direct_threads_chunk", "unread", "primary", 3, "di1") in storage.client.calls
@@ -290,6 +307,7 @@ async def test_openapi_read_list_routes_use_page_schemas_and_cursor_parameter():
         "/hashtag/media/recent": "MediaPage",
         "/location/media/top": "MediaPage",
         "/location/media/recent": "MediaPage",
+        "/media/comments": "CommentPage",
         "/story/viewers": "ViewerPage",
         "/story/archive": "StoryArchiveDayPage",
         "/direct/inbox": "DirectThreadPage",

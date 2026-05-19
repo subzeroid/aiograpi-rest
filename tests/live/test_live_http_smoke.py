@@ -112,8 +112,17 @@ def _create_session(base_url, account):
 
 
 def _assert_published_http_pagination(base_url, headers, public_user_id):
+    user_posts_path = f"/user/posts?user_id={public_user_id}&amount=2"
+    user_posts = _request_json(base_url, "GET", user_posts_path, headers=headers)
+    _assert_paginated_page(user_posts, user_posts_path)
+    if user_posts["items"]:
+        comments_path = f"/media/comments?media_id={user_posts['items'][0]['id']}&amount=2"
+        _assert_paginated_page(
+            _request_json(base_url, "GET", comments_path, headers=headers),
+            comments_path,
+        )
+
     for path in (
-        f"/user/posts?user_id={public_user_id}&amount=2",
         "/hashtag/media/top?name=instagram&amount=2",
         "/direct/inbox?thread_message_limit=1",
     ):

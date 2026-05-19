@@ -13,14 +13,16 @@ boundary.
 - Login, relogin, session import, settings export/import, and runtime proxy,
   locale, and timezone updates.
 - Account profile, privacy, profile picture, and authenticated account info.
-- User profile, follower, following, follow, mute, block, friendship, follow
-  request, highlight, and about endpoints.
-- Search endpoints for users, accounts, followers/following, hashtags, music,
+- User profile, follower, following, follow, mute, block, friendship, pinned
+  posts, guides, follow request, highlight, and about endpoints.
+- Search and discovery endpoints for users, accounts, followers/following,
+  hashtags, related hashtags, hashtag Reels, locations, location guides, music,
   places, top results, Reels, recent searches, and typeahead suggestions.
 - Paginated media, user, hashtag, location, story viewer/archive, and Direct
   inbox list endpoints.
-- Media comments, likes, saves, pins, archive, photo, video, Reel, carousel
-  album, story, highlight, note, notification, IGTV, and insights routes.
+- Media paginated comments, likes, saves, pins, archive, photo, video, Reel,
+  carousel album, story, highlight, note, notification, IGTV, and insights
+  routes.
 - OpenAPI documentation at `/docs` and raw schema at `/openapi.json`.
 - Typed client generation guide for Swift, Go, TypeScript, Python, PHP, Rust,
   Kotlin, Scala, C#, C++, and other OpenAPI Generator targets.

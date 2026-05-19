@@ -1,4 +1,6 @@
-from aiograpi.types import Location
+from typing import List
+
+from aiograpi.types import Guide, Location
 from fastapi import APIRouter, Depends, Query
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
@@ -51,3 +53,15 @@ async def location_medias_recent(
     cl = await clients.get(sessionid)
     items, next_cursor = await cl.location_medias_v1_chunk(location_pk, amount, "recent", cursor or None)
     return MediaPage(items=items, next_cursor=next_cursor or "")
+
+
+@router.get("/guides", response_model=List[Guide])
+async def location_guides(
+    sessionid: str = Depends(get_sessionid),
+    location_pk: int = Query(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[Guide]:
+    """Get location guides
+    """
+    cl = await clients.get(sessionid)
+    return await cl.location_guides_v1(location_pk)

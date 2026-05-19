@@ -1,4 +1,6 @@
-from aiograpi.types import Hashtag
+from typing import List
+
+from aiograpi.types import Hashtag, Media
 from fastapi import APIRouter, Depends, Form, Query
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
@@ -51,6 +53,31 @@ async def hashtag_medias_recent(
     cl = await clients.get(sessionid)
     items, next_cursor = await cl.hashtag_medias_v1_chunk(name, amount, "recent", cursor or None)
     return MediaPage(items=items, next_cursor=next_cursor or "")
+
+
+@router.get("/related", response_model=List[Hashtag])
+async def hashtag_related(
+    sessionid: str = Depends(get_sessionid),
+    name: str = Query(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[Hashtag]:
+    """Get related hashtags
+    """
+    cl = await clients.get(sessionid)
+    return await cl.hashtag_related_hashtags(name)
+
+
+@router.get("/reels", response_model=List[Media])
+async def hashtag_reels(
+    sessionid: str = Depends(get_sessionid),
+    name: str = Query(...),
+    amount: int = Query(27, ge=1, le=200),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[Media]:
+    """Get hashtag Reels
+    """
+    cl = await clients.get(sessionid)
+    return await cl.hashtag_medias_reels_v1(name, amount)
 
 
 @router.post("/follow", response_model=bool)

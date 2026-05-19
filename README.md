@@ -96,6 +96,9 @@ curl "http://localhost:8000/user/followers?user_id=25025320&amount=50" \
 
 curl "http://localhost:8000/user/posts?username=instagram&amount=12" \
   -H "X-Session-ID: $SESSIONID"
+
+curl "http://localhost:8000/media/comments?media_id=MEDIA_ID&amount=20" \
+  -H "X-Session-ID: $SESSIONID"
 ```
 
 User post collection routes such as `/user/posts`, `/user/reels`,
@@ -220,9 +223,11 @@ For typed client generation in C++, C#, F#, D, Erlang, Elixir, Nim, Haskell, Lis
 
 1. **Authorization** — login, 2FA, settings management
 2. **Account** — account info, profile, profile picture, privacy
-3. **Media** — info, comments, likes, saves, pins, archive, edit, delete
+3. **Media** — info, paginated comments, likes, saves, pins, archive, edit, delete
 4. **Direct** — inbox, threads, messages, seen state
-5. **Discovery** — user, account, follower, following, hashtag, music, place, top, Reel, recent, and typeahead search; friendship, blocks, follow requests
+5. **Discovery** — user, account, follower, following, hashtag, music, place,
+   top, Reel, recent, and typeahead search; related hashtags, hashtag Reels,
+   location guides, pinned posts, friendship, blocks, follow requests
 6. **Video / Photo / IGTV / Reels / Album** — upload to feed and story, download
 7. **Story / Highlights / Notes** — archive, viewers, highlights, notes
 8. **Notifications / Insights** — inbox, notification settings, media and account insights
@@ -437,7 +442,8 @@ TEST_ACCOUNTS_URL="https://example.com/accounts" python3.13 -m pytest tests/live
 GitHub Actions also has a scheduled **Live Tests** workflow that runs nightly
 and can be launched manually. It starts the Docker Compose API service, creates
 a real session from `TEST_ACCOUNTS_URL`, sends it through `X-Session-ID`, and
-checks `/user/about` plus paginated read-list routes. A second nightly job runs
+checks `/user/about`, `/media/comments`, and paginated read-list routes. A
+second nightly job runs
 the same HTTP smoke against the published Docker image
 `subzeroid/aiograpi-rest:latest`, so the public `docker run` path is exercised
 with a real session too. The direct ASGI live smoke also uploads a real JPEG to

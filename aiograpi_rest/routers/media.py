@@ -11,7 +11,7 @@ from aiograpi_rest.helpers import (
     parse_upload_location,
     parse_upload_usertags,
 )
-from aiograpi_rest.pagination import MediaPage
+from aiograpi_rest.pagination import CommentPage, MediaPage
 
 router = APIRouter(
     prefix="/media",
@@ -270,15 +270,17 @@ async def media_unarchive(sessionid: str = Depends(get_sessionid),
     return await cl.media_unarchive(media_id)
 
 
-@router.get("/comments", response_model=List[Comment])
+@router.get("/comments", response_model=CommentPage)
 async def media_comments(sessionid: str = Depends(get_sessionid),
                          media_id: str = Query(...),
-                         amount: Optional[int] = Query(20),
-                         clients: ClientStorage = Depends(get_clients)) -> List[Comment]:
-    """Get media comments
+                         amount: int = Query(20, ge=1, le=200),
+                         cursor: str = Query(""),
+                         clients: ClientStorage = Depends(get_clients)) -> CommentPage:
+    """Get a page of media comments
     """
     cl = await clients.get(sessionid)
-    return await cl.media_comments(media_id, amount)
+    items, next_cursor = await cl.media_comments_chunk(media_id, amount, cursor or None)
+    return CommentPage(items=items, next_cursor=next_cursor or "")
 
 
 @router.post("/comment", response_model=Comment)

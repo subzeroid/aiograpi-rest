@@ -1,11 +1,16 @@
 from typing import List
 
-from aiograpi.types import DirectThread, Media, StoryArchiveDay, UserShort, Viewer
+from aiograpi.types import Comment, DirectThread, Media, StoryArchiveDay, UserShort, Viewer
 from pydantic import BaseModel
 
 
 class MediaPage(BaseModel):
     items: List[Media]
+    next_cursor: str
+
+
+class CommentPage(BaseModel):
+    items: List[Comment]
     next_cursor: str
 
 

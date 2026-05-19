@@ -107,6 +107,7 @@ from the previous page. This shape is used for:
 - `GET /hashtag/media/top`
 - `GET /location/media/recent`
 - `GET /location/media/top`
+- `GET /media/comments`
 - `GET /story/archive`
 - `GET /story/viewers`
 - `GET /user/reels`
@@ -120,6 +121,15 @@ from the previous page. This shape is used for:
 User post collection routes accept either `user_id` for numeric Instagram
 user PKs or `username` for usernames. If a legacy client passes a username in
 `user_id`, the service resolves it before calling `aiograpi`.
+
+Additional discovery collection routes return plain arrays when `aiograpi` does
+not expose a cursor for the underlying method:
+
+- `GET /hashtag/related`
+- `GET /hashtag/reels`
+- `GET /location/guides`
+- `GET /user/guides`
+- `GET /user/pinned/posts`
 
 ## Form JSON Fields
 

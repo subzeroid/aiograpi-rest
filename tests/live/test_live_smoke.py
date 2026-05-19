@@ -168,6 +168,14 @@ async def try_settings_import_paginated_read_lists(account, tmp_path):
                 headers=headers,
             )
         )
+        if media_page["items"]:
+            _assert_paginated_page(
+                await api.get(
+                    "/media/comments",
+                    params={"media_id": media_page["items"][0]["id"], "amount": 2},
+                    headers=headers,
+                )
+            )
         hashtag_top_page = _assert_paginated_page(
             await api.get(
                 "/hashtag/media/top",

@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict, List, Optional
 
 from aiograpi.extractors import json_value
-from aiograpi.types import About, Highlight, Relationship, User, UserShort
+from aiograpi.types import About, Guide, Highlight, Media, Relationship, User, UserShort
 from fastapi import APIRouter, Depends, Form, HTTPException, Query
 from pydantic import ValidationError
 
@@ -219,6 +219,16 @@ async def user_unblock(sessionid: str = Depends(get_sessionid),
     return await cl.user_unblock(user_id, surface)
 
 
+@router.get("/pinned/posts", response_model=List[Media])
+async def user_pinned_posts(sessionid: str = Depends(get_sessionid),
+                            user_id: int = Query(...),
+                            clients: ClientStorage = Depends(get_clients)) -> List[Media]:
+    """Get user pinned posts
+    """
+    cl = await clients.get(sessionid)
+    return await cl.user_pinned_medias(user_id)
+
+
 @router.get("/highlights", response_model=List[Highlight])
 async def user_highlights(sessionid: str = Depends(get_sessionid),
                           user_id: int = Query(...),
@@ -228,3 +238,13 @@ async def user_highlights(sessionid: str = Depends(get_sessionid),
     """
     cl = await clients.get(sessionid)
     return await cl.user_highlights(user_id, amount)
+
+
+@router.get("/guides", response_model=List[Guide])
+async def user_guides(sessionid: str = Depends(get_sessionid),
+                      user_id: int = Query(...),
+                      clients: ClientStorage = Depends(get_clients)) -> List[Guide]:
+    """Get user guides
+    """
+    cl = await clients.get(sessionid)
+    return await cl.user_guides_v1(user_id)

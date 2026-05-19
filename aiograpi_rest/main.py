@@ -145,7 +145,7 @@ OPERATION_SUMMARIES = {
     "getMediaLikers": "List media likers",
     "postMediaArchive": "Archive media",
     "deleteMediaArchive": "Unarchive media",
-    "getMediaComments": "List media comments",
+    "getMediaComments": "List paginated media comments",
     "postMediaComment": "Create a media comment",
     "deleteMediaComment": "Delete a media comment",
     "getMediaCommentReplies": "List media comment replies",
@@ -164,11 +164,14 @@ OPERATION_SUMMARIES = {
     "getHashtag": "Get hashtag details",
     "getHashtagMediaTop": "List paginated top hashtag media",
     "getHashtagMediaRecent": "List paginated recent hashtag media",
+    "getHashtagRelated": "List related hashtags",
+    "getHashtagReels": "List hashtag Reels",
     "postHashtagFollow": "Follow a hashtag",
     "deleteHashtagFollow": "Unfollow a hashtag",
     "getLocation": "Get location details",
     "getLocationMediaTop": "List paginated top location media",
     "getLocationMediaRecent": "List paginated recent location media",
+    "getLocationGuides": "List location guides",
     "getSearchAccounts": "Search accounts",
     "getSearchFollowers": "Search a user's followers",
     "getSearchFollowing": "Search accounts a user follows",
@@ -226,7 +229,9 @@ OPERATION_SUMMARIES = {
     "getUserFriendship": "Get user relationship",
     "postUserBlock": "Block a user",
     "deleteUserBlock": "Unblock a user",
+    "getUserPinnedPosts": "List user pinned posts",
     "getUserHighlights": "List user highlights",
+    "getUserGuides": "List user guides",
     "getHighlight": "Get highlight details",
     "postHighlight": "Create a highlight",
     "patchHighlight": "Update a highlight",
@@ -422,7 +427,11 @@ def _move_paths_after(openapi_schema: dict[str, Any], anchor_path: str, moved_pa
 
 
 def _order_openapi_paths(openapi_schema: dict[str, Any]) -> None:
-    _move_paths_after(openapi_schema, "/user/videos", ["/user/highlights", "/user/stories"])
+    _move_paths_after(
+        openapi_schema,
+        "/user/videos",
+        ["/user/pinned/posts", "/user/highlights", "/user/stories", "/user/guides"],
+    )
 
 
 app = FastAPI(
