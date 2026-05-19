@@ -582,9 +582,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <h2 id="summary">Summary</h2>
 <ul>
 <li>Public <code>aiograpi.Client</code> methods: <strong>500</strong></li>
-<li>Methods reached by REST routes: <strong>137</strong></li>
-<li>Methods not exposed as REST routes: <strong>363</strong></li>
-<li>Candidate REST backlog: <strong>177</strong></li>
+<li>Methods reached by REST routes: <strong>142</strong></li>
+<li>Methods not exposed as REST routes: <strong>358</strong></li>
+<li>Candidate REST backlog: <strong>173</strong></li>
 </ul>
 <h2 id="rest-relevance">REST Relevance</h2>
 <table>
@@ -598,17 +598,17 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tbody>
 <tr>
 <td><code>exposed</code></td>
-<td style="text-align: right;">137</td>
+<td style="text-align: right;">142</td>
 <td>Already used by public REST routes.</td>
 </tr>
 <tr>
 <td><code>candidate</code></td>
-<td style="text-align: right;">177</td>
+<td style="text-align: right;">173</td>
 <td>Likely useful as a future user-facing REST endpoint.</td>
 </tr>
 <tr>
 <td><code>duplicate</code></td>
-<td style="text-align: right;">90</td>
+<td style="text-align: right;">89</td>
 <td>Variant of an already exposed method, such as <code>_v1</code>, <code>_gql</code>, <code>_a1</code>, chunk, or origin helpers.</td>
 </tr>
 <tr>
@@ -705,9 +705,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>direct</code></td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">38</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">45</td>
 </tr>
@@ -944,7 +944,7 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 </tr>
 <tr>
 <td><code>direct</code></td>
-<td><code>direct_active_presence</code>, <code>direct_answer</code>, <code>direct_delete_reaction</code>, <code>direct_media</code>, <code>direct_media_share</code>, <code>direct_message</code>, <code>direct_message_like</code>, <code>direct_message_search</code>, <code>direct_message_unlike</code>, <code>direct_message_unsend</code>, <code>direct_messages</code>, <code>direct_pending_approve</code>, <code>direct_pending_chunk</code>, <code>direct_pending_inbox</code>, <code>direct_profile_share</code>, <code>direct_request_approve</code>, <code>direct_requests</code>, <code>direct_search</code>, <code>direct_send_cutout_sticker</code>, <code>direct_send_file</code>, <code>direct_send_photo</code>, <code>direct_send_reaction</code>, <code>direct_send_seen</code>, <code>direct_send_video</code>, <code>direct_send_voice</code>, <code>direct_spam_chunk</code>, <code>direct_spam_inbox</code>, <code>direct_story_share</code>, <code>direct_thread_add_users</code>, <code>direct_thread_by_participants</code>, <code>direct_thread_hide</code>, <code>direct_thread_mark_unread</code>, <code>direct_thread_mute</code>, <code>direct_thread_mute_video_call</code>, <code>direct_thread_unmute</code>, <code>direct_thread_unmute_video_call</code>, <code>direct_thread_update_title</code>, <code>direct_users_presence</code></td>
+<td><code>direct_active_presence</code>, <code>direct_answer</code>, <code>direct_delete_reaction</code>, <code>direct_media</code>, <code>direct_media_share</code>, <code>direct_message_like</code>, <code>direct_message_search</code>, <code>direct_message_unlike</code>, <code>direct_message_unsend</code>, <code>direct_pending_approve</code>, <code>direct_pending_inbox</code>, <code>direct_profile_share</code>, <code>direct_request_approve</code>, <code>direct_requests</code>, <code>direct_send_cutout_sticker</code>, <code>direct_send_file</code>, <code>direct_send_photo</code>, <code>direct_send_reaction</code>, <code>direct_send_seen</code>, <code>direct_send_video</code>, <code>direct_send_voice</code>, <code>direct_spam_chunk</code>, <code>direct_spam_inbox</code>, <code>direct_story_share</code>, <code>direct_thread_add_users</code>, <code>direct_thread_by_participants</code>, <code>direct_thread_hide</code>, <code>direct_thread_mark_unread</code>, <code>direct_thread_mute</code>, <code>direct_thread_mute_video_call</code>, <code>direct_thread_unmute</code>, <code>direct_thread_unmute_video_call</code>, <code>direct_thread_update_title</code>, <code>direct_users_presence</code></td>
 </tr>
 <tr>
 <td><code>explore</code></td>
@@ -1126,6 +1126,10 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>direct_message_delete</code></td>
 </tr>
 <tr>
+<td><code>GET /direct/message</code></td>
+<td><code>direct_message</code></td>
+</tr>
+<tr>
 <td><code>POST /direct/message</code></td>
 <td><code>direct_send</code></td>
 </tr>
@@ -1134,12 +1138,28 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <td><code>direct_message_seen</code></td>
 </tr>
 <tr>
+<td><code>GET /direct/messages</code></td>
+<td><code>direct_messages</code></td>
+</tr>
+<tr>
+<td><code>GET /direct/pending</code></td>
+<td><code>direct_pending_chunk</code></td>
+</tr>
+<tr>
+<td><code>GET /direct/search</code></td>
+<td><code>direct_search</code></td>
+</tr>
+<tr>
 <td><code>GET /direct/thread</code></td>
 <td><code>direct_thread</code></td>
 </tr>
 <tr>
 <td><code>POST /direct/thread</code></td>
 <td><code>direct_thread_create</code></td>
+</tr>
+<tr>
+<td><code>GET /direct/threads</code></td>
+<td><code>direct_threads</code></td>
 </tr>
 <tr>
 <td><code>GET /hashtag</code></td>
@@ -2113,9 +2133,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>direct_message(self, thread_id: int, message_id: int, amount: int = 20) -&gt; aiograpi.types.DirectMessage</code></td>
 <td><code>direct</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /direct/message</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_message_delete(self, thread_id: int, message_id: int) -&gt; bool</code></td>
@@ -2162,9 +2182,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>direct_messages(self, thread_id: int, amount: int = 20) -&gt; List[aiograpi.types.DirectMessage]</code></td>
 <td><code>direct</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /direct/messages</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_pending_approve(self, thread_id: int) -&gt; bool</code></td>
@@ -2176,9 +2196,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>direct_pending_chunk(self, cursor: str = None) -&gt; Tuple[List[aiograpi.types.DirectThread], str]</code></td>
 <td><code>direct</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /direct/pending</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_pending_inbox(self, amount: int = 20) -&gt; List[aiograpi.types.DirectThread]</code></td>
@@ -2211,9 +2231,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>direct_search(self, query: str, mode: Literal['raven', 'universal'] = 'universal') -&gt; List[aiograpi.types.UserShort]</code></td>
 <td><code>direct</code></td>
-<td>-</td>
-<td><code>candidate</code></td>
-<td>potential user-facing REST endpoint</td>
+<td><code>GET /direct/search</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_send(self, text: str, user_ids: List[int] = [], thread_ids: List[int] = [], send_attribute: Literal['message_button', 'inbox_search'] = 'message_button', reply_to_message: Optional[aiograpi.types.DirectMessage] = None) -&gt; aiograpi.types.DirectMessage</code></td>
@@ -2372,9 +2392,9 @@ the installed <code>aiograpi.Client</code> class and the local FastAPI router im
 <tr>
 <td><code>direct_threads(self, amount: int = 20, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None) -&gt; List[aiograpi.types.DirectThread]</code></td>
 <td><code>direct</code></td>
-<td>-</td>
-<td><code>duplicate</code></td>
-<td>variant of already exposed <code>direct_threads</code> route family</td>
+<td><code>GET /direct/threads</code></td>
+<td><code>exposed</code></td>
+<td>used by at least one public REST route</td>
 </tr>
 <tr>
 <td><code>direct_threads_chunk(self, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None, cursor: str = None) -&gt; Tuple[List[aiograpi.types.DirectThread], str]</code></td>
