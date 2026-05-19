@@ -14,6 +14,12 @@ class CommentPage(BaseModel):
     next_cursor: str
 
 
+class CommentStreamPage(BaseModel):
+    items: List[Comment]
+    min_cursor: str
+    max_cursor: str
+
+
 class UserShortPage(BaseModel):
     items: List[UserShort]
     next_cursor: str

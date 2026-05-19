@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from aiograpi import Client
 from aiograpi.types import Comment, Media, UserShort
@@ -11,7 +11,7 @@ from aiograpi_rest.helpers import (
     parse_upload_location,
     parse_upload_usertags,
 )
-from aiograpi_rest.pagination import CommentPage, MediaPage
+from aiograpi_rest.pagination import CommentPage, CommentStreamPage, MediaPage
 
 router = APIRouter(
     prefix="/media",
@@ -285,6 +285,19 @@ async def media_comments(sessionid: str = Depends(get_sessionid),
     return CommentPage(items=items, next_cursor=next_cursor or "")
 
 
+@router.get("/comments/stream", response_model=CommentStreamPage)
+async def media_comments_stream(sessionid: str = Depends(get_sessionid),
+                                media_id: str = Query(...),
+                                min_id: str = Query(""),
+                                max_id: str = Query(""),
+                                clients: ClientStorage = Depends(get_clients)) -> CommentStreamPage:
+    """Get a stream page of media comments
+    """
+    cl = await clients.get(sessionid)
+    items, min_cursor, max_cursor = await cl.media_stream_comments_v1_chunk(media_id, min_id, max_id)
+    return CommentStreamPage(items=items, min_cursor=min_cursor or "", max_cursor=max_cursor or "")
+
+
 @router.post("/comment", response_model=Comment)
 async def media_comment(sessionid: str = Depends(get_sessionid),
                         media_id: str = Form(...),
@@ -306,6 +319,27 @@ async def media_comment_delete(sessionid: str = Depends(get_sessionid),
     """
     cl = await clients.get(sessionid)
     return await cl.comment_bulk_delete(media_id, [comment_pk])
+
+
+@router.get("/comment/infos", response_model=Dict[str, Any])
+async def media_comment_infos(sessionid: str = Depends(get_sessionid),
+                              media_ids: List[str] = Query(...),
+                              clients: ClientStorage = Depends(get_clients)) -> Dict[str, Any]:
+    """Get media comment summaries
+    """
+    cl = await clients.get(sessionid)
+    return await cl.media_comment_infos(media_ids)
+
+
+@router.post("/comment/check/offensive", response_model=bool)
+async def media_comment_check_offensive(sessionid: str = Depends(get_sessionid),
+                                        media_id: str = Form(...),
+                                        text: str = Form(...),
+                                        clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Check whether comment text is offensive for media
+    """
+    cl = await clients.get(sessionid)
+    return await cl.media_check_offensive_comment(media_id, text)
 
 
 @router.get("/comment/replies", response_model=List[Comment])
@@ -339,6 +373,40 @@ async def media_comment_unlike(sessionid: str = Depends(get_sessionid),
     """
     cl = await clients.get(sessionid)
     return await cl.comment_unlike(comment_pk)
+
+
+@router.get("/comment/likers", response_model=List[Dict[str, Any]])
+async def media_comment_likers(sessionid: str = Depends(get_sessionid),
+                               comment_pk: str = Query(...),
+                               amount: int = Query(0, ge=0, le=200),
+                               clients: ClientStorage = Depends(get_clients)) -> List[Dict[str, Any]]:
+    """Get users who liked a comment
+    """
+    cl = await clients.get(sessionid)
+    return await cl.comment_likers_gql(comment_pk, amount)
+
+
+@router.post("/comment/pin", response_model=bool)
+async def media_comment_pin(sessionid: str = Depends(get_sessionid),
+                            media_id: str = Form(...),
+                            comment_pk: int = Form(...),
+                            revert: Optional[bool] = Form(False),
+                            clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Pin a media comment
+    """
+    cl = await clients.get(sessionid)
+    return await cl.comment_pin(media_id, comment_pk, revert)
+
+
+@router.delete("/comment/pin", response_model=bool)
+async def media_comment_unpin(sessionid: str = Depends(get_sessionid),
+                              media_id: str = Query(...),
+                              comment_pk: int = Query(...),
+                              clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Unpin a media comment
+    """
+    cl = await clients.get(sessionid)
+    return await cl.comment_unpin(media_id, comment_pk)
 
 
 @router.post("/save", response_model=bool)

@@ -291,9 +291,14 @@ async def test_openapi_uses_rest_http_methods():
         "/media": {"delete", "get", "patch"},
         "/media/archive": {"delete", "post"},
         "/media/comment": {"delete", "post"},
+        "/media/comment/check/offensive": {"post"},
+        "/media/comment/infos": {"get"},
         "/media/comment/like": {"delete", "post"},
+        "/media/comment/likers": {"get"},
+        "/media/comment/pin": {"delete", "post"},
         "/media/comment/replies": {"get"},
         "/media/comments": {"get"},
+        "/media/comments/stream": {"get"},
         "/media/like": {"delete", "post"},
         "/account/liked/media": {"get"},
         "/media/likers": {"get"},
@@ -600,7 +605,13 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/location/media/recent"]["get"]["summary"] == "List paginated recent location media"
     assert paths["/media"]["get"]["summary"] == "Get media details"
     assert paths["/media/comments"]["get"]["summary"] == "List paginated media comments"
+    assert paths["/media/comments/stream"]["get"]["summary"] == "Stream media comments"
     assert paths["/media/comment/replies"]["get"]["summary"] == "List media comment replies"
+    assert paths["/media/comment/likers"]["get"]["summary"] == "List comment likers"
+    assert paths["/media/comment/infos"]["get"]["summary"] == "Get media comment summaries"
+    assert paths["/media/comment/check/offensive"]["post"]["summary"] == "Check comment text for offensiveness"
+    assert paths["/media/comment/pin"]["post"]["summary"] == "Pin a media comment"
+    assert paths["/media/comment/pin"]["delete"]["summary"] == "Unpin a media comment"
     assert paths["/media/likers"]["get"]["summary"] == "List media likers"
     assert paths["/music/feed/browser"]["get"]["summary"] == "Get feed music browser"
     assert paths["/notes"]["get"]["summary"] == "List notes"

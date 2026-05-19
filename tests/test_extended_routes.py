@@ -212,6 +212,10 @@ class FakeExpandedClient:
         self.calls.append(("media_comment_replies", media_id, comment_id, amount))
         return [_comment_payload("11")]
 
+    async def media_stream_comments_v1_chunk(self, media_id, min_id="", max_id=""):
+        self.calls.append(("media_stream_comments_v1_chunk", media_id, min_id, max_id))
+        return [_comment_payload("12")], "next-min", "next-max"
+
     async def comment_like(self, comment_pk, revert=False):
         self.calls.append(("comment_like", comment_pk, revert))
         return True
@@ -219,6 +223,26 @@ class FakeExpandedClient:
     async def comment_unlike(self, comment_pk):
         self.calls.append(("comment_unlike", comment_pk))
         return True
+
+    async def comment_pin(self, media_id, comment_pk, revert=False):
+        self.calls.append(("comment_pin", media_id, comment_pk, revert))
+        return True
+
+    async def comment_unpin(self, media_id, comment_pk):
+        self.calls.append(("comment_unpin", media_id, comment_pk))
+        return True
+
+    async def comment_likers_gql(self, comment_pk, amount=0):
+        self.calls.append(("comment_likers_gql", comment_pk, amount))
+        return [{"pk": "2", "username": "comment_liker"}]
+
+    async def media_comment_infos(self, media_ids):
+        self.calls.append(("media_comment_infos", media_ids))
+        return {"items": {media_id: {"comment_count": index} for index, media_id in enumerate(media_ids, start=1)}}
+
+    async def media_check_offensive_comment(self, media_id, text):
+        self.calls.append(("media_check_offensive_comment", media_id, text))
+        return False
 
     async def liked_medias(self, amount=21, last_media_pk=0):
         self.calls.append(("liked_medias", amount, last_media_pk))
@@ -1063,6 +1087,51 @@ async def test_reels_routes(storage):
     assert ("friends_reels", 4, 11) in storage.client.calls
     assert ("explore_reels", 5, 12) in storage.client.calls
     assert ("reels_timeline_media", "collection1", 6, 13) in storage.client.calls
+
+
+@pytest.mark.asyncio
+async def test_comment_utility_routes(storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        stream = await ac.get(
+            "/media/comments/stream",
+            params={"sessionid": "sid", "media_id": "m1", "min_id": "min1", "max_id": "max1"},
+        )
+        likers = await ac.get(
+            "/media/comment/likers",
+            params={"sessionid": "sid", "comment_pk": "c1", "amount": "5"},
+        )
+        infos = await ac.get(
+            "/media/comment/infos",
+            params=[("sessionid", "sid"), ("media_ids", "m1"), ("media_ids", "m2")],
+        )
+        offensive = await ac.post(
+            "/media/comment/check/offensive",
+            data={"sessionid": "sid", "media_id": "m1", "text": "hello"},
+        )
+        pin = await ac.post(
+            "/media/comment/pin",
+            data={"sessionid": "sid", "media_id": "m1", "comment_pk": "10"},
+        )
+        unpin = await ac.delete(
+            "/media/comment/pin",
+            params={"sessionid": "sid", "media_id": "m1", "comment_pk": "10"},
+        )
+
+    assert stream.status_code == 200
+    assert stream.json()["items"][0]["pk"] == "12"
+    assert stream.json()["min_cursor"] == "next-min"
+    assert stream.json()["max_cursor"] == "next-max"
+    assert likers.status_code == 200 and likers.json()[0]["username"] == "comment_liker"
+    assert infos.status_code == 200 and infos.json()["items"]["m2"]["comment_count"] == 2
+    assert offensive.status_code == 200 and offensive.json() is False
+    assert pin.status_code == 200 and pin.json() is True
+    assert unpin.status_code == 200 and unpin.json() is True
+    assert ("media_stream_comments_v1_chunk", "m1", "min1", "max1") in storage.client.calls
+    assert ("comment_likers_gql", "c1", 5) in storage.client.calls
+    assert ("media_comment_infos", ["m1", "m2"]) in storage.client.calls
+    assert ("media_check_offensive_comment", "m1", "hello") in storage.client.calls
+    assert ("comment_pin", "m1", 10, False) in storage.client.calls
+    assert ("comment_unpin", "m1", 10) in storage.client.calls
 
 
 @pytest.mark.asyncio

@@ -68,8 +68,13 @@ def test_aiograpi_coverage_classifies_methods_by_rest_relevance():
     assert classify_method(methods["track_stream_info_by_id"], covered).status == "exposed"
     assert classify_method(methods["track_download_by_url"], covered).status == "exposed"
     assert classify_method(methods["music_in_feed_audio_browser"], covered).status == "exposed"
-    assert classify_method(methods["comment_likers_gql"], covered).status == "candidate"
+    assert classify_method(methods["comment_likers_gql"], covered).status == "exposed"
     assert classify_method(methods["comment_likers_gql_chunk"], covered).status == "duplicate"
+    assert classify_method(methods["comment_pin"], covered).status == "exposed"
+    assert classify_method(methods["comment_unpin"], covered).status == "exposed"
+    assert classify_method(methods["media_check_offensive_comment"], covered).status == "exposed"
+    assert classify_method(methods["media_comment_infos"], covered).status == "exposed"
+    assert classify_method(methods["media_stream_comments_v1_chunk"], covered).status == "exposed"
     assert classify_method(methods["hashtag_medias_a1"], covered).status == "duplicate"
     assert classify_method(methods["media_info_gql"], covered).status == "duplicate"
     assert classify_method(methods["user_followers_gql"], covered).status == "duplicate"
@@ -104,6 +109,22 @@ def test_aiograpi_coverage_classifies_paginated_variants_and_exact_internal_help
     ).status == "internal"
 
 
+def test_aiograpi_coverage_prefers_non_chunk_infos_candidate_names():
+    covered: set[str] = set()
+    method_names = {"media_comment_infos", "media_comment_info_chunk"}
+
+    assert classify_method(
+        ClientMethod("media_comment_infos", "aiograpi.mixins.comment", "(self)"),
+        covered,
+        method_names,
+    ).status == "candidate"
+    assert classify_method(
+        ClientMethod("media_comment_info_chunk", "aiograpi.mixins.comment", "(self)"),
+        covered,
+        method_names,
+    ).status == "duplicate"
+
+
 def test_aiograpi_coverage_markdown_summarizes_candidate_backlog():
     markdown = build_markdown()
 
@@ -112,6 +133,7 @@ def test_aiograpi_coverage_markdown_summarizes_candidate_backlog():
     assert "| `explore` | `report_explore_media` |" in markdown
     assert "| `track` |" in markdown
     assert "`track_info_by_id`" in markdown
+    assert "`comment_pin`" in markdown
     assert "`collections`" in markdown
     assert "`collection_medias_v1`" not in markdown.split("## Full Method Matrix", 1)[0]
     assert "`direct_message_like`" in markdown

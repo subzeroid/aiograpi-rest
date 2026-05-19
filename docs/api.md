@@ -135,6 +135,26 @@ workflows.
 - `GET /track/download/by/url` downloads track audio from a URL.
 - `GET /music/feed/browser` returns music candidates for feed posts.
 
+## Comment Utilities
+
+Comment routes live under `Media (Post)` because Instagram comments always
+belong to a media object.
+
+- `GET /media/comments` lists a paginated comment page with `next_cursor`.
+- `GET /media/comments/stream` lists a stream comment page with `min_cursor`
+  and `max_cursor`.
+- `POST /media/comment` creates a comment or reply.
+- `DELETE /media/comment` deletes one comment from media.
+- `GET /media/comment/replies` lists replies for one comment.
+- `POST /media/comment/like` likes a comment.
+- `DELETE /media/comment/like` unlikes a comment.
+- `GET /media/comment/likers` lists users who liked a comment.
+- `POST /media/comment/pin` pins a comment.
+- `DELETE /media/comment/pin` unpins a comment.
+- `GET /media/comment/infos` returns comment counters for media IDs.
+- `POST /media/comment/check/offensive` checks whether text is offensive for
+  the target media.
+
 ## Pagination
 
 Paginated read-list routes return an object with `items` and `next_cursor`.
@@ -147,6 +167,8 @@ from the previous page. This shape is used for:
 - `GET /location/media/recent`
 - `GET /location/media/top`
 - `GET /media/comments`
+- `GET /media/comments/stream` returns `items`, `min_cursor`, and `max_cursor`
+  instead of `next_cursor`.
 - `GET /story/archive`
 - `GET /story/viewers`
 - `GET /user/reels`

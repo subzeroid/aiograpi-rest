@@ -9,16 +9,16 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 ## Summary
 
 - Public `aiograpi.Client` methods: **500**
-- Methods reached by REST routes: **185**
-- Methods not exposed as REST routes: **315**
-- Candidate REST backlog: **130**
+- Methods reached by REST routes: **191**
+- Methods not exposed as REST routes: **309**
+- Candidate REST backlog: **124**
 
 ## REST Relevance
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `exposed` | 185 | Already used by public REST routes. |
-| `candidate` | 130 | Likely useful as a future user-facing REST endpoint. |
+| `exposed` | 191 | Already used by public REST routes. |
+| `candidate` | 124 | Likely useful as a future user-facing REST endpoint. |
 | `duplicate` | 89 | Variant of an already exposed method, such as `_v1`, `_gql`, `_a1`, chunk, or origin helpers. |
 | `internal` | 96 | Low-level auth/request/configuration/signup/challenge helpers that should not be mirrored blindly. |
 
@@ -34,7 +34,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `challenge` | 1 | 0 | 0 | 5 | 6 |
 | `clip` | 3 | 6 | 0 | 1 | 10 |
 | `collection` | 7 | 0 | 2 | 0 | 9 |
-| `comment` | 6 | 6 | 10 | 0 | 22 |
+| `comment` | 12 | 0 | 10 | 0 | 22 |
 | `direct` | 39 | 6 | 0 | 0 | 45 |
 | `explore` | 2 | 1 | 0 | 0 | 3 |
 | `fbsearch` | 9 | 7 | 0 | 0 | 16 |
@@ -69,7 +69,6 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `account` | `account_security_info`, `account_set_biography`, `change_password`, `remove_bio_links`, `reset_password`, `send_confirm_email`, `send_confirm_phone_number`, `set_external_url` |
 | `album` | `album_upload_with_music` |
 | `clip` | `clip_info_for_creation`, `clip_pin`, `clip_share_to_fb_config`, `clip_trial_eligible`, `clip_unpin`, `clip_upload_as_reel_with_music` |
-| `comment` | `comment_likers_gql`, `comment_pin`, `comment_unpin`, `media_check_offensive_comment`, `media_comment_infos`, `media_stream_comments_v1_chunk` |
 | `direct` | `direct_answer`, `direct_message_unsend`, `direct_pending_inbox`, `direct_request_approve`, `direct_send_cutout_sticker`, `direct_spam_inbox` |
 | `explore` | `report_explore_media` |
 | `fbsearch` | `fbsearch_item`, `fbsearch_suggested_profiles`, `fbsearch_topsearch_flat`, `fbsearch_typeahead_stream`, `fbsearch_typehead`, `web_search_topsearch`, `web_search_topsearch_hashtags` |
@@ -188,10 +187,16 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `GET /media/author` | `media_user` |
 | `DELETE /media/comment` | `comment_bulk_delete` |
 | `POST /media/comment` | `media_comment` |
+| `POST /media/comment/check/offensive` | `media_check_offensive_comment` |
+| `GET /media/comment/infos` | `media_comment_infos` |
 | `DELETE /media/comment/like` | `comment_unlike` |
 | `POST /media/comment/like` | `comment_like` |
+| `GET /media/comment/likers` | `comment_likers_gql` |
+| `DELETE /media/comment/pin` | `comment_unpin` |
+| `POST /media/comment/pin` | `comment_pin` |
 | `GET /media/comment/replies` | `media_comment_replies` |
 | `GET /media/comments` | `media_comments_chunk` |
+| `GET /media/comments/stream` | `media_stream_comments_v1_chunk` |
 | `DELETE /media/like` | `media_unlike` |
 | `POST /media/like` | `media_like` |
 | `GET /media/likers` | `media_likers` |
@@ -336,11 +341,11 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `collections(self) -> List[aiograpi.types.Collection]` | `collection` | `GET /account/collection`<br>`GET /account/collections` | `exposed` | used by at least one public REST route |
 | `comment_bulk_delete(self, media_id: str, comment_pks: List[int]) -> bool` | `comment` | `DELETE /media/comment` | `exposed` | used by at least one public REST route |
 | `comment_like(self, comment_pk: int, revert: bool = False) -> bool` | `comment` | `POST /media/comment/like` | `exposed` | used by at least one public REST route |
-| `comment_likers_gql(self, comment_pk: str, amount: int = 0) -> List[dict]` | `comment` | - | `candidate` | potential user-facing REST endpoint |
-| `comment_likers_gql_chunk(self, comment_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `comment` | - | `duplicate` | variant of candidate `comment_likers_gql` |
-| `comment_pin(self, media_id: str, comment_pk: int, revert: bool = False)` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `comment_likers_gql(self, comment_pk: str, amount: int = 0) -> List[dict]` | `comment` | `GET /media/comment/likers` | `exposed` | used by at least one public REST route |
+| `comment_likers_gql_chunk(self, comment_pk: str, end_cursor: str = '') -> Tuple[List[dict], str]` | `comment` | - | `duplicate` | variant of already exposed `comment_likers` route family |
+| `comment_pin(self, media_id: str, comment_pk: int, revert: bool = False)` | `comment` | `POST /media/comment/pin` | `exposed` | used by at least one public REST route |
 | `comment_unlike(self, comment_pk: int) -> bool` | `comment` | `DELETE /media/comment/like` | `exposed` | used by at least one public REST route |
-| `comment_unpin(self, media_id: str, comment_pk: int)` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `comment_unpin(self, media_id: str, comment_pk: int)` | `comment` | `DELETE /media/comment/pin` | `exposed` | used by at least one public REST route |
 | `create_music_note(self, track: Union[aiograpi.types.Track, Dict], text: str = '', audience: int = 0, start_time: Optional[int] = None, duration: int = 30000, browse_session_id: Optional[str] = None, alacorn_session_id: Optional[str] = None) -> aiograpi.types.Note` | `note` | - | `candidate` | potential user-facing REST endpoint |
 | `create_note(self, text: str, audience: int = 0) -> aiograpi.types.Note` | `note` | `POST /note` | `exposed` | used by at least one public REST route |
 | `creator_info(self, user_id: str, entry_point: str = 'direct_thread') -> Tuple[aiograpi.types.UserShort, Dict]` | `user` | - | `candidate` | potential user-facing REST endpoint |
@@ -502,11 +507,11 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `login_flow(self) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
 | `logout(self) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
 | `media_archive(self, media_id: str, revert: bool = False) -> bool` | `media` | `POST /media/archive` | `exposed` | used by at least one public REST route |
-| `media_check_offensive_comment(self, media_id: str, text: str) -> bool` | `comment` | - | `candidate` | potential user-facing REST endpoint |
-| `media_check_offensive_comment_v2(self, media_id: str, comment: str) -> dict` | `comment` | - | `duplicate` | variant of candidate `media_check_offensive_comment` |
+| `media_check_offensive_comment(self, media_id: str, text: str) -> bool` | `comment` | `POST /media/comment/check/offensive` | `exposed` | used by at least one public REST route |
+| `media_check_offensive_comment_v2(self, media_id: str, comment: str) -> dict` | `comment` | - | `duplicate` | variant of already exposed `media_check_offensive_comment` route family |
 | `media_code_from_pk(self, media_pk: str) -> str` | `media` | - | `candidate` | potential user-facing REST endpoint |
 | `media_comment(self, media_id: str, text: str, replied_to_comment_id: Optional[int] = None) -> aiograpi.types.Comment` | `comment` | `POST /media/comment` | `exposed` | used by at least one public REST route |
-| `media_comment_infos(self, media_ids: List[str]) -> dict` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `media_comment_infos(self, media_ids: List[str]) -> dict` | `comment` | `GET /media/comment/infos` | `exposed` | used by at least one public REST route |
 | `media_comment_replies(self, media_id: str, comment_id: str, amount: int = 0) -> List[aiograpi.types.Comment]` | `comment` | `GET /media/comment/replies` | `exposed` | used by at least one public REST route |
 | `media_comment_replies_chunk(self, media_id: str, comment_id: str, max_amount: int, min_id: str = None) -> Tuple[List[aiograpi.types.Comment], str]` | `comment` | - | `duplicate` | variant of already exposed `media_comment_replies` route family |
 | `media_comments(self, media_id: str, amount: int = 20) -> List[aiograpi.types.Comment]` | `comment` | - | `duplicate` | variant of already exposed `media_comments` route family |
@@ -543,7 +548,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `media_save(self, media_id: str, collection_pk: int = None, revert: bool = False) -> bool` | `collection` | `POST /media/save` | `exposed` | used by at least one public REST route |
 | `media_seen(self, media_ids: List[str], skipped_media_ids: List[str] = [])` | `media` | `PATCH /media/seen` | `exposed` | used by at least one public REST route |
 | `media_start_livestream(self, broadcast_id)` | `media` | - | `candidate` | potential user-facing REST endpoint |
-| `media_stream_comments_v1_chunk(self, media_id: str, min_id: str = '', max_id: str = '') -> Tuple[List[aiograpi.types.Comment], str, str]` | `comment` | - | `candidate` | potential user-facing REST endpoint |
+| `media_stream_comments_v1_chunk(self, media_id: str, min_id: str = '', max_id: str = '') -> Tuple[List[aiograpi.types.Comment], str, str]` | `comment` | `GET /media/comments/stream` | `exposed` | used by at least one public REST route |
 | `media_template_v1(self, media_id: str)` | `media` | - | `candidate` | potential user-facing REST endpoint |
 | `media_unarchive(self, media_id: str) -> bool` | `media` | `DELETE /media/archive` | `exposed` | used by at least one public REST route |
 | `media_unlike(self, media_id: str) -> bool` | `media` | `DELETE /media/like` | `exposed` | used by at least one public REST route |
