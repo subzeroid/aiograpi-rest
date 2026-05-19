@@ -145,6 +145,26 @@ async def user_remove_follower(sessionid: str = Depends(get_sessionid),
     return await cl.user_remove_follower(user_id)
 
 
+@router.post("/close-friend", response_model=bool)
+async def user_close_friend_add(sessionid: str = Depends(get_sessionid),
+                                user_id: int = Form(...),
+                                clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Add a user to close friends
+    """
+    cl = await clients.get(sessionid)
+    return await cl.close_friend_add(user_id)
+
+
+@router.delete("/close-friend", response_model=bool)
+async def user_close_friend_remove(sessionid: str = Depends(get_sessionid),
+                                   user_id: int = Query(...),
+                                   clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Remove a user from close friends
+    """
+    cl = await clients.get(sessionid)
+    return await cl.close_friend_remove(user_id)
+
+
 @router.post("/mute/posts", response_model=bool)
 async def mute_posts_from_follow(sessionid: str = Depends(get_sessionid),
                                  user_id: int = Form(...),
@@ -185,6 +205,86 @@ async def unmute_stories_from_follow(sessionid: str = Depends(get_sessionid),
     """
     cl = await clients.get(sessionid)
     return await cl.unmute_stories_from_follow(user_id)
+
+
+@router.post("/notifications/posts", response_model=bool)
+async def user_notifications_posts_enable(sessionid: str = Depends(get_sessionid),
+                                          user_id: int = Form(...),
+                                          clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Enable post notifications for a user
+    """
+    cl = await clients.get(sessionid)
+    return await cl.enable_posts_notifications(user_id)
+
+
+@router.delete("/notifications/posts", response_model=bool)
+async def user_notifications_posts_disable(sessionid: str = Depends(get_sessionid),
+                                           user_id: int = Query(...),
+                                           clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Disable post notifications for a user
+    """
+    cl = await clients.get(sessionid)
+    return await cl.disable_posts_notifications(user_id)
+
+
+@router.post("/notifications/stories", response_model=bool)
+async def user_notifications_stories_enable(sessionid: str = Depends(get_sessionid),
+                                            user_id: int = Form(...),
+                                            clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Enable story notifications for a user
+    """
+    cl = await clients.get(sessionid)
+    return await cl.enable_stories_notifications(user_id)
+
+
+@router.delete("/notifications/stories", response_model=bool)
+async def user_notifications_stories_disable(sessionid: str = Depends(get_sessionid),
+                                             user_id: int = Query(...),
+                                             clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Disable story notifications for a user
+    """
+    cl = await clients.get(sessionid)
+    return await cl.disable_stories_notifications(user_id)
+
+
+@router.post("/notifications/reels", response_model=bool)
+async def user_notifications_reels_enable(sessionid: str = Depends(get_sessionid),
+                                          user_id: int = Form(...),
+                                          clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Enable Reel notifications for a user
+    """
+    cl = await clients.get(sessionid)
+    return await cl.enable_reels_notifications(user_id)
+
+
+@router.delete("/notifications/reels", response_model=bool)
+async def user_notifications_reels_disable(sessionid: str = Depends(get_sessionid),
+                                           user_id: int = Query(...),
+                                           clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Disable Reel notifications for a user
+    """
+    cl = await clients.get(sessionid)
+    return await cl.disable_reels_notifications(user_id)
+
+
+@router.post("/notifications/videos", response_model=bool)
+async def user_notifications_videos_enable(sessionid: str = Depends(get_sessionid),
+                                           user_id: int = Form(...),
+                                           clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Enable video notifications for a user
+    """
+    cl = await clients.get(sessionid)
+    return await cl.enable_videos_notifications(user_id)
+
+
+@router.delete("/notifications/videos", response_model=bool)
+async def user_notifications_videos_disable(sessionid: str = Depends(get_sessionid),
+                                            user_id: int = Query(...),
+                                            clients: ClientStorage = Depends(get_clients)) -> bool:
+    """Disable video notifications for a user
+    """
+    cl = await clients.get(sessionid)
+    return await cl.disable_videos_notifications(user_id)
 
 
 @router.get("/friendship", response_model=Relationship)

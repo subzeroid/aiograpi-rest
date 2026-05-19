@@ -64,6 +64,27 @@ check account and proxy health before retrying.
 - State reversals use the same resource path with `DELETE`: for example,
   `POST /media/like` likes media and `DELETE /media/like` unlikes it.
 
+## Relationship Actions
+
+User relationship routes use `POST` to create or enable a relationship state and
+`DELETE` to remove or disable it.
+
+- `POST /user/follow` follows a user.
+- `DELETE /user/follow` unfollows a user.
+- `DELETE /user/follower` removes a follower.
+- `POST /account/follow/request/approve` approves a pending follow request.
+- `DELETE /account/follow/request` declines a pending follow request.
+- `POST /user/close-friend` adds a user to close friends.
+- `DELETE /user/close-friend` removes a user from close friends.
+- `POST /user/notifications/posts` enables post notifications for a user.
+- `DELETE /user/notifications/posts` disables post notifications for a user.
+- `POST /user/notifications/stories` enables story notifications for a user.
+- `DELETE /user/notifications/stories` disables story notifications for a user.
+- `POST /user/notifications/reels` enables Reel notifications for a user.
+- `DELETE /user/notifications/reels` disables Reel notifications for a user.
+- `POST /user/notifications/videos` enables video notifications for a user.
+- `DELETE /user/notifications/videos` disables video notifications for a user.
+
 ## OpenAPI
 
 - Swagger UI: `/docs`

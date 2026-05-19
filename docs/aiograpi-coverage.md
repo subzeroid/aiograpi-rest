@@ -9,16 +9,16 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 ## Summary
 
 - Public `aiograpi.Client` methods: **500**
-- Methods reached by REST routes: **191**
-- Methods not exposed as REST routes: **309**
-- Candidate REST backlog: **124**
+- Methods reached by REST routes: **203**
+- Methods not exposed as REST routes: **297**
+- Candidate REST backlog: **112**
 
 ## REST Relevance
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `exposed` | 191 | Already used by public REST routes. |
-| `candidate` | 124 | Likely useful as a future user-facing REST endpoint. |
+| `exposed` | 203 | Already used by public REST routes. |
+| `candidate` | 112 | Likely useful as a future user-facing REST endpoint. |
 | `duplicate` | 89 | Variant of an already exposed method, such as `_v1`, `_gql`, `_a1`, chunk, or origin helpers. |
 | `internal` | 96 | Low-level auth/request/configuration/signup/challenge helpers that should not be mirrored blindly. |
 
@@ -59,7 +59,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `timeline` | 4 | 0 | 0 | 0 | 4 |
 | `totp` | 2 | 2 | 0 | 0 | 4 |
 | `track` | 5 | 0 | 0 | 0 | 5 |
-| `user` | 20 | 30 | 20 | 4 | 74 |
+| `user` | 32 | 18 | 20 | 4 | 74 |
 | `video` | 4 | 1 | 1 | 4 | 10 |
 
 ## Candidate Backlog By Area
@@ -84,7 +84,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `share` | `share_code_from_url`, `share_info`, `share_info_by_url` |
 | `story` | `archive_stories`, `sticker_tray`, `users_stories_gql` |
 | `totp` | `totp_generate_code`, `totp_generate_seed` |
-| `user` | `chaining`, `close_friend_add`, `close_friend_remove`, `creator_info`, `disable_posts_notifications`, `disable_reels_notifications`, `disable_stories_notifications`, `disable_videos_notifications`, `discover_recommended_accounts_for_category_v1`, `enable_posts_notifications`, `enable_reels_notifications`, `enable_stories_notifications`, `enable_videos_notifications`, `feed_user_stream_item`, `fetch_suggestion_details`, `new_feed_exist`, `user_follow_request_approve`, `user_follow_request_decline`, `user_follow_requests_approve`, `user_follow_requests_decline`, `user_friendships_v1`, `user_id_from_username`, `user_related_profiles_gql`, `user_short_gql`, `user_stream_by_id_flat`, `user_stream_by_id_v1`, `user_stream_by_username_flat`, `user_stream_by_username_v1`, `user_web_profile_info_v1`, `username_from_user_id` |
+| `user` | `chaining`, `creator_info`, `discover_recommended_accounts_for_category_v1`, `feed_user_stream_item`, `fetch_suggestion_details`, `new_feed_exist`, `user_follow_requests_approve`, `user_follow_requests_decline`, `user_friendships_v1`, `user_id_from_username`, `user_related_profiles_gql`, `user_short_gql`, `user_stream_by_id_flat`, `user_stream_by_id_v1`, `user_stream_by_username_flat`, `user_stream_by_username_v1`, `user_web_profile_info_v1`, `username_from_user_id` |
 | `video` | `video_upload_to_direct` |
 
 ## REST Routes To aiograpi Methods
@@ -97,6 +97,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `GET /account/collection/media` | `collection_medias`, `collection_medias_by_name` |
 | `GET /account/collections` | `collections` |
 | `GET /account/feed/timeline` | `get_timeline_feed` |
+| `DELETE /account/follow/request` | `user_follow_request_decline` |
+| `POST /account/follow/request/approve` | `user_follow_request_approve` |
 | `GET /account/follow/requests` | `user_follow_requests_chunk` |
 | `GET /account/liked/media` | `liked_medias` |
 | `PATCH /account/picture` | `account_change_picture` |
@@ -251,6 +253,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `GET /user/about` | `user_about_v1` |
 | `DELETE /user/block` | `user_unblock` |
 | `POST /user/block` | `user_block` |
+| `DELETE /user/close-friend` | `close_friend_remove` |
+| `POST /user/close-friend` | `close_friend_add` |
 | `DELETE /user/follow` | `user_unfollow` |
 | `POST /user/follow` | `user_follow` |
 | `DELETE /user/follower` | `user_remove_follower` |
@@ -263,6 +267,14 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `POST /user/mute/posts` | `mute_posts_from_follow` |
 | `DELETE /user/mute/stories` | `unmute_stories_from_follow` |
 | `POST /user/mute/stories` | `mute_stories_from_follow` |
+| `DELETE /user/notifications/posts` | `disable_posts_notifications` |
+| `POST /user/notifications/posts` | `enable_posts_notifications` |
+| `DELETE /user/notifications/reels` | `disable_reels_notifications` |
+| `POST /user/notifications/reels` | `enable_reels_notifications` |
+| `DELETE /user/notifications/stories` | `disable_stories_notifications` |
+| `POST /user/notifications/stories` | `enable_stories_notifications` |
+| `DELETE /user/notifications/videos` | `disable_videos_notifications` |
+| `POST /user/notifications/videos` | `enable_videos_notifications` |
 | `GET /user/pinned/posts` | `user_pinned_medias` |
 | `GET /user/posts` | `user_info_by_username_v1`, `user_medias_paginated_v1` |
 | `GET /user/reels` | `user_clips_paginated_v1`, `user_info_by_username_v1` |
@@ -331,8 +343,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `clip_unpin(self, media_pk: str) -> bool` | `clip` | - | `candidate` | potential user-facing REST endpoint |
 | `clip_upload(self, path: pathlib._local.Path, caption: str, thumbnail: pathlib._local.Path = None, usertags: List[aiograpi.types.Usertag] = [], location: aiograpi.types.Location = None, configure_timeout: int = 10, feed_show: str = '1', extra_data: Dict[str, object] = {}, trial: bool = False, trial_graduation_strategy: str = 'manual') -> aiograpi.types.Media` | `clip` | `POST /clip/upload`<br>`POST /clip/upload/by/url` | `exposed` | used by at least one public REST route |
 | `clip_upload_as_reel_with_music(self, path: pathlib._local.Path, caption: str, track: aiograpi.types.Track, extra_data: Dict[str, str] = {}) -> aiograpi.types.Media` | `clip` | - | `candidate` | potential user-facing REST endpoint |
-| `close_friend_add(self, user_id: str)` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `close_friend_remove(self, user_id: str)` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `close_friend_add(self, user_id: str)` | `user` | `POST /user/close-friend` | `exposed` | used by at least one public REST route |
+| `close_friend_remove(self, user_id: str)` | `user` | `DELETE /user/close-friend` | `exposed` | used by at least one public REST route |
 | `collection_medias(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | `GET /account/collection/media` | `exposed` | used by at least one public REST route |
 | `collection_medias_by_name(self, name: str) -> List[aiograpi.types.Collection]` | `collection` | `GET /account/collection/media` | `exposed` | used by at least one public REST route |
 | `collection_medias_v1(self, collection_pk: str, amount: int = 21, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `collection` | - | `duplicate` | variant of already exposed `collection_medias` route family |
@@ -395,17 +407,17 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `direct_threads(self, amount: int = 20, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None) -> List[aiograpi.types.DirectThread]` | `direct` | `GET /direct/threads` | `exposed` | used by at least one public REST route |
 | `direct_threads_chunk(self, selected_filter: Literal['flagged', 'unread'] = '', box: Literal['general', 'primary'] = '', thread_message_limit: Optional[int] = None, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | `GET /direct/inbox` | `exposed` | used by at least one public REST route |
 | `direct_users_presence(self, user_ids: List[int]) -> Dict` | `direct` | `GET /direct/presence` | `exposed` | used by at least one public REST route |
-| `disable_posts_notifications(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `disable_reels_notifications(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `disable_stories_notifications(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `disable_videos_notifications(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `disable_posts_notifications(self, user_id: str) -> bool` | `user` | `DELETE /user/notifications/posts` | `exposed` | used by at least one public REST route |
+| `disable_reels_notifications(self, user_id: str) -> bool` | `user` | `DELETE /user/notifications/reels` | `exposed` | used by at least one public REST route |
+| `disable_stories_notifications(self, user_id: str) -> bool` | `user` | `DELETE /user/notifications/stories` | `exposed` | used by at least one public REST route |
+| `disable_videos_notifications(self, user_id: str) -> bool` | `user` | `DELETE /user/notifications/videos` | `exposed` | used by at least one public REST route |
 | `discover_recommended_accounts_for_category_v1(self, user_id: str) -> dict` | `user` | - | `candidate` | potential user-facing REST endpoint |
 | `dump_instaman(self)` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
 | `dump_settings(self, path: Union[str, pathlib._local.Path]) -> bool` | `auth` | - | `internal` | low-level aiograpi helper or unsafe generic surface |
-| `enable_posts_notifications(self, user_id: str, disable: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `enable_reels_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `enable_stories_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `enable_videos_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `enable_posts_notifications(self, user_id: str, disable: bool = False) -> bool` | `user` | `POST /user/notifications/posts` | `exposed` | used by at least one public REST route |
+| `enable_reels_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | `POST /user/notifications/reels` | `exposed` | used by at least one public REST route |
+| `enable_stories_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | `POST /user/notifications/stories` | `exposed` | used by at least one public REST route |
+| `enable_videos_notifications(self, user_id: str, revert: bool = False) -> bool` | `user` | `POST /user/notifications/videos` | `exposed` | used by at least one public REST route |
 | `explore_page(self)` | `explore` | `GET /explore` | `exposed` | used by at least one public REST route |
 | `explore_page_media_info(self, media_pk: int)` | `explore` | `GET /explore/media` | `exposed` | used by at least one public REST route |
 | `explore_reels(self, amount: int = 10, last_media_pk: int = 0) -> List[aiograpi.types.Media]` | `timeline` | `GET /reels/explore` | `exposed` | used by at least one public REST route |
@@ -693,8 +705,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `user_clips_paginated_v1(self, user_id: str, amount: int = 50, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/reels` | `exposed` | used by at least one public REST route |
 | `user_clips_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - | `duplicate` | variant of already exposed `user_clips` route family |
 | `user_follow(self, user_id: str) -> bool` | `user` | `POST /user/follow` | `exposed` | used by at least one public REST route |
-| `user_follow_request_approve(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
-| `user_follow_request_decline(self, user_id: str) -> bool` | `user` | - | `candidate` | potential user-facing REST endpoint |
+| `user_follow_request_approve(self, user_id: str) -> bool` | `user` | `POST /account/follow/request/approve` | `exposed` | used by at least one public REST route |
+| `user_follow_request_decline(self, user_id: str) -> bool` | `user` | `DELETE /account/follow/request` | `exposed` | used by at least one public REST route |
 | `user_follow_requests(self, amount: int = 0) -> List[aiograpi.types.UserShort]` | `user` | - | `duplicate` | variant of already exposed `user_follow_requests` route family |
 | `user_follow_requests_approve(self, user_ids: List[str]) -> Dict[str, bool]` | `user` | - | `candidate` | potential user-facing REST endpoint |
 | `user_follow_requests_chunk(self, max_amount: int = 0, max_id: str = '') -> Tuple[List[aiograpi.types.UserShort], str]` | `user` | `GET /account/follow/requests` | `exposed` | used by at least one public REST route |

@@ -79,6 +79,30 @@ async def account_follow_requests(
     return UserShortPage(items=items, next_cursor=next_cursor or "")
 
 
+@router.post("/follow/request/approve", response_model=bool)
+async def account_follow_request_approve(
+    sessionid: str = Depends(get_sessionid),
+    user_id: int = Form(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Approve a pending follow request
+    """
+    cl = await clients.get(sessionid)
+    return await cl.user_follow_request_approve(user_id)
+
+
+@router.delete("/follow/request", response_model=bool)
+async def account_follow_request_decline(
+    sessionid: str = Depends(get_sessionid),
+    user_id: int = Query(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Decline a pending follow request
+    """
+    cl = await clients.get(sessionid)
+    return await cl.user_follow_request_decline(user_id)
+
+
 @router.get("/liked/media", response_model=List[Media])
 async def liked_medias(
     sessionid: str = Depends(get_sessionid),

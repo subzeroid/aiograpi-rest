@@ -221,6 +221,8 @@ async def test_openapi_uses_rest_http_methods():
         "/account/collection/media": {"get"},
         "/account/collections": {"get"},
         "/account/feed/timeline": {"get"},
+        "/account/follow/request": {"delete"},
+        "/account/follow/request/approve": {"post"},
         "/account/follow/requests": {"get"},
         "/account/picture": {"patch"},
         "/account/privacy": {"patch"},
@@ -348,6 +350,7 @@ async def test_openapi_uses_rest_http_methods():
         "/user": {"get"},
         "/user/about": {"get"},
         "/user/block": {"delete", "post"},
+        "/user/close-friend": {"delete", "post"},
         "/user/follower": {"delete"},
         "/user/followers": {"get"},
         "/user/following": {"get"},
@@ -358,6 +361,10 @@ async def test_openapi_uses_rest_http_methods():
         "/user/pinned/posts": {"get"},
         "/user/mute/posts": {"delete", "post"},
         "/user/mute/stories": {"delete", "post"},
+        "/user/notifications/posts": {"delete", "post"},
+        "/user/notifications/reels": {"delete", "post"},
+        "/user/notifications/stories": {"delete", "post"},
+        "/user/notifications/videos": {"delete", "post"},
         "/user/follow": {"delete", "post"},
         "/user/reels": {"get"},
         "/user/stories": {"get"},
@@ -414,7 +421,6 @@ async def test_openapi_removes_undo_style_paths():
         "/media/pk/from/url",
         "/account/info",
         "/account/profile",
-        "/account/follow/request",
         "/auth/timeline/feed",
         "/auth/totp/enable",
         "/story/delete",
@@ -568,6 +574,8 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/account/collection"]["get"]["summary"] == "Get a saved collection"
     assert paths["/account/collection/media"]["get"]["summary"] == "List saved collection media"
     assert paths["/account/follow/requests"]["get"]["summary"] == "List paginated pending follow requests"
+    assert paths["/account/follow/request/approve"]["post"]["summary"] == "Approve a pending follow request"
+    assert paths["/account/follow/request"]["delete"]["summary"] == "Decline a pending follow request"
     assert paths["/direct/thread"]["patch"]["summary"] == "Update direct thread state"
     assert paths["/direct/thread/user"]["post"]["summary"] == "Add users to a direct thread"
     assert paths["/direct/thread/seen"]["patch"]["summary"] == "Mark a direct thread as seen"
@@ -638,8 +646,18 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/track/download/by/url"]["get"]["summary"] == "Download track audio from a URL"
     assert paths["/user"]["get"]["summary"] == "Get user profile"
     assert paths["/user/followers"]["get"]["summary"] == "List paginated user followers"
+    assert paths["/user/close-friend"]["post"]["summary"] == "Add a user to close friends"
+    assert paths["/user/close-friend"]["delete"]["summary"] == "Remove a user from close friends"
     assert paths["/user/guides"]["get"]["summary"] == "List user guides"
     assert paths["/user/highlights"]["get"]["summary"] == "List user highlights"
+    assert paths["/user/notifications/posts"]["post"]["summary"] == "Enable post notifications for a user"
+    assert paths["/user/notifications/posts"]["delete"]["summary"] == "Disable post notifications for a user"
+    assert paths["/user/notifications/stories"]["post"]["summary"] == "Enable story notifications for a user"
+    assert paths["/user/notifications/stories"]["delete"]["summary"] == "Disable story notifications for a user"
+    assert paths["/user/notifications/reels"]["post"]["summary"] == "Enable Reel notifications for a user"
+    assert paths["/user/notifications/reels"]["delete"]["summary"] == "Disable Reel notifications for a user"
+    assert paths["/user/notifications/videos"]["post"]["summary"] == "Enable video notifications for a user"
+    assert paths["/user/notifications/videos"]["delete"]["summary"] == "Disable video notifications for a user"
     assert paths["/user/pinned/posts"]["get"]["summary"] == "List user pinned posts"
     assert paths["/user/posts"]["get"]["summary"] == "List paginated user posts"
     assert paths["/user/reels"]["get"]["summary"] == "List paginated user Reels"

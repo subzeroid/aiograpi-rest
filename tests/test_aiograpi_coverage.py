@@ -68,6 +68,18 @@ def test_aiograpi_coverage_classifies_methods_by_rest_relevance():
     assert classify_method(methods["track_stream_info_by_id"], covered).status == "exposed"
     assert classify_method(methods["track_download_by_url"], covered).status == "exposed"
     assert classify_method(methods["music_in_feed_audio_browser"], covered).status == "exposed"
+    assert classify_method(methods["user_follow_request_approve"], covered).status == "exposed"
+    assert classify_method(methods["user_follow_request_decline"], covered).status == "exposed"
+    assert classify_method(methods["close_friend_add"], covered).status == "exposed"
+    assert classify_method(methods["close_friend_remove"], covered).status == "exposed"
+    assert classify_method(methods["enable_posts_notifications"], covered).status == "exposed"
+    assert classify_method(methods["disable_posts_notifications"], covered).status == "exposed"
+    assert classify_method(methods["enable_stories_notifications"], covered).status == "exposed"
+    assert classify_method(methods["disable_stories_notifications"], covered).status == "exposed"
+    assert classify_method(methods["enable_reels_notifications"], covered).status == "exposed"
+    assert classify_method(methods["disable_reels_notifications"], covered).status == "exposed"
+    assert classify_method(methods["enable_videos_notifications"], covered).status == "exposed"
+    assert classify_method(methods["disable_videos_notifications"], covered).status == "exposed"
     assert classify_method(methods["comment_likers_gql"], covered).status == "exposed"
     assert classify_method(methods["comment_likers_gql_chunk"], covered).status == "duplicate"
     assert classify_method(methods["comment_pin"], covered).status == "exposed"
@@ -134,6 +146,7 @@ def test_aiograpi_coverage_markdown_summarizes_candidate_backlog():
     assert "| `track` |" in markdown
     assert "`track_info_by_id`" in markdown
     assert "`comment_pin`" in markdown
+    assert "`close_friend_add`" in markdown
     assert "`collections`" in markdown
     assert "`collection_medias_v1`" not in markdown.split("## Full Method Matrix", 1)[0]
     assert "`direct_message_like`" in markdown
