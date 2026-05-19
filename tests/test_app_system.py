@@ -237,12 +237,18 @@ async def test_openapi_uses_rest_http_methods():
         "/clip/upload/by/url": {"post"},
         "/deps": {"get"},
         "/direct/inbox": {"get"},
+        "/direct/media": {"post"},
         "/direct/message": {"delete", "get", "post"},
+        "/direct/message/like": {"delete", "post"},
+        "/direct/message/reaction": {"delete", "post"},
         "/direct/message/seen": {"patch"},
         "/direct/messages": {"get"},
-        "/direct/pending": {"get"},
+        "/direct/pending": {"get", "patch"},
+        "/direct/profile": {"post"},
         "/direct/search": {"get"},
-        "/direct/thread": {"get", "post"},
+        "/direct/story": {"post"},
+        "/direct/thread": {"delete", "get", "patch", "post"},
+        "/direct/thread/user": {"post"},
         "/direct/threads": {"get"},
         "/hashtag": {"get"},
         "/hashtag/follow": {"delete", "post"},
@@ -523,6 +529,14 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/account"]["get"]["summary"] == "Get authenticated account info"
     assert paths["/account"]["patch"]["summary"] == "Update authenticated account profile"
     assert paths["/account/follow/requests"]["get"]["summary"] == "List paginated pending follow requests"
+    assert paths["/direct/thread"]["patch"]["summary"] == "Update direct thread state"
+    assert paths["/direct/thread/user"]["post"]["summary"] == "Add users to a direct thread"
+    assert paths["/direct/message/like"]["post"]["summary"] == "Like a direct message"
+    assert paths["/direct/message/reaction"]["delete"]["summary"] == "Remove a direct message reaction"
+    assert paths["/direct/pending"]["patch"]["summary"] == "Approve a pending direct thread request"
+    assert paths["/direct/media"]["post"]["summary"] == "Share media to direct users"
+    assert paths["/direct/profile"]["post"]["summary"] == "Share a profile to direct users or threads"
+    assert paths["/direct/story"]["post"]["summary"] == "Share a story to direct users or threads"
     assert paths["/hashtag"]["get"]["summary"] == "Get hashtag details"
     assert paths["/hashtag/media/top"]["get"]["summary"] == "List paginated top hashtag media"
     assert paths["/hashtag/related"]["get"]["summary"] == "List related hashtags"

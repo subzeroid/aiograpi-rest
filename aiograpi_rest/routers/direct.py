@@ -62,6 +62,56 @@ async def direct_thread(
     return await cl.direct_thread(thread_id, amount)
 
 
+@router.patch("/thread", response_model=bool)
+async def direct_thread_update(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Form(...),
+    title: Optional[str] = Form(None),
+    is_unread: Optional[bool] = Form(None),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Update direct thread state
+    """
+    if is_unread is False:
+        raise HTTPException(status_code=422, detail="Only is_unread=true is supported")
+    if title is None and is_unread is not True:
+        raise HTTPException(status_code=422, detail="Provide title or is_unread=true")
+
+    cl = await clients.get(sessionid)
+    ok = True
+    if title is not None:
+        ok = ok and await cl.direct_thread_update_title(thread_id, title)
+    if is_unread is True:
+        ok = ok and await cl.direct_thread_mark_unread(thread_id)
+    return ok
+
+
+@router.delete("/thread", response_model=bool)
+async def direct_thread_delete(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Query(...),
+    move_to_spam: bool = Query(False),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Hide a direct thread
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_thread_hide(thread_id, move_to_spam)
+
+
+@router.post("/thread/user", response_model=bool)
+async def direct_thread_user_add(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Form(...),
+    user_ids: List[int] = Form(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Add users to a direct thread
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_thread_add_users(thread_id, user_ids)
+
+
 @router.get("/messages", response_model=List[DirectMessage])
 async def direct_messages(
     sessionid: str = Depends(get_sessionid),
@@ -89,6 +139,82 @@ async def direct_message(
     return await cl.direct_message(thread_id, message_id, amount)
 
 
+@router.post("/message/like", response_model=bool)
+async def direct_message_like(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Form(...),
+    message_id: int = Form(...),
+    client_context: Optional[str] = Form(None),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Like a direct message
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_message_like(thread_id, message_id, client_context)
+
+
+@router.delete("/message/like", response_model=bool)
+async def direct_message_unlike(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Query(...),
+    message_id: int = Query(...),
+    client_context: Optional[str] = Query(None),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Unlike a direct message
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_message_unlike(thread_id, message_id, client_context)
+
+
+@router.post("/message/reaction", response_model=bool)
+async def direct_message_reaction_create(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Form(...),
+    message_id: int = Form(...),
+    emoji: str = Form("\u2764"),
+    client_context: Optional[str] = Form(None),
+    action_source: str = Form("double_tap"),
+    target_item_type: Optional[str] = Form(None),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Create a direct message reaction
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_send_reaction(
+        thread_id,
+        message_id,
+        emoji,
+        client_context,
+        action_source,
+        target_item_type,
+    )
+
+
+@router.delete("/message/reaction", response_model=bool)
+async def direct_message_reaction_delete(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Query(...),
+    message_id: int = Query(...),
+    emoji: str = Query("\u2764"),
+    client_context: Optional[str] = Query(None),
+    action_source: str = Query("double_tap"),
+    target_item_type: Optional[str] = Query(None),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Delete a direct message reaction
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_delete_reaction(
+        thread_id,
+        message_id,
+        emoji,
+        client_context,
+        action_source,
+        target_item_type,
+    )
+
+
 @router.get("/pending", response_model=DirectThreadPage)
 async def direct_pending(
     sessionid: str = Depends(get_sessionid),
@@ -102,6 +228,21 @@ async def direct_pending(
     return DirectThreadPage(items=items, next_cursor=next_cursor or "")
 
 
+@router.patch("/pending", response_model=bool)
+async def direct_pending_update(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Form(...),
+    approved: bool = Form(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Approve a pending direct thread request
+    """
+    if not approved:
+        raise HTTPException(status_code=422, detail="Only approved=true is supported")
+    cl = await clients.get(sessionid)
+    return await cl.direct_pending_approve(thread_id)
+
+
 @router.get("/search", response_model=List[UserShort])
 async def direct_search(
     sessionid: str = Depends(get_sessionid),
@@ -113,6 +254,59 @@ async def direct_search(
     """
     cl = await clients.get(sessionid)
     return await cl.direct_search(query, mode)
+
+
+@router.post("/media", response_model=DirectMessage)
+async def direct_media_share(
+    sessionid: str = Depends(get_sessionid),
+    media_id: str = Form(...),
+    user_ids: List[int] = Form(...),
+    send_attribute: str = Form("feed_timeline"),
+    media_type: str = Form("photo"),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectMessage:
+    """Share media to direct users
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_media_share(media_id, user_ids, send_attribute, media_type)
+
+
+def _validate_direct_targets(user_ids: List[int], thread_ids: List[int]) -> None:
+    if bool(user_ids) == bool(thread_ids):
+        raise HTTPException(
+            status_code=422,
+            detail="Provide exactly one of user_ids or thread_ids",
+        )
+
+
+@router.post("/profile", response_model=DirectMessage)
+async def direct_profile_share(
+    sessionid: str = Depends(get_sessionid),
+    user_id: str = Form(...),
+    user_ids: List[int] = Form([]),
+    thread_ids: List[int] = Form([]),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectMessage:
+    """Share a profile to direct users or threads
+    """
+    _validate_direct_targets(user_ids, thread_ids)
+    cl = await clients.get(sessionid)
+    return await cl.direct_profile_share(user_id, user_ids, thread_ids)
+
+
+@router.post("/story", response_model=DirectMessage)
+async def direct_story_share(
+    sessionid: str = Depends(get_sessionid),
+    story_id: str = Form(...),
+    user_ids: List[int] = Form([]),
+    thread_ids: List[int] = Form([]),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectMessage:
+    """Share a story to direct users or threads
+    """
+    _validate_direct_targets(user_ids, thread_ids)
+    cl = await clients.get(sessionid)
+    return await cl.direct_story_share(story_id, user_ids, thread_ids)
 
 
 @router.post("/thread", response_model=str)
@@ -144,11 +338,7 @@ async def direct_message_send(
 ) -> DirectMessage:
     """Send a direct message
     """
-    if bool(user_ids) == bool(thread_ids):
-        raise HTTPException(
-            status_code=422,
-            detail="Provide exactly one of user_ids or thread_ids",
-        )
+    _validate_direct_targets(user_ids, thread_ids)
     cl = await clients.get(sessionid)
     return await cl.direct_send(text, user_ids, thread_ids, send_attribute)
 

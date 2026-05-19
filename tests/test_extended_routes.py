@@ -258,6 +258,80 @@ class FakeExpandedClient:
         self.calls.append(("direct_message_seen", thread_id, message_id))
         return True
 
+    async def direct_thread_update_title(self, thread_id, title):
+        self.calls.append(("direct_thread_update_title", thread_id, title))
+        return True
+
+    async def direct_thread_mark_unread(self, thread_id):
+        self.calls.append(("direct_thread_mark_unread", thread_id))
+        return True
+
+    async def direct_thread_add_users(self, thread_id, user_ids):
+        self.calls.append(("direct_thread_add_users", thread_id, user_ids))
+        return True
+
+    async def direct_thread_hide(self, thread_id, move_to_spam=False):
+        self.calls.append(("direct_thread_hide", thread_id, move_to_spam))
+        return True
+
+    async def direct_message_like(self, thread_id, message_id, client_context=None):
+        self.calls.append(("direct_message_like", thread_id, message_id, client_context))
+        return True
+
+    async def direct_message_unlike(self, thread_id, message_id, client_context=None):
+        self.calls.append(("direct_message_unlike", thread_id, message_id, client_context))
+        return True
+
+    async def direct_send_reaction(
+        self,
+        thread_id,
+        message_id,
+        emoji="❤",
+        client_context=None,
+        action_source="double_tap",
+        target_item_type=None,
+    ):
+        self.calls.append(
+            ("direct_send_reaction", thread_id, message_id, emoji, client_context, action_source, target_item_type)
+        )
+        return True
+
+    async def direct_delete_reaction(
+        self,
+        thread_id,
+        message_id,
+        emoji="❤",
+        client_context=None,
+        action_source="double_tap",
+        target_item_type=None,
+    ):
+        self.calls.append(
+            ("direct_delete_reaction", thread_id, message_id, emoji, client_context, action_source, target_item_type)
+        )
+        return True
+
+    async def direct_media_share(
+        self,
+        media_id,
+        user_ids,
+        send_attribute="feed_timeline",
+        media_type="photo",
+    ):
+        self.calls.append(("direct_media_share", media_id, user_ids, send_attribute, media_type))
+        return _direct_message_payload("media-share")
+
+    async def direct_profile_share(self, user_id, user_ids=None, thread_ids=None):
+        self.calls.append(("direct_profile_share", user_id, user_ids or [], thread_ids or []))
+        return _direct_message_payload("profile-share")
+
+    async def direct_story_share(self, story_id, user_ids=None, thread_ids=None):
+        self.calls.append(("direct_story_share", story_id, user_ids or [], thread_ids or []))
+        return _direct_message_payload("story-share")
+
+    async def direct_pending_approve(self, thread_id):
+        self.calls.append(("direct_pending_approve", thread_id))
+        return True
+
     async def hashtag_info(self, name):
         self.calls.append(("hashtag_info", name))
         return {"id": "tag1", "name": name, "media_count": 1}
@@ -552,6 +626,82 @@ async def test_direct_routes(storage):
             "/direct/message/seen",
             data={"sessionid": "sid", "thread_id": "100", "message_id": "1"},
         )
+        patch_thread = await ac.patch(
+            "/direct/thread",
+            data={"sessionid": "sid", "thread_id": "100", "title": "Renamed", "is_unread": "true"},
+        )
+        add_user = await ac.post(
+            "/direct/thread/user",
+            data={"sessionid": "sid", "thread_id": "100", "user_ids": ["3", "4"]},
+        )
+        hide_thread = await ac.delete(
+            "/direct/thread",
+            params={"sessionid": "sid", "thread_id": "100", "move_to_spam": "true"},
+        )
+        like_message = await ac.post(
+            "/direct/message/like",
+            data={"sessionid": "sid", "thread_id": "100", "message_id": "1", "client_context": "ctx"},
+        )
+        unlike_message = await ac.delete(
+            "/direct/message/like",
+            params={"sessionid": "sid", "thread_id": "100", "message_id": "1", "client_context": "ctx"},
+        )
+        react_message = await ac.post(
+            "/direct/message/reaction",
+            data={
+                "sessionid": "sid",
+                "thread_id": "100",
+                "message_id": "1",
+                "emoji": "\U0001f525",
+                "client_context": "ctx",
+                "action_source": "long_press",
+                "target_item_type": "text",
+            },
+        )
+        delete_reaction = await ac.delete(
+            "/direct/message/reaction",
+            params={
+                "sessionid": "sid",
+                "thread_id": "100",
+                "message_id": "1",
+                "emoji": "\U0001f525",
+                "client_context": "ctx",
+                "action_source": "long_press",
+                "target_item_type": "text",
+            },
+        )
+        share_media = await ac.post(
+            "/direct/media",
+            data={
+                "sessionid": "sid",
+                "media_id": "m1",
+                "user_ids": ["1", "2"],
+                "send_attribute": "feed_short_url",
+                "media_type": "video",
+            },
+        )
+        share_profile = await ac.post(
+            "/direct/profile",
+            data={"sessionid": "sid", "user_id": "1", "user_ids": ["2"]},
+        )
+        share_story = await ac.post(
+            "/direct/story",
+            data={"sessionid": "sid", "story_id": "story1", "thread_ids": ["100"]},
+        )
+        approve_pending = await ac.patch(
+            "/direct/pending",
+            data={"sessionid": "sid", "thread_id": "100", "approved": "true"},
+        )
+        invalid_patch_thread = await ac.patch("/direct/thread", data={"sessionid": "sid", "thread_id": "100"})
+        invalid_thread_read_state = await ac.patch(
+            "/direct/thread",
+            data={"sessionid": "sid", "thread_id": "100", "is_unread": "false"},
+        )
+        invalid_profile_share = await ac.post("/direct/profile", data={"sessionid": "sid", "user_id": "1"})
+        invalid_pending = await ac.patch(
+            "/direct/pending",
+            data={"sessionid": "sid", "thread_id": "100", "approved": "false"},
+        )
         empty = await ac.post(
             "/direct/message",
             data={"sessionid": "sid", "text": "hi"},
@@ -573,6 +723,17 @@ async def test_direct_routes(storage):
     assert created.status_code == 200 and created.json() == "100"
     assert message.status_code == 200 and message.json()["text"] == "hello"
     assert deleted.status_code == 200 and seen.status_code == 200
+    assert patch_thread.status_code == 200 and add_user.status_code == 200 and hide_thread.status_code == 200
+    assert like_message.status_code == 200 and unlike_message.status_code == 200
+    assert react_message.status_code == 200 and delete_reaction.status_code == 200
+    assert share_media.status_code == 200 and share_media.json()["id"] == "media-share"
+    assert share_profile.status_code == 200 and share_profile.json()["id"] == "profile-share"
+    assert share_story.status_code == 200 and share_story.json()["id"] == "story-share"
+    assert approve_pending.status_code == 200
+    assert invalid_patch_thread.status_code == 422
+    assert invalid_thread_read_state.status_code == 422
+    assert invalid_profile_share.status_code == 422
+    assert invalid_pending.status_code == 422
     assert empty.status_code == 422 and both.status_code == 422
     assert single.status_code == 422
     assert inbox.json()["next_cursor"] == "next-direct"
@@ -584,6 +745,18 @@ async def test_direct_routes(storage):
     assert ("direct_search", "user", "raven") in storage.client.calls
     assert ("direct_thread_create", [1, 2], "Team") in storage.client.calls
     assert ("direct_message_seen", 100, 1) in storage.client.calls
+    assert ("direct_thread_update_title", 100, "Renamed") in storage.client.calls
+    assert ("direct_thread_mark_unread", 100) in storage.client.calls
+    assert ("direct_thread_add_users", 100, [3, 4]) in storage.client.calls
+    assert ("direct_thread_hide", 100, True) in storage.client.calls
+    assert ("direct_message_like", 100, 1, "ctx") in storage.client.calls
+    assert ("direct_message_unlike", 100, 1, "ctx") in storage.client.calls
+    assert ("direct_send_reaction", 100, 1, "\U0001f525", "ctx", "long_press", "text") in storage.client.calls
+    assert ("direct_delete_reaction", 100, 1, "\U0001f525", "ctx", "long_press", "text") in storage.client.calls
+    assert ("direct_media_share", "m1", [1, 2], "feed_short_url", "video") in storage.client.calls
+    assert ("direct_profile_share", "1", [2], []) in storage.client.calls
+    assert ("direct_story_share", "story1", [], [100]) in storage.client.calls
+    assert ("direct_pending_approve", 100) in storage.client.calls
 
 
 @pytest.mark.asyncio
