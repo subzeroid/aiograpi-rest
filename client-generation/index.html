@@ -714,6 +714,15 @@ mkdir<span class="w"> </span>-p<span class="w"> </span>generated-clients
 </code></pre></div>
 <p>The npm wrapper may create <code>openapitools.json</code> in your current directory. Keep
 it in your application repository if you want repeatable generator output.</p>
+<p>If your local Node/npm version cannot run the wrapper, use the official Docker
+image instead:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">:/local&quot;</span><span class="w"> </span>openapitools/openapi-generator-cli:v7.22.0<span class="w"> </span>generate<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-i<span class="w"> </span>/local/openapi.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-g<span class="w"> </span>typescript-fetch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>/local/generated-clients/typescript-fetch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--skip-validate-spec<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--additional-properties<span class="o">=</span><span class="nv">npmName</span><span class="o">=</span>aiograpi-rest-client,supportsES6<span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
 <p>For repeated generation, define this helper once in your shell:</p>
 <div class="highlight"><pre><span></span><code>generate_aiograpi_rest_client<span class="o">()</span><span class="w"> </span><span class="o">{</span>
 <span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="nv">generator</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
@@ -881,9 +890,12 @@ calls with your normal HTTP client.</p>
 <p>The repository runs <code>scripts/check_client_generation.py</code> in CI. The script
 exports the current OpenAPI schema with <code>scripts/export_openapi.py</code> and
 smoke-generates <code>python</code>, <code>typescript-fetch</code>, <code>go</code>, and <code>swift5</code> clients with
-OpenAPI Generator 7.22.0. This does not turn those generated outputs into
-supported SDK packages; it only verifies that the published schema remains
-usable by the main documented generator targets.</p>
+OpenAPI Generator 7.22.0. It tries the npm wrapper first and falls back to the
+official <code>openapitools/openapi-generator-cli:v7.22.0</code> Docker image if the local
+Node/npm wrapper fails. Set <code>AIOGRAPI_REST_OPENAPI_GENERATOR_BACKEND=docker</code> to
+force Docker, or <code>npx</code> to require the npm wrapper. This does not turn those
+generated outputs into supported SDK packages; it only verifies that the
+published schema remains usable by the main documented generator targets.</p>
 <h2 id="repository-policy">Repository Policy</h2>
 <p>The <code>golang/</code> and <code>swift/</code> directories in this repository are minimal
 integration examples, not generated SDKs. Generated clients should usually live
