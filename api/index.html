@@ -419,6 +419,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#saved-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Saved Collections
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explore
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracks-and-music" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracks And Music
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -623,6 +656,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#saved-collections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Saved Collections
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explore
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracks-and-music" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracks And Music
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -767,6 +833,31 @@ objects. They accept <code>amount</code> and <code>last_media_pk</code> where th
 <li><code>GET /reels/friends</code> returns Friends tab Reels media.</li>
 <li><code>GET /reels/explore</code> returns Explore Reels media.</li>
 <li><code>GET /reels/timeline</code> returns Reels media for a <code>collection_pk</code>.</li>
+</ul>
+<h2 id="saved-collections">Saved Collections</h2>
+<p>Saved collection routes live under the authenticated account context because
+they read the current account's saved Instagram collections.</p>
+<ul>
+<li><code>GET /account/collections</code> lists saved collections.</li>
+<li><code>GET /account/collection</code> gets one saved collection by <code>collection_pk</code> or <code>name</code>.</li>
+<li><code>GET /account/collection/media</code> lists media in one saved collection by
+  <code>collection_pk</code> or <code>name</code>.</li>
+</ul>
+<h2 id="explore">Explore</h2>
+<p>Explore routes return raw Instagram-shaped objects because the Explore payload
+depends on ranking, layout, and media type.</p>
+<ul>
+<li><code>GET /explore</code> returns the authenticated account's Explore page.</li>
+<li><code>GET /explore/media</code> returns Explore metadata for one <code>media_pk</code>.</li>
+</ul>
+<h2 id="tracks-and-music">Tracks And Music</h2>
+<p>Track routes return Instagram music track data for Reels and post creation
+workflows.</p>
+<ul>
+<li><code>GET /track</code> gets a track by <code>id</code> or <code>canonical_id</code>.</li>
+<li><code>GET /track/stream</code> returns streamed media for a track <code>id</code>.</li>
+<li><code>GET /track/download/by/url</code> downloads track audio from a URL.</li>
+<li><code>GET /music/feed/browser</code> returns music candidates for feed posts.</li>
 </ul>
 <h2 id="pagination">Pagination</h2>
 <p>Paginated read-list routes return an object with <code>items</code> and <code>next_cursor</code>.
