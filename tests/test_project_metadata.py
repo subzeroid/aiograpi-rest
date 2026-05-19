@@ -147,6 +147,8 @@ def test_openapi_client_generation_smoke_check_is_configured():
 
     script = (ROOT / "scripts" / "check_client_generation.py").read_text()
     assert "scripts/export_openapi.py" in script
+    assert "openapitools/openapi-generator-cli:v" in script
+    assert "AIOGRAPI_REST_OPENAPI_GENERATOR_BACKEND" in script
     for generator in ("python", "typescript-fetch", "go", "swift5"):
         assert generator in script
     assert "--skip-validate-spec" in script
@@ -166,6 +168,224 @@ def test_openapi_client_generation_smoke_check_is_configured():
     run_commands = "\n".join(step.get("run", "") for step in steps)
     assert "pip install -e ." in run_commands
     assert "python scripts/check_client_generation.py" in run_commands
+
+
+def test_client_generation_docker_command_maps_temp_paths(tmp_path):
+    import scripts.check_client_generation as script
+
+    openapi = tmp_path / "openapi.json"
+    output = tmp_path / "clients" / "python"
+
+    command = script.openapi_generator_command(
+        ["generate", "-i", str(openapi), "-g", "python", "-o", str(output)],
+        backend="docker",
+        temp=tmp_path,
+    )
+
+    assert command[:6] == [
+        "docker",
+        "run",
+        "--rm",
+        "-v",
+        f"{tmp_path}:/local",
+        "openapitools/openapi-generator-cli:v7.22.0",
+    ]
+    assert "/local/openapi.json" in command
+    assert "/local/clients/python" in command
+    assert str(openapi) not in command
+    assert str(output) not in command
+
+
+def test_client_generation_falls_back_to_docker_when_npx_fails(monkeypatch, tmp_path, capsys):
+    import scripts.check_client_generation as script
+
+    commands = []
+
+    def fake_run(command, cwd=script.ROOT, **kwargs):
+        commands.append(command)
+        if command[0] == "npx":
+            raise subprocess.CalledProcessError(1, command, output="TypeError: e is not a constructor")
+
+    def fake_which(name):
+        if name in {"npx", "docker"}:
+            return f"/usr/bin/{name}"
+        return None
+
+    monkeypatch.setattr(script, "run", fake_run)
+    monkeypatch.setattr(script.shutil, "which", fake_which)
+    monkeypatch.setattr(script, "validate_generated_names", lambda generator, output: None)
+
+    script.run_smoke_with_fallback(
+        openapi=tmp_path / "openapi.json",
+        output_root=tmp_path / "clients",
+        temp=tmp_path,
+        backend="auto",
+    )
+
+    assert commands[0][:3] == ["npx", "--yes", "@openapitools/openapi-generator-cli"]
+    assert any(command[0] == "docker" for command in commands)
+    assert "falling back to Docker" in capsys.readouterr().out
+
+
+def test_client_generation_target_selection_and_command_failures(monkeypatch, tmp_path, capsys):
+    import scripts.check_client_generation as script
+
+    monkeypatch.setenv("AIOGRAPI_REST_CLIENT_GENERATORS", "python, go")
+    assert list(script.selected_targets()) == ["python", "go"]
+
+    monkeypatch.setenv("AIOGRAPI_REST_CLIENT_GENERATORS", "python, nope")
+    with pytest.raises(SystemExit, match="Unknown client generator"):
+        script.selected_targets()
+
+    calls = []
+
+    class Completed:
+        returncode = 0
+        stdout = "ok\n"
+
+    def fake_success(command, **kwargs):
+        calls.append((command, kwargs["env"]["PYTHONPATH"]))
+        return Completed()
+
+    monkeypatch.setattr(script.subprocess, "run", fake_success)
+    script.run(["tool"], cwd=tmp_path)
+    assert calls[0][0] == ["tool"]
+    assert str(ROOT) in calls[0][1]
+
+    class Failed:
+        returncode = 2
+        stdout = "failed\n"
+
+    monkeypatch.setattr(script.subprocess, "run", lambda *args, **kwargs: Failed())
+    with pytest.raises(subprocess.CalledProcessError) as printed:
+        script.run(["bad"], cwd=tmp_path)
+    assert printed.value.output == "failed\n"
+    assert "failed" in capsys.readouterr().out
+
+    with pytest.raises(subprocess.CalledProcessError):
+        script.run(["bad"], cwd=tmp_path, print_on_error=False)
+    assert "failed" not in capsys.readouterr().out
+
+
+def test_client_generation_backend_validation_and_explicit_paths(monkeypatch, tmp_path):
+    import scripts.check_client_generation as script
+
+    with pytest.raises(ValueError, match="Unknown OpenAPI Generator backend"):
+        script.openapi_generator_command(["version"], backend="bad", temp=tmp_path)
+
+    monkeypatch.setattr(script.shutil, "which", lambda name: None)
+    with pytest.raises(SystemExit, match="docker is required"):
+        script._require_backend("docker")
+
+    calls = []
+    monkeypatch.setattr(script, "smoke_generate_clients", lambda *args: calls.append(args))
+    script.run_smoke_with_fallback(tmp_path / "openapi.json", tmp_path / "clients", tmp_path, "docker")
+    assert calls[-1][-1] == "docker"
+
+    with pytest.raises(SystemExit, match="must be one of"):
+        script.run_smoke_with_fallback(tmp_path / "openapi.json", tmp_path / "clients", tmp_path, "bad")
+
+    monkeypatch.setattr(script.shutil, "which", lambda name: "/usr/bin/docker" if name == "docker" else None)
+    script.run_smoke_with_fallback(tmp_path / "openapi.json", tmp_path / "clients", tmp_path, "auto")
+    assert calls[-1][-1] == "docker"
+
+    def fake_smoke(openapi, output_root, temp, backend, **kwargs):
+        calls.append((openapi, output_root, temp, backend, kwargs))
+        if backend == "npx":
+            raise subprocess.CalledProcessError(1, ["npx"], output="")
+
+    monkeypatch.setattr(script, "smoke_generate_clients", fake_smoke)
+    monkeypatch.setattr(script.shutil, "which", lambda name: "/usr/bin/npx" if name == "npx" else None)
+    with pytest.raises(subprocess.CalledProcessError):
+        script.run_smoke_with_fallback(tmp_path / "openapi.json", tmp_path / "clients", tmp_path, "auto")
+
+
+def test_client_generation_fallback_removes_partial_output(monkeypatch, tmp_path):
+    import scripts.check_client_generation as script
+
+    commands = []
+    output_root = tmp_path / "clients"
+    output_root.mkdir()
+    (output_root / "partial.txt").write_text("partial")
+
+    def fake_run(command, cwd=script.ROOT, **kwargs):
+        commands.append(command)
+        if command[0] == "npx":
+            raise subprocess.CalledProcessError(1, command, output="")
+
+    monkeypatch.setattr(script, "run", fake_run)
+    monkeypatch.setattr(script.shutil, "which", lambda name: f"/usr/bin/{name}")
+    monkeypatch.setattr(script, "validate_generated_names", lambda generator, output: None)
+
+    script.run_smoke_with_fallback(tmp_path / "openapi.json", output_root, tmp_path, "auto")
+
+    assert not output_root.exists()
+    assert any(command[0] == "docker" for command in commands)
+
+
+def test_client_generation_validates_generated_names(tmp_path):
+    import scripts.check_client_generation as script
+
+    missing = tmp_path / "missing"
+    missing.mkdir()
+    with pytest.raises(SystemExit, match="did not generate expected file"):
+        script.validate_generated_names("python", missing)
+
+    output = tmp_path / "python"
+    for relative in script.GENERATED_NAME_CHECKS["python"]:
+        path = output / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("class AuthLoginResponse: pass")
+    (output / "safe.bin").write_text("ResponsePostauthlogin")
+    script.validate_generated_names("python", output)
+
+    bad_path = tmp_path / "bad-path"
+    for relative in script.GENERATED_NAME_CHECKS["python"]:
+        path = bad_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("")
+    (bad_path / "ResponsePostauthlogin.py").write_text("")
+    with pytest.raises(SystemExit, match="unstable file name"):
+        script.validate_generated_names("python", bad_path)
+
+    bad_text = tmp_path / "bad-text"
+    for relative in script.GENERATED_NAME_CHECKS["python"]:
+        path = bad_text / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("")
+    (bad_text / "stable.py").write_text("ResponsePostauthlogin")
+    with pytest.raises(SystemExit, match="unstable model name"):
+        script.validate_generated_names("python", bad_text)
+
+
+def test_client_generation_main_exports_schema_and_uses_backend(monkeypatch, tmp_path):
+    import scripts.check_client_generation as script
+
+    class FakeTemporaryDirectory:
+        def __init__(self, prefix):
+            self.prefix = prefix
+
+        def __enter__(self):
+            return str(tmp_path)
+
+        def __exit__(self, exc_type, exc, traceback):
+            return False
+
+    run_calls = []
+    smoke_calls = []
+    monkeypatch.setattr(script.tempfile, "TemporaryDirectory", FakeTemporaryDirectory)
+    monkeypatch.setattr(script, "run", lambda command: run_calls.append(command))
+    monkeypatch.setattr(
+        script,
+        "run_smoke_with_fallback",
+        lambda openapi, output_root, temp, backend: smoke_calls.append((openapi, output_root, temp, backend)),
+    )
+    monkeypatch.setenv("AIOGRAPI_REST_OPENAPI_GENERATOR_BACKEND", "docker")
+
+    script.main()
+
+    assert run_calls == [[sys.executable, "scripts/export_openapi.py", str(tmp_path / "openapi.json")]]
+    assert smoke_calls == [(tmp_path / "openapi.json", tmp_path / "clients", tmp_path, "docker")]
 
 
 def test_quickstart_examples_cover_login_sessionid_and_user_about():

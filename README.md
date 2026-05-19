@@ -385,6 +385,17 @@ npx --yes @openapitools/openapi-generator-cli generate \
   --skip-validate-spec
 ```
 
+If your local Node/npm wrapper fails, use Docker:
+
+```
+curl -fsS http://localhost:8000/openapi.json -o openapi.json
+docker run --rm -v "$PWD:/local" openapitools/openapi-generator-cli:v7.22.0 generate \
+  -g <language> \
+  -i /local/openapi.json \
+  -o /local/generated-clients/<language> \
+  --skip-validate-spec
+```
+
 `--skip-validate-spec` is sometimes needed for transient validator errors.
 See [Client Generation](docs/client-generation.md) for Swift, Go, TypeScript, Python, PHP, Rust, Kotlin, Scala, C#, C++, and other OpenAPI Generator targets.
 

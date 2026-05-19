@@ -44,6 +44,18 @@ npx --yes @openapitools/openapi-generator-cli version
 The npm wrapper may create `openapitools.json` in your current directory. Keep
 it in your application repository if you want repeatable generator output.
 
+If your local Node/npm version cannot run the wrapper, use the official Docker
+image instead:
+
+```bash
+docker run --rm -v "$PWD:/local" openapitools/openapi-generator-cli:v7.22.0 generate \
+  -i /local/openapi.json \
+  -g typescript-fetch \
+  -o /local/generated-clients/typescript-fetch \
+  --skip-validate-spec \
+  --additional-properties=npmName=aiograpi-rest-client,supportsES6=true
+```
+
 For repeated generation, define this helper once in your shell:
 
 ```bash
@@ -237,9 +249,12 @@ For a hand-written session flow before introducing a generated SDK, see:
 The repository runs `scripts/check_client_generation.py` in CI. The script
 exports the current OpenAPI schema with `scripts/export_openapi.py` and
 smoke-generates `python`, `typescript-fetch`, `go`, and `swift5` clients with
-OpenAPI Generator 7.22.0. This does not turn those generated outputs into
-supported SDK packages; it only verifies that the published schema remains
-usable by the main documented generator targets.
+OpenAPI Generator 7.22.0. It tries the npm wrapper first and falls back to the
+official `openapitools/openapi-generator-cli:v7.22.0` Docker image if the local
+Node/npm wrapper fails. Set `AIOGRAPI_REST_OPENAPI_GENERATOR_BACKEND=docker` to
+force Docker, or `npx` to require the npm wrapper. This does not turn those
+generated outputs into supported SDK packages; it only verifies that the
+published schema remains usable by the main documented generator targets.
 
 ## Repository Policy
 
