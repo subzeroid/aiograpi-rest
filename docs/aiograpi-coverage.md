@@ -9,16 +9,16 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 ## Summary
 
 - Public `aiograpi.Client` methods: **500**
-- Methods reached by REST routes: **154**
-- Methods not exposed as REST routes: **346**
-- Candidate REST backlog: **161**
+- Methods reached by REST routes: **158**
+- Methods not exposed as REST routes: **342**
+- Candidate REST backlog: **157**
 
 ## REST Relevance
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `exposed` | 154 | Already used by public REST routes. |
-| `candidate` | 161 | Likely useful as a future user-facing REST endpoint. |
+| `exposed` | 158 | Already used by public REST routes. |
+| `candidate` | 157 | Likely useful as a future user-facing REST endpoint. |
 | `duplicate` | 89 | Variant of an already exposed method, such as `_v1`, `_gql`, `_a1`, chunk, or origin helpers. |
 | `internal` | 96 | Low-level auth/request/configuration/signup/challenge helpers that should not be mirrored blindly. |
 
@@ -35,7 +35,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `clip` | 3 | 6 | 0 | 1 | 10 |
 | `collection` | 3 | 4 | 2 | 0 | 9 |
 | `comment` | 6 | 6 | 10 | 0 | 22 |
-| `direct` | 23 | 22 | 0 | 0 | 45 |
+| `direct` | 27 | 18 | 0 | 0 | 45 |
 | `explore` | 0 | 3 | 0 | 0 | 3 |
 | `fbsearch` | 9 | 7 | 0 | 0 | 16 |
 | `fundraiser` | 0 | 1 | 0 | 0 | 1 |
@@ -71,7 +71,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `clip` | `clip_info_for_creation`, `clip_pin`, `clip_share_to_fb_config`, `clip_trial_eligible`, `clip_unpin`, `clip_upload_as_reel_with_music` |
 | `collection` | `collection_medias`, `collection_medias_by_name`, `collection_pk_by_name`, `collections` |
 | `comment` | `comment_likers_gql`, `comment_pin`, `comment_unpin`, `media_check_offensive_comment`, `media_comment_infos`, `media_stream_comments_v1_chunk` |
-| `direct` | `direct_active_presence`, `direct_answer`, `direct_media`, `direct_message_search`, `direct_message_unsend`, `direct_pending_inbox`, `direct_request_approve`, `direct_requests`, `direct_send_cutout_sticker`, `direct_send_file`, `direct_send_photo`, `direct_send_seen`, `direct_send_video`, `direct_send_voice`, `direct_spam_chunk`, `direct_spam_inbox`, `direct_thread_by_participants`, `direct_thread_mute`, `direct_thread_mute_video_call`, `direct_thread_unmute`, `direct_thread_unmute_video_call`, `direct_users_presence` |
+| `direct` | `direct_active_presence`, `direct_answer`, `direct_media`, `direct_message_search`, `direct_message_unsend`, `direct_pending_inbox`, `direct_request_approve`, `direct_requests`, `direct_send_cutout_sticker`, `direct_send_seen`, `direct_spam_chunk`, `direct_spam_inbox`, `direct_thread_by_participants`, `direct_thread_mute`, `direct_thread_mute_video_call`, `direct_thread_unmute`, `direct_thread_unmute_video_call`, `direct_users_presence` |
 | `explore` | `explore_page`, `explore_page_media_info`, `report_explore_media` |
 | `fbsearch` | `fbsearch_item`, `fbsearch_suggested_profiles`, `fbsearch_topsearch_flat`, `fbsearch_typeahead_stream`, `fbsearch_typehead`, `web_search_topsearch`, `web_search_topsearch_hashtags` |
 | `fundraiser` | `standalone_fundraiser_info_v1` |
@@ -117,6 +117,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `GET /clip/download/by/url` | `clip_download_by_url` |
 | `POST /clip/upload` | `clip_upload` |
 | `POST /clip/upload/by/url` | `clip_upload` |
+| `POST /direct/file` | `direct_send_file` |
 | `GET /direct/inbox` | `direct_threads_chunk` |
 | `POST /direct/media` | `direct_media_share` |
 | `DELETE /direct/message` | `direct_message_delete` |
@@ -130,6 +131,7 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `GET /direct/messages` | `direct_messages` |
 | `GET /direct/pending` | `direct_pending_chunk` |
 | `PATCH /direct/pending` | `direct_pending_approve` |
+| `POST /direct/photo` | `direct_send_photo` |
 | `POST /direct/profile` | `direct_profile_share` |
 | `GET /direct/search` | `direct_search` |
 | `POST /direct/story` | `direct_story_share` |
@@ -139,6 +141,8 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `POST /direct/thread` | `direct_thread_create` |
 | `POST /direct/thread/user` | `direct_thread_add_users` |
 | `GET /direct/threads` | `direct_threads` |
+| `POST /direct/video` | `direct_send_video` |
+| `POST /direct/voice` | `direct_send_voice` |
 | `GET /hashtag` | `hashtag_info` |
 | `DELETE /hashtag/follow` | `hashtag_unfollow` |
 | `POST /hashtag/follow` | `hashtag_follow` |
@@ -342,12 +346,12 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `direct_search(self, query: str, mode: Literal['raven', 'universal'] = 'universal') -> List[aiograpi.types.UserShort]` | `direct` | `GET /direct/search` | `exposed` | used by at least one public REST route |
 | `direct_send(self, text: str, user_ids: List[int] = [], thread_ids: List[int] = [], send_attribute: Literal['message_button', 'inbox_search'] = 'message_button', reply_to_message: Optional[aiograpi.types.DirectMessage] = None) -> aiograpi.types.DirectMessage` | `direct` | `POST /direct/message` | `exposed` | used by at least one public REST route |
 | `direct_send_cutout_sticker(self, sticker_pk: str, user_ids: List[int] = None, thread_ids: List[int] = None) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
-| `direct_send_file(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], content_type: str = 'photo') -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
-| `direct_send_photo(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_send_file(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], content_type: str = 'photo') -> aiograpi.types.DirectMessage` | `direct` | `POST /direct/file` | `exposed` | used by at least one public REST route |
+| `direct_send_photo(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | `POST /direct/photo` | `exposed` | used by at least one public REST route |
 | `direct_send_reaction(self, thread_id: int, message_id: int, emoji: str = '❤', client_context: Optional[str] = None, action_source: str = 'double_tap', target_item_type: Optional[str] = None) -> bool` | `direct` | `POST /direct/message/reaction` | `exposed` | used by at least one public REST route |
 | `direct_send_seen(self, thread_id: int) -> bool` | `direct` | - | `candidate` | potential user-facing REST endpoint |
-| `direct_send_video(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
-| `direct_send_voice(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], waveform: Optional[List[float]] = None) -> aiograpi.types.DirectMessage` | `direct` | - | `candidate` | potential user-facing REST endpoint |
+| `direct_send_video(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | `POST /direct/video` | `exposed` | used by at least one public REST route |
+| `direct_send_voice(self, path: pathlib._local.Path, user_ids: List[int] = [], thread_ids: List[int] = [], waveform: Optional[List[float]] = None) -> aiograpi.types.DirectMessage` | `direct` | `POST /direct/voice` | `exposed` | used by at least one public REST route |
 | `direct_spam_chunk(self, cursor: str = None) -> Tuple[List[aiograpi.types.DirectThread], str]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
 | `direct_spam_inbox(self, amount: int = 20) -> List[aiograpi.types.DirectThread]` | `direct` | - | `candidate` | potential user-facing REST endpoint |
 | `direct_story_share(self, story_id: str, user_ids: List[int] = [], thread_ids: List[int] = []) -> aiograpi.types.DirectMessage` | `direct` | `POST /direct/story` | `exposed` | used by at least one public REST route |

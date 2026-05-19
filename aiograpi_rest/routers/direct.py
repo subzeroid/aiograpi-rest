@@ -1,7 +1,9 @@
+from pathlib import Path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import List, Literal, Optional
 
 from aiograpi.types import DirectMessage, DirectThread, UserShort
-from fastapi import APIRouter, Depends, Form, HTTPException, Query
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 from aiograpi_rest.pagination import DirectThreadPage
@@ -279,6 +281,13 @@ def _validate_direct_targets(user_ids: List[int], thread_ids: List[int]) -> None
         )
 
 
+async def _write_direct_upload(file: UploadFile, directory: str, fallback_suffix: str) -> Path:
+    suffix = Path(file.filename or "").suffix or fallback_suffix
+    with NamedTemporaryFile(suffix=suffix, delete=False, dir=directory) as tmp:
+        tmp.write(await file.read())
+        return Path(tmp.name)
+
+
 @router.post("/profile", response_model=DirectMessage)
 async def direct_profile_share(
     sessionid: str = Depends(get_sessionid),
@@ -307,6 +316,76 @@ async def direct_story_share(
     _validate_direct_targets(user_ids, thread_ids)
     cl = await clients.get(sessionid)
     return await cl.direct_story_share(story_id, user_ids, thread_ids)
+
+
+@router.post("/photo", response_model=DirectMessage)
+async def direct_photo_send(
+    sessionid: str = Depends(get_sessionid),
+    file: UploadFile = File(...),
+    user_ids: List[int] = Form([]),
+    thread_ids: List[int] = Form([]),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectMessage:
+    """Send a direct photo
+    """
+    _validate_direct_targets(user_ids, thread_ids)
+    cl = await clients.get(sessionid)
+    with TemporaryDirectory() as directory:
+        path = await _write_direct_upload(file, directory, ".jpg")
+        return await cl.direct_send_photo(path, user_ids, thread_ids)
+
+
+@router.post("/video", response_model=DirectMessage)
+async def direct_video_send(
+    sessionid: str = Depends(get_sessionid),
+    file: UploadFile = File(...),
+    user_ids: List[int] = Form([]),
+    thread_ids: List[int] = Form([]),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectMessage:
+    """Send a direct video
+    """
+    _validate_direct_targets(user_ids, thread_ids)
+    cl = await clients.get(sessionid)
+    with TemporaryDirectory() as directory:
+        path = await _write_direct_upload(file, directory, ".mp4")
+        return await cl.direct_send_video(path, user_ids, thread_ids)
+
+
+@router.post("/voice", response_model=DirectMessage)
+async def direct_voice_send(
+    sessionid: str = Depends(get_sessionid),
+    file: UploadFile = File(...),
+    user_ids: List[int] = Form([]),
+    thread_ids: List[int] = Form([]),
+    waveform: Optional[List[float]] = Form(None),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectMessage:
+    """Send a direct voice message
+    """
+    _validate_direct_targets(user_ids, thread_ids)
+    cl = await clients.get(sessionid)
+    with TemporaryDirectory() as directory:
+        path = await _write_direct_upload(file, directory, ".m4a")
+        return await cl.direct_send_voice(path, user_ids, thread_ids, waveform)
+
+
+@router.post("/file", response_model=DirectMessage)
+async def direct_file_send(
+    sessionid: str = Depends(get_sessionid),
+    file: UploadFile = File(...),
+    user_ids: List[int] = Form([]),
+    thread_ids: List[int] = Form([]),
+    content_type: str = Form("photo"),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectMessage:
+    """Send a direct file
+    """
+    _validate_direct_targets(user_ids, thread_ids)
+    cl = await clients.get(sessionid)
+    with TemporaryDirectory() as directory:
+        path = await _write_direct_upload(file, directory, ".bin")
+        return await cl.direct_send_file(path, user_ids, thread_ids, content_type)
 
 
 @router.post("/thread", response_model=str)

@@ -236,6 +236,7 @@ async def test_openapi_uses_rest_http_methods():
         "/clip/upload": {"post"},
         "/clip/upload/by/url": {"post"},
         "/deps": {"get"},
+        "/direct/file": {"post"},
         "/direct/inbox": {"get"},
         "/direct/media": {"post"},
         "/direct/message": {"delete", "get", "post"},
@@ -244,12 +245,15 @@ async def test_openapi_uses_rest_http_methods():
         "/direct/message/seen": {"patch"},
         "/direct/messages": {"get"},
         "/direct/pending": {"get", "patch"},
+        "/direct/photo": {"post"},
         "/direct/profile": {"post"},
         "/direct/search": {"get"},
         "/direct/story": {"post"},
         "/direct/thread": {"delete", "get", "patch", "post"},
         "/direct/thread/user": {"post"},
         "/direct/threads": {"get"},
+        "/direct/video": {"post"},
+        "/direct/voice": {"post"},
         "/hashtag": {"get"},
         "/hashtag/follow": {"delete", "post"},
         "/hashtag/media/recent": {"get"},
@@ -537,6 +541,10 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/direct/media"]["post"]["summary"] == "Share media to direct users"
     assert paths["/direct/profile"]["post"]["summary"] == "Share a profile to direct users or threads"
     assert paths["/direct/story"]["post"]["summary"] == "Share a story to direct users or threads"
+    assert paths["/direct/photo"]["post"]["summary"] == "Send a direct photo"
+    assert paths["/direct/video"]["post"]["summary"] == "Send a direct video"
+    assert paths["/direct/voice"]["post"]["summary"] == "Send a direct voice message"
+    assert paths["/direct/file"]["post"]["summary"] == "Send a direct file"
     assert paths["/hashtag"]["get"]["summary"] == "Get hashtag details"
     assert paths["/hashtag/media/top"]["get"]["summary"] == "List paginated top hashtag media"
     assert paths["/hashtag/related"]["get"]["summary"] == "List related hashtags"

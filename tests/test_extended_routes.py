@@ -147,6 +147,7 @@ def _note_payload(note_id="n1"):
 class FakeExpandedClient:
     def __init__(self):
         self.calls = []
+        self.upload_paths = []
 
     async def account_info(self):
         self.calls.append(("account_info",))
@@ -327,6 +328,30 @@ class FakeExpandedClient:
     async def direct_story_share(self, story_id, user_ids=None, thread_ids=None):
         self.calls.append(("direct_story_share", story_id, user_ids or [], thread_ids or []))
         return _direct_message_payload("story-share")
+
+    async def direct_send_photo(self, path, user_ids=None, thread_ids=None):
+        payload = Path(path).read_bytes()
+        self.upload_paths.append(Path(path))
+        self.calls.append(("direct_send_photo", Path(path).suffix, payload, user_ids or [], thread_ids or []))
+        return _direct_message_payload("photo-direct")
+
+    async def direct_send_video(self, path, user_ids=None, thread_ids=None):
+        payload = Path(path).read_bytes()
+        self.upload_paths.append(Path(path))
+        self.calls.append(("direct_send_video", Path(path).suffix, payload, user_ids or [], thread_ids or []))
+        return _direct_message_payload("video-direct")
+
+    async def direct_send_voice(self, path, user_ids=None, thread_ids=None, waveform=None):
+        payload = Path(path).read_bytes()
+        self.upload_paths.append(Path(path))
+        self.calls.append(("direct_send_voice", Path(path).suffix, payload, user_ids or [], thread_ids or [], waveform))
+        return _direct_message_payload("voice-direct")
+
+    async def direct_send_file(self, path, user_ids=None, thread_ids=None, content_type="photo"):
+        payload = Path(path).read_bytes()
+        self.upload_paths.append(Path(path))
+        self.calls.append(("direct_send_file", Path(path).suffix, payload, user_ids or [], thread_ids or [], content_type))
+        return _direct_message_payload("file-direct")
 
     async def direct_pending_approve(self, thread_id):
         self.calls.append(("direct_pending_approve", thread_id))
@@ -688,6 +713,26 @@ async def test_direct_routes(storage):
             "/direct/story",
             data={"sessionid": "sid", "story_id": "story1", "thread_ids": ["100"]},
         )
+        send_photo = await ac.post(
+            "/direct/photo",
+            data={"sessionid": "sid", "user_ids": ["2"]},
+            files={"file": ("photo.jpg", b"photo-bytes", "image/jpeg")},
+        )
+        send_video = await ac.post(
+            "/direct/video",
+            data={"sessionid": "sid", "thread_ids": ["100"]},
+            files={"file": ("video.mp4", b"video-bytes", "video/mp4")},
+        )
+        send_voice = await ac.post(
+            "/direct/voice",
+            data={"sessionid": "sid", "thread_ids": ["100"], "waveform": ["0.1", "0.2"]},
+            files={"file": ("voice.m4a", b"voice-bytes", "audio/mp4")},
+        )
+        send_file = await ac.post(
+            "/direct/file",
+            data={"sessionid": "sid", "user_ids": ["2"], "content_type": "video"},
+            files={"file": ("document.bin", b"file-bytes", "application/octet-stream")},
+        )
         approve_pending = await ac.patch(
             "/direct/pending",
             data={"sessionid": "sid", "thread_id": "100", "approved": "true"},
@@ -698,6 +743,11 @@ async def test_direct_routes(storage):
             data={"sessionid": "sid", "thread_id": "100", "is_unread": "false"},
         )
         invalid_profile_share = await ac.post("/direct/profile", data={"sessionid": "sid", "user_id": "1"})
+        invalid_direct_file_targets = await ac.post(
+            "/direct/file",
+            data={"sessionid": "sid", "user_ids": ["2"], "thread_ids": ["100"]},
+            files={"file": ("document.bin", b"file-bytes", "application/octet-stream")},
+        )
         invalid_pending = await ac.patch(
             "/direct/pending",
             data={"sessionid": "sid", "thread_id": "100", "approved": "false"},
@@ -729,10 +779,15 @@ async def test_direct_routes(storage):
     assert share_media.status_code == 200 and share_media.json()["id"] == "media-share"
     assert share_profile.status_code == 200 and share_profile.json()["id"] == "profile-share"
     assert share_story.status_code == 200 and share_story.json()["id"] == "story-share"
+    assert send_photo.status_code == 200 and send_photo.json()["id"] == "photo-direct"
+    assert send_video.status_code == 200 and send_video.json()["id"] == "video-direct"
+    assert send_voice.status_code == 200 and send_voice.json()["id"] == "voice-direct"
+    assert send_file.status_code == 200 and send_file.json()["id"] == "file-direct"
     assert approve_pending.status_code == 200
     assert invalid_patch_thread.status_code == 422
     assert invalid_thread_read_state.status_code == 422
     assert invalid_profile_share.status_code == 422
+    assert invalid_direct_file_targets.status_code == 422
     assert invalid_pending.status_code == 422
     assert empty.status_code == 422 and both.status_code == 422
     assert single.status_code == 422
@@ -756,6 +811,12 @@ async def test_direct_routes(storage):
     assert ("direct_media_share", "m1", [1, 2], "feed_short_url", "video") in storage.client.calls
     assert ("direct_profile_share", "1", [2], []) in storage.client.calls
     assert ("direct_story_share", "story1", [], [100]) in storage.client.calls
+    assert ("direct_send_photo", ".jpg", b"photo-bytes", [2], []) in storage.client.calls
+    assert ("direct_send_video", ".mp4", b"video-bytes", [], [100]) in storage.client.calls
+    assert ("direct_send_voice", ".m4a", b"voice-bytes", [], [100], [0.1, 0.2]) in storage.client.calls
+    assert ("direct_send_file", ".bin", b"file-bytes", [2], [], "video") in storage.client.calls
+    assert storage.client.upload_paths
+    assert all(not path.exists() for path in storage.client.upload_paths)
     assert ("direct_pending_approve", 100) in storage.client.calls
 
 
