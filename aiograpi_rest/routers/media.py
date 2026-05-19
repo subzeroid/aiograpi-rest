@@ -55,14 +55,16 @@ async def _resolve_user_id(cl, user_id: Optional[str], username: Optional[str]) 
     if user_id and username:
         raise HTTPException(status_code=422, detail="Provide either user_id or username, not both")
     if username:
-        return str(await cl.user_id_from_username(username.strip().lstrip("@")))
+        user = await cl.user_info_by_username_v1(username.strip().lstrip("@"))
+        return str(user.pk)
     if not user_id:
         raise HTTPException(status_code=422, detail="Provide user_id or username")
 
     user_id = user_id.strip()
     if user_id.isdecimal():
         return user_id
-    return str(await cl.user_id_from_username(user_id.lstrip("@")))
+    user = await cl.user_info_by_username_v1(user_id.lstrip("@"))
+    return str(user.pk)
 
 
 async def _user_medias_page(cl,
@@ -71,7 +73,7 @@ async def _user_medias_page(cl,
                             amount: int,
                             cursor: str) -> MediaPage:
     user_id = await _resolve_user_id(cl, user_id, username)
-    items, next_cursor = await cl.user_medias_paginated(user_id, amount, cursor or "")
+    items, next_cursor = await cl.user_medias_paginated_v1(user_id, amount, cursor or "")
     return MediaPage(items=items, next_cursor=next_cursor or "")
 
 

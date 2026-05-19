@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
@@ -90,8 +92,16 @@ class FakePaginationClient:
         self.calls.append(("user_id_from_username", username))
         return 25025320
 
+    async def user_info_by_username_v1(self, username):
+        self.calls.append(("user_info_by_username_v1", username))
+        return SimpleNamespace(pk="25025320")
+
     async def user_medias_paginated(self, user_id, amount=0, end_cursor=""):
         self.calls.append(("user_medias_paginated", user_id, amount, end_cursor))
+        return [_media_payload(1)], "next-user-medias"
+
+    async def user_medias_paginated_v1(self, user_id, amount=0, end_cursor=""):
+        self.calls.append(("user_medias_paginated_v1", user_id, amount, end_cursor))
         return [_media_payload(1)], "next-user-medias"
 
     async def usertag_medias_paginated(self, user_id, amount=0, end_cursor=""):
@@ -195,7 +205,7 @@ async def test_media_read_list_routes_return_items_and_next_cursor(storage):
         assert response.json()["next_cursor"] == next_cursor
         assert "end_cursor" not in response.json()
 
-    assert ("user_medias_paginated", "10", 7, "m1") in storage.client.calls
+    assert ("user_medias_paginated_v1", "10", 7, "m1") in storage.client.calls
     assert ("usertag_medias_paginated", "10", 8, "t1") in storage.client.calls
     assert ("user_clips_paginated_v1", "10", 9, "c1") in storage.client.calls
     assert ("user_videos_paginated_v1", "10", 10, "v1") in storage.client.calls
@@ -204,7 +214,7 @@ async def test_media_read_list_routes_return_items_and_next_cursor(storage):
 @pytest.mark.asyncio
 async def test_user_media_read_list_routes_resolve_username(storage):
     routes = [
-        ("/user/posts", {"username": "instagram", "amount": "7"}, "user_medias_paginated"),
+        ("/user/posts", {"username": "instagram", "amount": "7"}, "user_medias_paginated_v1"),
         ("/user/tagged/posts", {"username": "instagram", "amount": "8"}, "usertag_medias_paginated"),
         ("/user/reels", {"username": "instagram", "amount": "9"}, "user_clips_paginated_v1"),
         ("/user/videos", {"username": "instagram", "amount": "10"}, "user_videos_paginated_v1"),
@@ -216,13 +226,14 @@ async def test_user_media_read_list_routes_resolve_username(storage):
         assert response.json()["items"]
         assert any(call[0] == method_name and call[1] == "25025320" for call in storage.client.calls)
 
-    assert storage.client.calls.count(("user_id_from_username", "instagram")) == 4
+    assert storage.client.calls.count(("user_info_by_username_v1", "instagram")) == 4
+    assert not any(call[0] == "user_id_from_username" for call in storage.client.calls)
 
 
 @pytest.mark.asyncio
 async def test_user_media_read_list_routes_resolve_username_in_user_id(storage):
     checks = [
-        ("/user/posts", "user_medias_paginated"),
+        ("/user/posts", "user_medias_paginated_v1"),
         ("/user/reels", "user_clips_paginated_v1"),
         ("/user/videos", "user_videos_paginated_v1"),
     ]
@@ -231,8 +242,10 @@ async def test_user_media_read_list_routes_resolve_username_in_user_id(storage):
         response = await _get(path, {"user_id": "iarijitbiswas", "amount": "2"})
         assert response.status_code == 200
         assert response.json()["items"]
-        assert ("user_id_from_username", "iarijitbiswas") in storage.client.calls
+        assert ("user_info_by_username_v1", "iarijitbiswas") in storage.client.calls
         assert any(call[0] == method_name and call[1] == "25025320" and call[2] == 2 for call in storage.client.calls)
+
+    assert not any(call[0] == "user_id_from_username" for call in storage.client.calls)
 
 
 @pytest.mark.asyncio

@@ -179,11 +179,11 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `DELETE /user/mute/stories` | `unmute_stories_from_follow` |
 | `POST /user/mute/stories` | `mute_stories_from_follow` |
 | `GET /user/pinned/posts` | `user_pinned_medias` |
-| `GET /user/posts` | `user_id_from_username`, `user_medias_paginated` |
-| `GET /user/reels` | `user_clips_paginated_v1`, `user_id_from_username` |
+| `GET /user/posts` | `user_info_by_username_v1`, `user_medias_paginated_v1` |
+| `GET /user/reels` | `user_clips_paginated_v1`, `user_info_by_username_v1` |
 | `GET /user/stories` | `user_stories` |
-| `GET /user/tagged/posts` | `user_id_from_username`, `usertag_medias_paginated` |
-| `GET /user/videos` | `user_id_from_username`, `user_videos_paginated_v1` |
+| `GET /user/tagged/posts` | `user_info_by_username_v1`, `usertag_medias_paginated` |
+| `GET /user/videos` | `user_info_by_username_v1`, `user_videos_paginated_v1` |
 | `GET /video/download` | `video_download` |
 | `GET /video/download/by/url` | `video_download_by_url` |
 | `POST /video/upload` | `video_upload` |
@@ -629,12 +629,12 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `user_guides_v1(self, user_id: int) -> List[aiograpi.types.Guide]` | `user` | `GET /user/guides` |
 | `user_highlights(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Highlight]` | `highlight` | `GET /user/highlights` |
 | `user_highlights_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Highlight]` | `highlight` | - |
-| `user_id_from_username(self, username: str) -> str` | `user` | `GET /user/posts`<br>`GET /user/reels`<br>`GET /user/tagged/posts`<br>`GET /user/videos` |
+| `user_id_from_username(self, username: str) -> str` | `user` | - |
 | `user_info(self, user_id: str) -> aiograpi.types.User` | `user` | `GET /user` |
 | `user_info_by_username(self, username: str) -> aiograpi.types.User` | `user` | `GET /user` |
 | `user_info_by_username_a1(self, username: str) -> dict` | `user` | - |
 | `user_info_by_username_gql(self, username: str) -> aiograpi.types.User` | `user` | - |
-| `user_info_by_username_v1(self, username: str) -> aiograpi.types.User` | `user` | - |
+| `user_info_by_username_v1(self, username: str) -> aiograpi.types.User` | `user` | `GET /user/posts`<br>`GET /user/reels`<br>`GET /user/tagged/posts`<br>`GET /user/videos` |
 | `user_info_by_username_v2_gql(self, username: str) -> aiograpi.types.User` | `user` | - |
 | `user_info_gql(self, user_id: str) -> aiograpi.types.User` | `user` | - |
 | `user_info_v1(self, user_id: str, from_module: Literal['self_profile', 'feed_timeline', 'reel_feed_timeline'] = 'self_profile', is_app_start: bool = False) -> aiograpi.types.User` | `user` | - |
@@ -644,9 +644,9 @@ the installed `aiograpi.Client` class and the local FastAPI router implementatio
 | `user_medias_chunk_gql(self, user_id: int, sleep: int = 2, end_cursor=None, amount: int = 0) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
 | `user_medias_chunk_v1(self, user_id: int, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
 | `user_medias_gql(self, user_id: int, amount: int = 0, sleep: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
-| `user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/posts` |
+| `user_medias_paginated(self, user_id: str, amount: int = 0, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
 | `user_medias_paginated_gql(self, user_id: str, amount: int = 0, sleep: int = 2, end_cursor=None) -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
-| `user_medias_paginated_v1(self, user_id: str, amount: int = 33, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | - |
+| `user_medias_paginated_v1(self, user_id: str, amount: int = 33, end_cursor: str = '') -> Tuple[List[aiograpi.types.Media], str]` | `media` | `GET /user/posts` |
 | `user_medias_v1(self, user_id: int, amount: int = 0) -> List[aiograpi.types.Media]` | `media` | - |
 | `user_pinned_medias(self, user_id) -> List[aiograpi.types.Media]` | `media` | `GET /user/pinned/posts` |
 | `user_related_profiles_gql(self, user_id: str) -> List[aiograpi.types.UserShort]` | `user` | - |

@@ -59,6 +59,10 @@ class FakeMediaClient:
         self.calls.append(("user_medias_paginated", user_id, amount, end_cursor))
         return [_media_payload(pk=3)], "next-cursor"
 
+    async def user_medias_paginated_v1(self, user_id, amount, end_cursor=""):
+        self.calls.append(("user_medias_paginated_v1", user_id, amount, end_cursor))
+        return [_media_payload(pk=3)], "next-cursor"
+
     async def usertag_medias(self, user_id, amount):
         self.calls.append(("usertag_medias", user_id, amount))
         return [_media_payload(pk=2)]
@@ -293,7 +297,8 @@ async def test_user_medias_returns_items_and_cursor(storage):
     assert response.status_code == 200
     assert response.json()["items"][0]["pk"] == 3
     assert response.json()["next_cursor"] == "next-cursor"
-    assert ("user_medias_paginated", "1", 10, "cursor") in storage.client.calls
+    assert ("user_medias_paginated_v1", "1", 10, "cursor") in storage.client.calls
+    assert not any(call[0] == "user_medias_paginated" for call in storage.client.calls)
 
 
 @pytest.mark.asyncio
