@@ -238,19 +238,27 @@ async def test_openapi_uses_rest_http_methods():
         "/deps": {"get"},
         "/direct/file": {"post"},
         "/direct/inbox": {"get"},
-        "/direct/media": {"post"},
+        "/direct/media": {"get", "post"},
         "/direct/message": {"delete", "get", "post"},
         "/direct/message/like": {"delete", "post"},
         "/direct/message/reaction": {"delete", "post"},
         "/direct/message/seen": {"patch"},
         "/direct/messages": {"get"},
+        "/direct/messages/search": {"get"},
         "/direct/pending": {"get", "patch"},
         "/direct/photo": {"post"},
+        "/direct/presence": {"get"},
         "/direct/profile": {"post"},
+        "/direct/requests": {"get"},
         "/direct/search": {"get"},
+        "/direct/spam": {"get"},
         "/direct/story": {"post"},
         "/direct/thread": {"delete", "get", "patch", "post"},
+        "/direct/thread/by/participants": {"get"},
+        "/direct/thread/mute": {"delete", "post"},
+        "/direct/thread/seen": {"patch"},
         "/direct/thread/user": {"post"},
+        "/direct/thread/video/call/mute": {"delete", "post"},
         "/direct/threads": {"get"},
         "/direct/video": {"post"},
         "/direct/voice": {"post"},
@@ -535,9 +543,20 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/account/follow/requests"]["get"]["summary"] == "List paginated pending follow requests"
     assert paths["/direct/thread"]["patch"]["summary"] == "Update direct thread state"
     assert paths["/direct/thread/user"]["post"]["summary"] == "Add users to a direct thread"
+    assert paths["/direct/thread/seen"]["patch"]["summary"] == "Mark a direct thread as seen"
+    assert paths["/direct/thread/mute"]["post"]["summary"] == "Mute a direct thread"
+    assert paths["/direct/thread/mute"]["delete"]["summary"] == "Unmute a direct thread"
+    assert paths["/direct/thread/video/call/mute"]["post"]["summary"] == "Mute direct thread video calls"
+    assert paths["/direct/thread/video/call/mute"]["delete"]["summary"] == "Unmute direct thread video calls"
+    assert paths["/direct/thread/by/participants"]["get"]["summary"] == "Find a direct thread by participants"
     assert paths["/direct/message/like"]["post"]["summary"] == "Like a direct message"
     assert paths["/direct/message/reaction"]["delete"]["summary"] == "Remove a direct message reaction"
+    assert paths["/direct/messages/search"]["get"]["summary"] == "Search direct messages"
     assert paths["/direct/pending"]["patch"]["summary"] == "Approve a pending direct thread request"
+    assert paths["/direct/requests"]["get"]["summary"] == "List direct message requests"
+    assert paths["/direct/spam"]["get"]["summary"] == "List paginated direct spam threads"
+    assert paths["/direct/presence"]["get"]["summary"] == "Get direct presence"
+    assert paths["/direct/media"]["get"]["summary"] == "List direct thread media"
     assert paths["/direct/media"]["post"]["summary"] == "Share media to direct users"
     assert paths["/direct/profile"]["post"]["summary"] == "Share a profile to direct users or threads"
     assert paths["/direct/story"]["post"]["summary"] == "Share a story to direct users or threads"

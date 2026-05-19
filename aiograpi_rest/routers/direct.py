@@ -1,9 +1,10 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
-from aiograpi.types import DirectMessage, DirectThread, UserShort
+from aiograpi.types import DirectMessage, DirectShortThread, DirectThread, Media, UserShort
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
+from pydantic import BaseModel
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_sessionid
 from aiograpi_rest.pagination import DirectThreadPage
@@ -13,6 +14,11 @@ router = APIRouter(
     tags=["Direct"],
     responses={404: {"description": "Not found"}},
 )
+
+
+class DirectMessageSearchResult(BaseModel):
+    message: DirectMessage
+    thread: DirectShortThread
 
 
 @router.get("/inbox", response_model=DirectThreadPage)
@@ -33,6 +39,31 @@ async def direct_inbox(
         thread_message_limit,
         cursor or None,
     )
+    return DirectThreadPage(items=items, next_cursor=next_cursor or "")
+
+
+@router.get("/requests", response_model=List[DirectThread])
+async def direct_requests(
+    sessionid: str = Depends(get_sessionid),
+    amount: int = Query(20),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[DirectThread]:
+    """List direct message requests
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_requests(amount)
+
+
+@router.get("/spam", response_model=DirectThreadPage)
+async def direct_spam(
+    sessionid: str = Depends(get_sessionid),
+    cursor: str = Query(""),
+    clients: ClientStorage = Depends(get_clients),
+) -> DirectThreadPage:
+    """Get a page of direct spam threads
+    """
+    cl = await clients.get(sessionid)
+    items, next_cursor = await cl.direct_spam_chunk(cursor or None)
     return DirectThreadPage(items=items, next_cursor=next_cursor or "")
 
 
@@ -62,6 +93,18 @@ async def direct_thread(
     """
     cl = await clients.get(sessionid)
     return await cl.direct_thread(thread_id, amount)
+
+
+@router.get("/thread/by/participants", response_model=Dict[str, Any])
+async def direct_thread_by_participants(
+    sessionid: str = Depends(get_sessionid),
+    user_ids: List[int] = Query(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> Dict[str, Any]:
+    """Find a direct thread by participants
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_thread_by_participants(user_ids)
 
 
 @router.patch("/thread", response_model=bool)
@@ -101,6 +144,66 @@ async def direct_thread_delete(
     return await cl.direct_thread_hide(thread_id, move_to_spam)
 
 
+@router.patch("/thread/seen", response_model=bool)
+async def direct_thread_seen(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Form(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Mark a direct thread as seen
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_send_seen(thread_id)
+
+
+@router.post("/thread/mute", response_model=bool)
+async def direct_thread_mute(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Form(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Mute a direct thread
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_thread_mute(thread_id)
+
+
+@router.delete("/thread/mute", response_model=bool)
+async def direct_thread_unmute(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Query(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Unmute a direct thread
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_thread_unmute(thread_id)
+
+
+@router.post("/thread/video/call/mute", response_model=bool)
+async def direct_thread_video_call_mute(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Form(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Mute direct thread video calls
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_thread_mute_video_call(thread_id)
+
+
+@router.delete("/thread/video/call/mute", response_model=bool)
+async def direct_thread_video_call_unmute(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Query(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> bool:
+    """Unmute direct thread video calls
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_thread_unmute_video_call(thread_id)
+
+
 @router.post("/thread/user", response_model=bool)
 async def direct_thread_user_add(
     sessionid: str = Depends(get_sessionid),
@@ -125,6 +228,21 @@ async def direct_messages(
     """
     cl = await clients.get(sessionid)
     return await cl.direct_messages(thread_id, amount)
+
+
+@router.get("/messages/search", response_model=List[DirectMessageSearchResult])
+async def direct_message_search(
+    sessionid: str = Depends(get_sessionid),
+    query: str = Query(...),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[DirectMessageSearchResult]:
+    """Search direct messages
+    """
+    cl = await clients.get(sessionid)
+    return [
+        DirectMessageSearchResult(message=message, thread=thread)
+        for message, thread in await cl.direct_message_search(query)
+    ]
 
 
 @router.get("/message", response_model=DirectMessage)
@@ -256,6 +374,33 @@ async def direct_search(
     """
     cl = await clients.get(sessionid)
     return await cl.direct_search(query, mode)
+
+
+@router.get("/presence", response_model=Dict[str, Any])
+async def direct_presence(
+    sessionid: str = Depends(get_sessionid),
+    user_ids: List[int] = Query([]),
+    clients: ClientStorage = Depends(get_clients),
+) -> Dict[str, Any]:
+    """Get direct presence
+    """
+    cl = await clients.get(sessionid)
+    if user_ids:
+        return await cl.direct_users_presence(user_ids)
+    return await cl.direct_active_presence()
+
+
+@router.get("/media", response_model=List[Media])
+async def direct_media(
+    sessionid: str = Depends(get_sessionid),
+    thread_id: int = Query(...),
+    amount: int = Query(20),
+    clients: ClientStorage = Depends(get_clients),
+) -> List[Media]:
+    """List direct thread media
+    """
+    cl = await clients.get(sessionid)
+    return await cl.direct_media(thread_id, amount)
 
 
 @router.post("/media", response_model=DirectMessage)

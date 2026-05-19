@@ -83,6 +83,19 @@ def _direct_thread_payload():
     }
 
 
+def _direct_short_thread_payload():
+    return {
+        "id": "100",
+        "users": [_user_short(1)],
+        "named": False,
+        "thread_title": "Thread",
+        "pending": False,
+        "thread_type": "private",
+        "viewer_id": "1",
+        "is_group": False,
+    }
+
+
 def _location_payload(pk=1):
     return {"pk": pk, "name": "Location", "lat": 1.0, "lng": 2.0}
 
@@ -239,9 +252,37 @@ class FakeExpandedClient:
         self.calls.append(("direct_pending_chunk", cursor))
         return [_direct_thread_payload()], "next-pending"
 
+    async def direct_requests(self, amount=20):
+        self.calls.append(("direct_requests", amount))
+        return [_direct_thread_payload()]
+
+    async def direct_spam_chunk(self, cursor=None):
+        self.calls.append(("direct_spam_chunk", cursor))
+        return [_direct_thread_payload()], "next-spam"
+
     async def direct_search(self, query, mode="universal"):
         self.calls.append(("direct_search", query, mode))
         return [_user_short(2)]
+
+    async def direct_message_search(self, query):
+        self.calls.append(("direct_message_search", query))
+        return [(_direct_message_payload("search1"), _direct_short_thread_payload())]
+
+    async def direct_media(self, thread_id, amount=20):
+        self.calls.append(("direct_media", thread_id, amount))
+        return [_media_payload(22)]
+
+    async def direct_active_presence(self):
+        self.calls.append(("direct_active_presence",))
+        return {"active": {"1": {"last_activity": 123}}}
+
+    async def direct_users_presence(self, user_ids):
+        self.calls.append(("direct_users_presence", user_ids))
+        return {"users": {str(user_id): {"is_active": True} for user_id in user_ids}}
+
+    async def direct_thread_by_participants(self, user_ids):
+        self.calls.append(("direct_thread_by_participants", user_ids))
+        return {"thread_id": "100", "user_ids": user_ids}
 
     async def direct_thread_create(self, user_ids, title=""):
         self.calls.append(("direct_thread_create", user_ids, title))
@@ -259,6 +300,10 @@ class FakeExpandedClient:
         self.calls.append(("direct_message_seen", thread_id, message_id))
         return True
 
+    async def direct_send_seen(self, thread_id):
+        self.calls.append(("direct_send_seen", thread_id))
+        return True
+
     async def direct_thread_update_title(self, thread_id, title):
         self.calls.append(("direct_thread_update_title", thread_id, title))
         return True
@@ -273,6 +318,22 @@ class FakeExpandedClient:
 
     async def direct_thread_hide(self, thread_id, move_to_spam=False):
         self.calls.append(("direct_thread_hide", thread_id, move_to_spam))
+        return True
+
+    async def direct_thread_mute(self, thread_id, revert=False):
+        self.calls.append(("direct_thread_mute", thread_id, revert))
+        return True
+
+    async def direct_thread_unmute(self, thread_id):
+        self.calls.append(("direct_thread_unmute", thread_id))
+        return True
+
+    async def direct_thread_mute_video_call(self, thread_id, revert=False):
+        self.calls.append(("direct_thread_mute_video_call", thread_id, revert))
+        return True
+
+    async def direct_thread_unmute_video_call(self, thread_id):
+        self.calls.append(("direct_thread_unmute_video_call", thread_id))
         return True
 
     async def direct_message_like(self, thread_id, message_id, client_context=None):
@@ -638,7 +699,20 @@ async def test_direct_routes(storage):
             params={"sessionid": "sid", "thread_id": "100", "message_id": "1", "amount": "6"},
         )
         pending = await ac.get("/direct/pending", params={"sessionid": "sid", "cursor": "pending-cursor"})
+        requests = await ac.get("/direct/requests", params={"sessionid": "sid", "amount": "2"})
+        spam = await ac.get("/direct/spam", params={"sessionid": "sid", "cursor": "spam-cursor"})
         search = await ac.get("/direct/search", params={"sessionid": "sid", "query": "user", "mode": "raven"})
+        message_search = await ac.get(
+            "/direct/messages/search",
+            params={"sessionid": "sid", "query": "hello"},
+        )
+        thread_media = await ac.get("/direct/media", params={"sessionid": "sid", "thread_id": "100", "amount": "2"})
+        active_presence = await ac.get("/direct/presence", params={"sessionid": "sid"})
+        users_presence = await ac.get("/direct/presence", params={"sessionid": "sid", "user_ids": ["1", "2"]})
+        thread_by_participants = await ac.get(
+            "/direct/thread/by/participants",
+            params={"sessionid": "sid", "user_ids": ["1", "2"]},
+        )
         created = await ac.post("/direct/thread", data={"sessionid": "sid", "user_ids": ["1", "2"], "title": "Team"})
         message = await ac.post(
             "/direct/message",
@@ -651,6 +725,7 @@ async def test_direct_routes(storage):
             "/direct/message/seen",
             data={"sessionid": "sid", "thread_id": "100", "message_id": "1"},
         )
+        thread_seen = await ac.patch("/direct/thread/seen", data={"sessionid": "sid", "thread_id": "100"})
         patch_thread = await ac.patch(
             "/direct/thread",
             data={"sessionid": "sid", "thread_id": "100", "title": "Renamed", "is_unread": "true"},
@@ -662,6 +737,16 @@ async def test_direct_routes(storage):
         hide_thread = await ac.delete(
             "/direct/thread",
             params={"sessionid": "sid", "thread_id": "100", "move_to_spam": "true"},
+        )
+        mute_thread = await ac.post("/direct/thread/mute", data={"sessionid": "sid", "thread_id": "100"})
+        unmute_thread = await ac.delete("/direct/thread/mute", params={"sessionid": "sid", "thread_id": "100"})
+        mute_video_call = await ac.post(
+            "/direct/thread/video/call/mute",
+            data={"sessionid": "sid", "thread_id": "100"},
+        )
+        unmute_video_call = await ac.delete(
+            "/direct/thread/video/call/mute",
+            params={"sessionid": "sid", "thread_id": "100"},
         )
         like_message = await ac.post(
             "/direct/message/like",
@@ -764,16 +849,28 @@ async def test_direct_routes(storage):
 
     assert inbox.status_code == 200 and threads.status_code == 200 and thread.status_code == 200
     assert messages.status_code == 200 and message_lookup.status_code == 200
-    assert pending.status_code == 200 and search.status_code == 200
+    assert pending.status_code == 200 and requests.status_code == 200 and spam.status_code == 200
+    assert search.status_code == 200 and message_search.status_code == 200
+    assert thread_media.status_code == 200 and active_presence.status_code == 200
+    assert users_presence.status_code == 200 and thread_by_participants.status_code == 200
     assert threads.json()[0]["id"] == "100"
     assert messages.json()[0]["text"] == "hello"
     assert message_lookup.json()["id"] == "1"
     assert pending.json()["next_cursor"] == "next-pending"
+    assert spam.json()["next_cursor"] == "next-spam"
     assert search.json()[0]["username"] == "user2"
+    assert message_search.json()[0]["message"]["id"] == "search1"
+    assert message_search.json()[0]["thread"]["id"] == "100"
+    assert thread_media.json()[0]["pk"] == 22
+    assert active_presence.json()["active"]["1"]["last_activity"] == 123
+    assert users_presence.json()["users"]["2"]["is_active"] is True
+    assert thread_by_participants.json()["thread_id"] == "100"
     assert created.status_code == 200 and created.json() == "100"
     assert message.status_code == 200 and message.json()["text"] == "hello"
-    assert deleted.status_code == 200 and seen.status_code == 200
+    assert deleted.status_code == 200 and seen.status_code == 200 and thread_seen.status_code == 200
     assert patch_thread.status_code == 200 and add_user.status_code == 200 and hide_thread.status_code == 200
+    assert mute_thread.status_code == 200 and unmute_thread.status_code == 200
+    assert mute_video_call.status_code == 200 and unmute_video_call.status_code == 200
     assert like_message.status_code == 200 and unlike_message.status_code == 200
     assert react_message.status_code == 200 and delete_reaction.status_code == 200
     assert share_media.status_code == 200 and share_media.json()["id"] == "media-share"
@@ -797,13 +894,25 @@ async def test_direct_routes(storage):
     assert ("direct_messages", 100, 4) in storage.client.calls
     assert ("direct_message", 100, 1, 6) in storage.client.calls
     assert ("direct_pending_chunk", "pending-cursor") in storage.client.calls
+    assert ("direct_requests", 2) in storage.client.calls
+    assert ("direct_spam_chunk", "spam-cursor") in storage.client.calls
     assert ("direct_search", "user", "raven") in storage.client.calls
+    assert ("direct_message_search", "hello") in storage.client.calls
+    assert ("direct_media", 100, 2) in storage.client.calls
+    assert ("direct_active_presence",) in storage.client.calls
+    assert ("direct_users_presence", [1, 2]) in storage.client.calls
+    assert ("direct_thread_by_participants", [1, 2]) in storage.client.calls
     assert ("direct_thread_create", [1, 2], "Team") in storage.client.calls
     assert ("direct_message_seen", 100, 1) in storage.client.calls
+    assert ("direct_send_seen", 100) in storage.client.calls
     assert ("direct_thread_update_title", 100, "Renamed") in storage.client.calls
     assert ("direct_thread_mark_unread", 100) in storage.client.calls
     assert ("direct_thread_add_users", 100, [3, 4]) in storage.client.calls
     assert ("direct_thread_hide", 100, True) in storage.client.calls
+    assert ("direct_thread_mute", 100, False) in storage.client.calls
+    assert ("direct_thread_unmute", 100) in storage.client.calls
+    assert ("direct_thread_mute_video_call", 100, False) in storage.client.calls
+    assert ("direct_thread_unmute_video_call", 100) in storage.client.calls
     assert ("direct_message_like", 100, 1, "ctx") in storage.client.calls
     assert ("direct_message_unlike", 100, 1, "ctx") in storage.client.calls
     assert ("direct_send_reaction", 100, 1, "\U0001f525", "ctx", "long_press", "text") in storage.client.calls
