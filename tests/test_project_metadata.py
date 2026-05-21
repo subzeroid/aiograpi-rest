@@ -578,56 +578,36 @@ def test_release_workflow_verifies_published_artifacts():
     assert "http://127.0.0.1:18080/build" in run_commands
 
 
-def test_live_tests_workflow_runs_nightly_against_real_session_flow():
-    workflow = yaml.load((ROOT / ".github" / "workflows" / "live-tests.yml").read_text(), Loader=yaml.BaseLoader)
+def test_github_actions_run_offline_regressions_only():
+    assert not (ROOT / ".github" / "workflows" / "live-tests.yml").exists()
 
-    assert workflow["name"] == "Live Tests"
-    assert workflow["env"]["FORCE_JAVASCRIPT_ACTIONS_TO_NODE24"] == "true"
-    assert workflow["on"]["workflow_dispatch"] == {}
-    assert workflow["on"]["schedule"] == [{"cron": "17 3 * * *"}]
+    for path in sorted((ROOT / ".github" / "workflows").glob("*.yml")):
+        text = path.read_text()
+        assert "TEST_ACCOUNTS_URL" not in text, path.name
+        assert "tests/live" not in text, path.name
+        assert "-m live" not in text, path.name
 
-    job = workflow["jobs"]["live"]
-    assert job["if"] == "github.repository == 'subzeroid/aiograpi-rest'"
-    assert job["timeout-minutes"] == "30"
-    assert job["env"]["TEST_ACCOUNTS_URL"] == "${{ secrets.TEST_ACCOUNTS_URL }}"
-    assert job["env"]["TEST_ACCOUNTS_COUNT"] == "25"
-    assert job["env"]["LIVE_ACCOUNT_TIMEOUT"] == "90"
-    assert job["env"]["LIVE_PAGINATION_ACCOUNTS_COUNT"] == "5"
-    assert job["env"]["LIVE_PAGINATION_TIMEOUT"] == "180"
-    assert job["env"]["LIVE_STORY_ACCOUNTS_COUNT"] == "5"
-    assert job["env"]["LIVE_STORY_TIMEOUT"] == "240"
-    assert job["env"]["LIVE_MEDIA_ACCOUNTS_COUNT"] == "5"
-    assert job["env"]["LIVE_MEDIA_TIMEOUT"] == "300"
-    assert job["env"]["LIVE_API_BASE_URL"] == "http://127.0.0.1:8000"
-
-    steps = job["steps"]
-    assert any(step.get("uses") == "actions/checkout@v6.0.2" for step in steps)
-    assert any(step.get("uses") == "actions/setup-python@v6.2.0" for step in steps)
-
-    run_commands = "\n".join(step.get("run", "") for step in steps)
-    assert "docker compose up -d api" in run_commands
-    assert "curl -fsS http://127.0.0.1:8000/health" in run_commands
-    assert "pytest tests/live -m live -o addopts='' -v" in run_commands
-    assert "::notice::TEST_ACCOUNTS_URL is not configured; skipping live tests." in run_commands
-    assert "docker compose logs api" in run_commands
-
-
-def test_live_tests_cover_published_image_and_paginated_read_lists():
-    workflow = yaml.load((ROOT / ".github" / "workflows" / "live-tests.yml").read_text(), Loader=yaml.BaseLoader)
-    live_smoke = (ROOT / "tests" / "live" / "test_live_smoke.py").read_text()
-    http_smoke = (ROOT / "tests" / "live" / "test_live_http_smoke.py").read_text()
-    readme = (ROOT / "README.md").read_text()
-
+    workflow = yaml.load((ROOT / ".github" / "workflows" / "tests.yml").read_text(), Loader=yaml.BaseLoader)
     run_commands = "\n".join(
         step.get("run", "")
         for job in workflow["jobs"].values()
         for step in job.get("steps", [])
     )
-    assert "docker rm -f aiograpi-rest-live >/dev/null 2>&1 || true" in run_commands
-    assert "docker run --pull always" in run_commands
-    assert "subzeroid/aiograpi-rest:latest" in run_commands
-    assert 'TEST_ACCOUNTS_COUNT: "5"' in (ROOT / ".github" / "workflows" / "live-tests.yml").read_text()
-    assert "pytest tests/live/test_live_http_smoke.py -m live -o addopts='' -v" in run_commands
+    assert "ruff check ." in run_commands
+    assert "python scripts/generate_aiograpi_coverage.py --check" in run_commands
+    assert "pytest --cov=. --cov-report=term-missing --cov-fail-under=100" in run_commands
+
+
+def test_local_live_tests_cover_published_image_and_paginated_read_lists():
+    live_smoke = (ROOT / "tests" / "live" / "test_live_smoke.py").read_text()
+    http_smoke = (ROOT / "tests" / "live" / "test_live_http_smoke.py").read_text()
+    readme = (ROOT / "README.md").read_text()
+
+    assert "TEST_ACCOUNTS_URL" in live_smoke
+    assert "TEST_ACCOUNTS_URL" in http_smoke
+    assert "LIVE_API_BASE_URL" in http_smoke
+    assert "test_live_http_login_authorize_and_user_about_flow" in http_smoke
+    assert "test_live_http_story_upload_creates_visible_downloadable_image_story" in http_smoke
 
     for endpoint in (
         "/user/posts",

@@ -136,3 +136,4 @@ dmypy.json
 
 # user database
 db.json
+.gstack/
