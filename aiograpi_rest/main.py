@@ -789,6 +789,12 @@ async def handle_exception(request, exc: Exception):
     elif isinstance(exc, aiograpi_exceptions.UnknownError) and "The username you entered" in str(exc):
         status_code = 401
         body["hint"] = "Check the Instagram username and retry POST /auth/login."
+    elif isinstance(exc, TypeError) and "NoneType" in str(exc) and "int(" in str(exc):
+        status_code = 502
+        body["hint"] = (
+            "Instagram did not return ig-set-password-encryption-key-id. "
+            "Often proxy geo mismatch, block, or challenge HTML instead of the mobile API."
+        )
     return JSONResponse(body, status_code=status_code)
 
 

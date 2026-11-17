@@ -28,7 +28,7 @@ def _apply_client_options(
         cl.set_locale(locale)
 
     if timezone != "":
-        cl.set_timezone_offset(timezone)
+        cl.set_timezone_offset(int(timezone))
 
 
 @router.post("/login")

@@ -32,7 +32,7 @@ def test_pyproject_replaces_requirements_txt():
     assert not (ROOT / "requirements.txt").exists()
     pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text())
     deps = pyproject["project"]["dependencies"]
-    assert "aiograpi==1.0.9" in deps
+    assert any(dep.startswith("aiograpi>=") for dep in deps)
     assert pyproject["project"]["requires-python"] == ">=3.13"
     assert pyproject["project"]["name"] == "aiograpi-rest"
     assert re.fullmatch(r"\d+\.\d+\.\d+", pyproject["project"]["version"])
@@ -463,6 +463,13 @@ def test_app_version_returns_unknown_when_metadata_is_missing(monkeypatch):
     assert main._app_version() == "0+unknown"
 
 
+def test_dockerfile_monorepo_installs_sibling_aiograpi():
+    dockerfile = (ROOT / "Dockerfile.monorepo").read_text()
+    assert "COPY aiograpi /tmp/aiograpi" in dockerfile
+    assert "pip install /tmp/aiograpi" in dockerfile
+    assert "COPY aiograpi-rest/pyproject.toml" in dockerfile
+
+
 def test_dockerfile_uses_python_313_and_pyproject_install():
     dockerfile = (ROOT / "Dockerfile").read_text()
     assert "FROM python:3.13-slim" in dockerfile
@@ -489,10 +496,18 @@ def test_compose_runs_api_service_on_8000():
     compose = yaml.safe_load((ROOT / "docker-compose.yml").read_text())
     assert compose["name"] == "aiograpi-rest"
     api = compose["services"]["api"]
-    assert api["build"] == {"context": ".", "target": "runtime"}
+    assert api["build"] == {
+        "context": "..",
+        "dockerfile": "aiograpi-rest/Dockerfile.monorepo",
+        "target": "runtime",
+    }
     assert "8000:8000" in api["ports"]
     test = compose["services"]["test"]
-    assert test["build"] == {"context": ".", "target": "test"}
+    assert test["build"] == {
+        "context": "..",
+        "dockerfile": "aiograpi-rest/Dockerfile.monorepo",
+        "target": "test",
+    }
     assert test["profiles"] == ["test"]
 
 
