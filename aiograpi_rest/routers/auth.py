@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Union
 from unittest.mock import patch
 
 from aiograpi import Client
+from aiograpi import exceptions as aiograpi_exceptions
 from fastapi import APIRouter, Depends, Form, HTTPException, Query
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_optional_sessionid, get_sessionid
@@ -50,18 +51,35 @@ async def auth_login(username: str = Form(...),
     cl = clients.client()
     _apply_client_options(cl, proxy, locale, timezone)
 
-    # Handle 2FA if verification code is provided
-    if verification_code:
-        # Try login with 2FA code directly
-        try:
-            result = await cl.login(username, password, verification_code=verification_code)
-        except TypeError:
-            # Fallback to mocking input if the direct parameter doesn't work
-            with patch('builtins.input', return_value=verification_code):
-                result = await cl.login(username, password)
-    else:
-        # Regular login without 2FA
-        result = await cl.login(username, password)
+    try:
+        # Handle 2FA if verification code is provided
+        if verification_code:
+            try:
+                result = await cl.login(username, password, verification_code=verification_code)
+            except TypeError:
+                with patch('builtins.input', return_value=verification_code):
+                    result = await cl.login(username, password)
+        else:
+            result = await cl.login(username, password)
+    except aiograpi_exceptions.ChallengeRequired as exc:
+        session_key = getattr(cl, "sessionid", None)
+        if session_key:
+            clients.set(cl)
+        detail = {
+            "detail": str(exc),
+            "exc_type": "ChallengeRequired",
+            "hint": (
+                "Retry POST /auth/challenge/resolve with last_json and security_code."
+                if "Challenge code required" in str(exc)
+                else "Resolve the Instagram challenge, then retry login or import a saved session."
+            ),
+        }
+        if session_key:
+            detail["session_key"] = session_key
+        last_json = getattr(cl, "last_json", None)
+        if last_json is not None:
+            detail["last_json"] = last_json
+        raise HTTPException(status_code=403, detail=detail) from exc
 
     if result:
         clients.set(cl)
