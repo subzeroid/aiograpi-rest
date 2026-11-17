@@ -582,7 +582,6 @@ def _order_openapi_paths(openapi_schema: dict[str, Any]) -> None:
 
 app = FastAPI(
     generate_unique_id_function=generate_operation_id,
-    openapi_version=OPENAPI_VERSION,
     openapi_tags=OPENAPI_TAGS,
 )
 app.include_router(auth.router)
