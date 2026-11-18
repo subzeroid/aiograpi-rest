@@ -26,8 +26,7 @@ ENV AIOGRAPI_REST_DB_PATH=/data/db.json
 
 WORKDIR /app
 
-COPY aiograpi /tmp/aiograpi
-RUN pip install /tmp/aiograpi
+RUN pip install "aiograpi==2.1.15"
 
 COPY aiograpi-rest/pyproject.toml aiograpi-rest/README.md /app/
 COPY aiograpi-rest/aiograpi_rest /app/aiograpi_rest

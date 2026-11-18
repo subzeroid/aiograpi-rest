@@ -463,10 +463,9 @@ def test_app_version_returns_unknown_when_metadata_is_missing(monkeypatch):
     assert main._app_version() == "0+unknown"
 
 
-def test_dockerfile_monorepo_installs_sibling_aiograpi():
+def test_dockerfile_monorepo_installs_aiograpi_from_pypi():
     dockerfile = (ROOT / "Dockerfile.monorepo").read_text()
-    assert "COPY aiograpi /tmp/aiograpi" in dockerfile
-    assert "pip install /tmp/aiograpi" in dockerfile
+    assert 'pip install "aiograpi==2.1.15"' in dockerfile
     assert "COPY aiograpi-rest/pyproject.toml" in dockerfile
 
 
