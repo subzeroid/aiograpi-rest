@@ -192,8 +192,8 @@ async def test_track_music_routes_call_aiograpi_methods(storage):
     assert ("track_info_by_id", "track-1", "cursor") in storage.client.calls
     assert ("track_info_by_canonical_id", "canonical-1") in storage.client.calls
     assert ("track_stream_info_by_id", "track-1", "stream") in storage.client.calls
-    assert ("track_download_by_url", "https://example.com/audio.mp3", "", ".") in storage.client.calls
-    assert ("track_download_by_url", "https://example.com/audio.mp3", "track.mp3", ".") in storage.client.calls
+    assert ("track_download_by_url", "https://example.com/audio.mp3", "", "") in storage.client.calls
+    assert ("track_download_by_url", "https://example.com/audio.mp3", "track.mp3", "") in storage.client.calls
     assert ("music_in_feed_audio_browser", "browser-1") in storage.client.calls
     assert ("music_search_v2", "rock", "clips", True, "search-1", "browser-2") in storage.client.calls
     assert ("music_keyword_search", "ro", "clips", 2, "search-2", "browser-3") in storage.client.calls
