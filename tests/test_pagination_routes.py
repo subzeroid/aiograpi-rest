@@ -120,6 +120,14 @@ class FakePaginationClient:
         self.calls.append(("user_followers_v1_chunk", user_id, max_amount, max_id))
         return [_user_short(1)], "next-followers"
 
+    async def user_followers_private_gql_chunk(self, user_id, max_amount=0, max_id=None):
+        self.calls.append(("user_followers_private_gql_chunk", user_id, max_amount, max_id))
+        return [_user_short(1)], "next-followers-gql"
+
+    async def user_following_private_gql_chunk(self, user_id, max_amount=0, max_id=None):
+        self.calls.append(("user_following_private_gql_chunk", user_id, max_amount, max_id))
+        return [_user_short(2)], None
+
     async def user_following_v1_chunk(self, user_id, max_amount=0, max_id=""):
         self.calls.append(("user_following_v1_chunk", user_id, max_amount, max_id))
         return [_user_short(2)], "next-following"
@@ -268,6 +276,8 @@ async def test_user_discovery_story_and_direct_list_routes_return_items_and_next
     checks = [
         ("/user/followers", {"user_id": "10", "amount": "11", "cursor": "f1"}, "next-followers"),
         ("/user/following", {"user_id": "10", "amount": "12", "cursor": "g1"}, "next-following"),
+        ("/user/followers/gql", {"user_id": "10", "amount": "11", "cursor": "fq1"}, "next-followers-gql"),
+        ("/user/following/gql", {"user_id": "10", "amount": "12"}, ""),
         ("/account/follow/requests", {"amount": "13", "cursor": "r1"}, "next-follow-requests"),
         ("/hashtag/media/top", {"name": "python", "amount": "14", "cursor": "ht1"}, "next-hashtag-top"),
         ("/hashtag/media/recent", {"name": "python", "amount": "15", "cursor": "hr1"}, "next-hashtag-recent"),
@@ -295,6 +305,9 @@ async def test_user_discovery_story_and_direct_list_routes_return_items_and_next
         assert len(body["items"]) == 1
         assert body["next_cursor"] == next_cursor
 
+    assert ("user_followers_private_gql_chunk", "10", 11, "fq1") in storage.client.calls
+    # An empty cursor starts from the top (None for the GraphQL query, not "").
+    assert ("user_following_private_gql_chunk", "10", 12, None) in storage.client.calls
     assert ("user_follow_requests_chunk", 13, "r1") in storage.client.calls
     assert ("hashtag_medias_v1_chunk", "python", 14, "top", "ht1") in storage.client.calls
     assert ("hashtag_medias_v1_chunk", "python", 15, "recent", "hr1") in storage.client.calls
@@ -321,6 +334,8 @@ async def test_openapi_read_list_routes_use_page_schemas_and_cursor_parameter():
         "/user/videos": "MediaPage",
         "/user/followers": "UserShortPage",
         "/user/following": "UserShortPage",
+        "/user/followers/gql": "UserShortPage",
+        "/user/following/gql": "UserShortPage",
         "/account/follow/requests": "UserShortPage",
         "/hashtag/media/top": "MediaPage",
         "/hashtag/media/recent": "MediaPage",

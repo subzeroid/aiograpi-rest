@@ -81,11 +81,13 @@ class FakeStorage:
     def __init__(self):
         self.created = FakeClient()
         self.saved = []
+        self.get_calls = []
 
     def client(self):
         return self.created
 
-    async def get(self, sessionid):
+    async def get(self, sessionid, warm_timeline=True):
+        self.get_calls.append((sessionid, warm_timeline))
         return self.created
 
     def set(self, client):
@@ -134,7 +136,7 @@ async def test_login_without_verification_code_uses_two_arg_login(fake_storage):
     assert response.status_code == 200
     assert response.json() == "sid"
     assert fake_storage.created.locale == "en_US"
-    assert fake_storage.created.timezone == "10800"
+    assert fake_storage.created.timezone == 10800
     assert fake_storage.created.calls == [("login", "u", "p", "")]
 
 
@@ -216,11 +218,14 @@ async def test_login_challenge_required_returns_actionable_403(fake_storage):
 
     assert response.status_code == 403
     assert response.json() == {
-        "detail": "challenge_required",
-        "exc_type": "ChallengeRequired",
-        "hint": "Resolve the Instagram challenge, then retry login or import a saved session.",
+        "detail": {
+            "detail": "challenge_required",
+            "exc_type": "ChallengeRequired",
+            "hint": "Resolve the Instagram challenge, then retry login or import a saved session.",
+            "session_key": "sid",
+        },
     }
-    assert fake_storage.saved == []
+    assert fake_storage.saved == [fake_storage.created]
 
 
 @pytest.mark.asyncio
@@ -278,7 +283,7 @@ async def test_login_by_sessionid_accepts_client_options(fake_storage):
     assert response.json() == "sid"
     assert fake_storage.created.proxy == "http://proxy.example:8080"
     assert fake_storage.created.locale == "en_US"
-    assert fake_storage.created.timezone == "10800"
+    assert fake_storage.created.timezone == 10800
     assert ("login_by_sessionid", "sid") in fake_storage.created.calls
     assert fake_storage.saved == [fake_storage.created]
 
@@ -381,8 +386,19 @@ async def test_settings_set_can_patch_runtime_client_options(fake_storage):
     assert fake_storage.created.settings == {"authorization_data": {"sessionid": "sid"}}
     assert fake_storage.created.proxy == "http://proxy.example:8080"
     assert fake_storage.created.locale == "en_US"
-    assert fake_storage.created.timezone == "10800"
+    assert fake_storage.created.timezone == 10800
     assert fake_storage.saved == [fake_storage.created]
+    # A new proxy is applied without warming the timeline through the old one.
+    assert fake_storage.get_calls == [("sid", False)]
+
+
+@pytest.mark.asyncio
+async def test_settings_set_without_proxy_keeps_timeline_warmup(fake_storage):
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        response = await ac.patch("/auth/settings", data={"sessionid": "sid", "locale": "en_US"})
+
+    assert response.status_code == 200
+    assert fake_storage.get_calls == [("sid", True)]
 
 
 @pytest.mark.asyncio

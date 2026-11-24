@@ -401,10 +401,45 @@ from the previous page. This shape is used for:
 - `GET /user/reels`
 - `GET /account/follow/requests`
 - `GET /user/followers`
+- `GET /user/followers/gql`
 - `GET /user/following`
+- `GET /user/following/gql`
 - `GET /user/posts`
 - `GET /user/tagged/posts`
 - `GET /user/videos`
+
+### Follower and following lists: v1 or private GraphQL
+
+There are two routes for each list:
+
+| Route | aiograpi method | Instagram call |
+|-------|-----------------|----------------|
+| `GET /user/followers` | `user_followers_v1_chunk` | `GET /api/v1/friendships/{id}/followers/` |
+| `GET /user/followers/gql` | `user_followers_private_gql_chunk` | private GraphQL `FollowersList` (Android app) |
+| `GET /user/following` | `user_following_v1_chunk` | `GET /api/v1/friendships/{id}/following/` |
+| `GET /user/following/gql` | `user_following_private_gql_chunk` | private GraphQL `FollowingList` (Android app) |
+
+What we saw on a live account (November 2026, aiograpi 2.1.15):
+
+- **Instagram throttles the v1 followers list per account and endpoint.** After
+  about 120 v1 followers pages in roughly 14 hours, every
+  `friendships/{id}/followers` call answered HTTP 429 (`ClientThrottledError`),
+  for any target user. In the same minutes, v1 `following`, media comments,
+  media likers and user info calls kept answering 200.
+- **The private GraphQL list kept answering 200 for the same account while the
+  v1 list was throttled.** Its payload root is
+  `xdt_api__v1__friendships__followers`, so it is served by the same backend
+  list, but Instagram counted it separately.
+- **The cursors are the same kind.** A v1 `next_cursor` (`"847|AQH…"`) passed as
+  `cursor` to `/user/followers/gql` continued the list from that point (none of
+  the first page came back) and returned a cursor in the same format
+  (`"872|AQH…"`). A crawl can switch from v1 to GraphQL without starting over.
+  We could not test the other direction while v1 was throttled.
+- **GraphQL pages are smaller and start with a plain offset.** Starting
+  without a cursor, pages held 25 users and the cursors were plain offsets
+  (`"25"`, `"50"`). Consecutive pages repeated a few users (6 of 25 in one
+  test), so de-duplicate by `pk`. `amount` only trims the page Instagram sends;
+  it does not ask for more.
 
 User post collection routes accept either `user_id` for numeric Instagram
 user PKs or `username` for usernames. If a legacy client passes a username in

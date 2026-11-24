@@ -416,7 +416,9 @@ async def test_openapi_uses_rest_http_methods():
         "/user/featured/accounts": {"get"},
         "/user/follower": {"delete"},
         "/user/followers": {"get"},
+        "/user/followers/gql": {"get"},
         "/user/following": {"get"},
+        "/user/following/gql": {"get"},
         "/user/friendship": {"get"},
         "/user/friendships": {"get"},
         "/user/fundraiser": {"get"},
@@ -789,6 +791,7 @@ async def test_openapi_uses_human_friendly_operation_summaries():
     assert paths["/track/download/by/url"]["get"]["summary"] == "Download track audio from a URL"
     assert paths["/user"]["get"]["summary"] == "Get user profile"
     assert paths["/user/followers"]["get"]["summary"] == "List paginated user followers"
+    assert paths["/user/followers/gql"]["get"]["summary"] == "List paginated user followers via private GraphQL"
     assert paths["/user/close-friend"]["post"]["summary"] == "Add a user to close friends"
     assert paths["/user/close-friend"]["delete"]["summary"] == "Remove a user from close friends"
     assert paths["/user/creator"]["get"]["summary"] == "Get creator info for a user"

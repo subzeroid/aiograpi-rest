@@ -11,7 +11,7 @@ requires-python = ">=3.13"
 dependencies = [
   "fastapi>=0.115,<1",
   "uvicorn[standard]>=0.34,<1",
-  "aiograpi==1.0.9",
+  "aiograpi>=2.1.15,<3",
   "python-multipart>=0.0.20,<1",
   "tinydb>=4.8,<5",
   "requests>=2.32,<3",
