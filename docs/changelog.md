@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `GET /account/feed/timeline` takes optional `reason` (`cold_start_fetch`, `warm_start_fetch`, `pagination`, `pull_to_refresh`, `auto_refresh`) and `max_id` query parameters, forwarded to `get_timeline_feed()`. Without them the request is unchanged (aiograpi's default `pull_to_refresh`, which returns only what is new since the last load).
+
 ## v6.0.0 - 2026-05-21
 
 Release: <https://github.com/subzeroid/aiograpi-rest/releases/tag/v6.0.0>

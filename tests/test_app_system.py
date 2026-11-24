@@ -1075,6 +1075,51 @@ async def test_authorized_routes_accept_sessionid_cookie(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_timeline_feed_forwards_reason_and_max_id():
+    from aiograpi_rest.dependencies import get_clients
+
+    calls = []
+
+    class Storage:
+        async def get(self, sessionid):
+            class Client:
+                async def get_timeline_feed(self, **kwargs):
+                    calls.append(kwargs)
+                    return {"feed_items": [], "next_max_id": "next"}
+
+            return Client()
+
+        def close(self):
+            pass
+
+    app.dependency_overrides[get_clients] = lambda: Storage()
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+            default = await ac.get("/account/feed/timeline", headers={"X-Session-ID": "sid"})
+            cold = await ac.get(
+                "/account/feed/timeline",
+                params={"reason": "cold_start_fetch"},
+                headers={"X-Session-ID": "sid"},
+            )
+            page = await ac.get(
+                "/account/feed/timeline",
+                params={"max_id": "QVFE"},
+                headers={"X-Session-ID": "sid"},
+            )
+            invalid = await ac.get(
+                "/account/feed/timeline",
+                params={"reason": "whenever"},
+                headers={"X-Session-ID": "sid"},
+            )
+    finally:
+        app.dependency_overrides.clear()
+
+    assert [default.status_code, cold.status_code, page.status_code] == [200, 200, 200]
+    assert calls == [{}, {"reason": "cold_start_fetch"}, {"max_id": "QVFE"}]
+    assert invalid.status_code == 422
+
+
+@pytest.mark.asyncio
 async def test_authorized_routes_reject_missing_sessionid():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         response = await ac.get("/account/feed/timeline")
