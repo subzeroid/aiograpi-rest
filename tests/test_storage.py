@@ -50,6 +50,18 @@ async def test_get_restores_settings_and_validates_timeline(tmp_path, monkeypatc
     assert client.timeline_called is True
 
 
+@pytest.mark.asyncio
+async def test_get_can_skip_timeline_warmup(tmp_path):
+    storage = ClientStorage(db_path=tmp_path / "db.json", client_factory=FakeClient)
+    storage.db.insert({"sessionid": "sid", "settings": json.dumps({"x": 1}), "proxy": "http://old.example:8080"})
+
+    client = await storage.get("sid", warm_timeline=False)
+
+    assert client.settings == {"x": 1}
+    assert client.proxy == "http://old.example:8080"
+    assert client.timeline_called is False
+
+
 def test_set_persists_client_settings(tmp_path):
     storage = ClientStorage(db_path=tmp_path / "db.json", client_factory=FakeClient)
     assert storage.set(FakeClient()) is True
