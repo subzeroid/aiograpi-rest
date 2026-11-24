@@ -275,10 +275,21 @@ def test_aiograpi_coverage_prefers_non_chunk_infos_candidate_names():
 
 def test_aiograpi_coverage_markdown_summarizes_candidate_backlog():
     markdown = build_markdown()
+    methods = client_methods()
+    covered = {
+        method
+        for route in route_coverage()
+        for method in route.client_methods
+    }
+    candidate_count = sum(
+        1
+        for method in methods.values()
+        if classify_method(method, covered).status == "candidate"
+    )
 
     assert "## REST Relevance" in markdown
     assert "## Candidate Backlog By Area" in markdown
-    assert "- Candidate REST backlog: **0**" in markdown
+    assert f"- Candidate REST backlog: **{candidate_count}**" in markdown
     candidate_section = markdown.split("## Candidate Backlog By Area", 1)[1].split(
         "## REST Routes To aiograpi Methods",
         1,

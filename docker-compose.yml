@@ -3,7 +3,8 @@ name: aiograpi-rest
 services:
   api:
     build:
-      context: .
+      context: ..
+      dockerfile: aiograpi-rest/Dockerfile.monorepo
       target: runtime
     stdin_open: true
     tty: true
@@ -19,7 +20,8 @@ services:
     profiles:
       - test
     build:
-      context: .
+      context: ..
+      dockerfile: aiograpi-rest/Dockerfile.monorepo
       target: test
     volumes:
       - .:/app

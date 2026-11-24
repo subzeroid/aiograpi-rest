@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Union
 from unittest.mock import patch
 
 from aiograpi import Client
+from aiograpi import exceptions as aiograpi_exceptions
 from fastapi import APIRouter, Depends, Form, HTTPException, Query
 
 from aiograpi_rest.dependencies import ClientStorage, get_clients, get_optional_sessionid, get_sessionid
@@ -27,7 +28,7 @@ def _apply_client_options(
         cl.set_locale(locale)
 
     if timezone != "":
-        cl.set_timezone_offset(timezone)
+        cl.set_timezone_offset(int(timezone))
 
 
 @router.post("/login")
@@ -50,18 +51,35 @@ async def auth_login(username: str = Form(...),
     cl = clients.client()
     _apply_client_options(cl, proxy, locale, timezone)
 
-    # Handle 2FA if verification code is provided
-    if verification_code:
-        # Try login with 2FA code directly
-        try:
-            result = await cl.login(username, password, verification_code=verification_code)
-        except TypeError:
-            # Fallback to mocking input if the direct parameter doesn't work
-            with patch('builtins.input', return_value=verification_code):
-                result = await cl.login(username, password)
-    else:
-        # Regular login without 2FA
-        result = await cl.login(username, password)
+    try:
+        # Handle 2FA if verification code is provided
+        if verification_code:
+            try:
+                result = await cl.login(username, password, verification_code=verification_code)
+            except TypeError:
+                with patch('builtins.input', return_value=verification_code):
+                    result = await cl.login(username, password)
+        else:
+            result = await cl.login(username, password)
+    except aiograpi_exceptions.ChallengeRequired as exc:
+        session_key = getattr(cl, "sessionid", None)
+        if session_key:
+            clients.set(cl)
+        detail = {
+            "detail": str(exc),
+            "exc_type": "ChallengeRequired",
+            "hint": (
+                "Retry POST /auth/challenge/resolve with last_json and security_code."
+                if "Challenge code required" in str(exc)
+                else "Resolve the Instagram challenge, then retry login or import a saved session."
+            ),
+        }
+        if session_key:
+            detail["session_key"] = session_key
+        last_json = getattr(cl, "last_json", None)
+        if last_json is not None:
+            detail["last_json"] = last_json
+        raise HTTPException(status_code=403, detail=detail) from exc
 
     if result:
         clients.set(cl)
@@ -145,7 +163,9 @@ async def settings_set(settings: Optional[str] = Form(
     """Set client's settings
     """
     if sessionid != "":
-        cl = await clients.get(sessionid)
+        # Replacing the proxy: skip the timeline warmup, which would go through the old
+        # (possibly dead) proxy and fail before the new one is saved.
+        cl = await clients.get(sessionid, warm_timeline=proxy is None)
     else:
         if settings is None:
             raise HTTPException(status_code=422, detail="settings is required when importing a new session")
@@ -160,7 +180,7 @@ async def settings_set(settings: Optional[str] = Form(
     if locale:
         cl.set_locale(locale)
     if timezone:
-        cl.set_timezone_offset(timezone)
+        cl.set_timezone_offset(int(timezone))
     clients.set(cl)
     return cl.sessionid
 

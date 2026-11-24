@@ -50,6 +50,18 @@ async def test_get_restores_settings_and_validates_timeline(tmp_path, monkeypatc
     assert client.timeline_called is True
 
 
+@pytest.mark.asyncio
+async def test_get_can_skip_timeline_warmup(tmp_path):
+    storage = ClientStorage(db_path=tmp_path / "db.json", client_factory=FakeClient)
+    storage.db.insert({"sessionid": "sid", "settings": json.dumps({"x": 1}), "proxy": "http://old.example:8080"})
+
+    client = await storage.get("sid", warm_timeline=False)
+
+    assert client.settings == {"x": 1}
+    assert client.proxy == "http://old.example:8080"
+    assert client.timeline_called is False
+
+
 def test_set_persists_client_settings(tmp_path):
     storage = ClientStorage(db_path=tmp_path / "db.json", client_factory=FakeClient)
     assert storage.set(FakeClient()) is True
@@ -127,6 +139,56 @@ def test_client_factory_produces_configured_client(tmp_path):
 def test_close_is_a_no_op(tmp_path):
     storage = ClientStorage(db_path=tmp_path / "db.json", client_factory=FakeClient)
     assert storage.close() is None
+
+
+@pytest.mark.asyncio
+async def test_timeline_on_get_always_calls_every_get(tmp_path, monkeypatch):
+    monkeypatch.delenv("AIOGRAPI_REST_TIMELINE_ON_GET", raising=False)
+    storage = ClientStorage(db_path=tmp_path / "db.json", client_factory=FakeClient)
+    storage.db.insert({"sessionid": "sid", "settings": json.dumps({"x": 1})})
+
+    first = await storage.get("sid")
+    second = await storage.get("sid")
+
+    assert first.timeline_called is True
+    assert second.timeline_called is True
+
+
+@pytest.mark.asyncio
+async def test_timeline_on_get_never_skips_warmup(tmp_path, monkeypatch):
+    monkeypatch.setenv("AIOGRAPI_REST_TIMELINE_ON_GET", "never")
+    storage = ClientStorage(db_path=tmp_path / "db.json", client_factory=FakeClient)
+    storage.db.insert({"sessionid": "sid", "settings": json.dumps({"x": 1})})
+
+    client = await storage.get("sid")
+
+    assert client.timeline_called is False
+
+
+@pytest.mark.asyncio
+async def test_timeline_on_get_interval_throttles_per_session(tmp_path, monkeypatch):
+    monkeypatch.setenv("AIOGRAPI_REST_TIMELINE_ON_GET", "interval")
+    monkeypatch.setenv("AIOGRAPI_REST_TIMELINE_INTERVAL_SECONDS", "60")
+    storage = ClientStorage(db_path=tmp_path / "db.json", client_factory=FakeClient)
+    storage.db.insert({"sessionid": "sid", "settings": json.dumps({"x": 1})})
+
+    timeline_times = [100.0, 100.0, 200.0]
+    call_count = [0]
+
+    def fake_monotonic():
+        index = min(call_count[0], len(timeline_times) - 1)
+        call_count[0] += 1
+        return timeline_times[index]
+
+    monkeypatch.setattr("aiograpi_rest.storages.time.monotonic", fake_monotonic)
+
+    first = await storage.get("sid")
+    second = await storage.get("sid")
+    third = await storage.get("sid")
+
+    assert first.timeline_called is True
+    assert second.timeline_called is False
+    assert third.timeline_called is True
 
 
 def test_get_clients_dependency_yields_storage(monkeypatch, tmp_path):

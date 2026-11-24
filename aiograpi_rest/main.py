@@ -582,7 +582,6 @@ def _order_openapi_paths(openapi_schema: dict[str, Any]) -> None:
 
 app = FastAPI(
     generate_unique_id_function=generate_operation_id,
-    openapi_version=OPENAPI_VERSION,
     openapi_tags=OPENAPI_TAGS,
 )
 app.include_router(auth.router)
@@ -790,6 +789,12 @@ async def handle_exception(request, exc: Exception):
     elif isinstance(exc, aiograpi_exceptions.UnknownError) and "The username you entered" in str(exc):
         status_code = 401
         body["hint"] = "Check the Instagram username and retry POST /auth/login."
+    elif isinstance(exc, TypeError) and "NoneType" in str(exc) and "int(" in str(exc):
+        status_code = 502
+        body["hint"] = (
+            "Instagram did not return ig-set-password-encryption-key-id. "
+            "Often proxy geo mismatch, block, or challenge HTML instead of the mobile API."
+        )
     return JSONResponse(body, status_code=status_code)
 
 

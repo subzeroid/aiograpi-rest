@@ -285,6 +285,15 @@ Or use Docker Compose (recommended for local dev):
 docker compose up api
 ```
 
+### Timeline warmup on session load
+
+`ClientStorage.get()` can call `get_timeline_feed()` to validate the session before each request. That is useful for health checks but expensive at high volume. Configure it with:
+
+| Variable | Default | Behavior |
+|----------|---------|----------|
+| `AIOGRAPI_REST_TIMELINE_ON_GET` | `always` | `always` — timeline on every `get`; `interval` — at most once per session per interval; `never` — skip |
+| `AIOGRAPI_REST_TIMELINE_INTERVAL_SECONDS` | `1800` | Used when mode is `interval` (seconds between timeline calls per `sessionid`, in-process memory) |
+
 Or run without Docker (requires Python 3.13):
 
 ```
