@@ -163,7 +163,9 @@ async def settings_set(settings: Optional[str] = Form(
     """Set client's settings
     """
     if sessionid != "":
-        cl = await clients.get(sessionid)
+        # Replacing the proxy: skip the timeline warmup, which would go through the old
+        # (possibly dead) proxy and fail before the new one is saved.
+        cl = await clients.get(sessionid, warm_timeline=proxy is None)
     else:
         if settings is None:
             raise HTTPException(status_code=422, detail="settings is required when importing a new session")

@@ -59,8 +59,12 @@ class ClientStorage:
             return
         await cl.get_timeline_feed()
 
-    async def get(self, sessionid: str) -> Client:
+    async def get(self, sessionid: str, warm_timeline: bool = True) -> Client:
         """Get client settings
+
+        ``warm_timeline=False`` restores the client without touching Instagram. Callers that
+        are about to replace the proxy need this: the stored proxy may be dead, and warming
+        the timeline through it would fail before the new proxy can be applied.
         """
         key = self._clean_sessionid(sessionid)
         rows = self.db.search(Query().sessionid == key)
@@ -72,7 +76,8 @@ class ClientStorage:
         cl.set_settings(settings)
         if row.get("proxy"):
             cl.set_proxy(row["proxy"])
-        await self._maybe_get_timeline_feed(key, cl)
+        if warm_timeline:
+            await self._maybe_get_timeline_feed(key, cl)
         return cl
 
     def set(self, cl: Client) -> bool:
