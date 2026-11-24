@@ -1,6 +1,6 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from aiograpi.exceptions import CollectionNotFound
 from aiograpi.types import Account, Collection, Media, UserShort
@@ -54,15 +54,35 @@ async def account_info(
     return await cl.account_info()
 
 
+TimelineReason = Literal["cold_start_fetch", "warm_start_fetch", "pagination", "pull_to_refresh", "auto_refresh"]
+
+
 @router.get("/feed/timeline", response_model=Dict)
 async def timeline_feed(
     sessionid: str = Depends(get_sessionid),
+    reason: Optional[TimelineReason] = Query(
+        None,
+        description=(
+            "Why the feed is loaded, as the app sends it. Defaults to aiograpi's pull_to_refresh, "
+            "which returns only what is new since the last load; cold_start_fetch loads the feed "
+            "as on app open."
+        ),
+    ),
+    max_id: Optional[str] = Query(
+        None,
+        description="next_max_id of the previous page, to load the next one (reason becomes pagination).",
+    ),
     clients: ClientStorage = Depends(get_clients),
 ) -> Dict:
     """Get your timeline feed
     """
     cl = await clients.get(sessionid)
-    return await cl.get_timeline_feed()
+    kwargs: Dict[str, Any] = {}
+    if reason:
+        kwargs["reason"] = reason
+    if max_id:
+        kwargs["max_id"] = max_id
+    return await cl.get_timeline_feed(**kwargs)
 
 
 @router.get("/feed/new", response_model=bool)
