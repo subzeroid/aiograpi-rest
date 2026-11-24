@@ -86,6 +86,37 @@ async def user_followers(sessionid: str = Depends(get_sessionid),
     return UserShortPage(items=items, next_cursor=next_cursor or "")
 
 
+@router.get("/followers/gql", response_model=UserShortPage)
+async def user_followers_gql(sessionid: str = Depends(get_sessionid),
+                             user_id: str = Query(...),
+                             amount: int = Query(50, ge=1, le=200),
+                             cursor: str = Query(""),
+                             clients: ClientStorage = Depends(get_clients)) -> UserShortPage:
+    """Get a page of user's followers through the private GraphQL FollowersList query
+    (the Android app's follow list), a different call from `/user/followers` (v1
+    `friendships/{id}/followers`). Instagram may throttle one and still answer the other.
+    `amount` only trims the page Instagram returns.
+    """
+    cl = await clients.get(sessionid)
+    items, next_cursor = await cl.user_followers_private_gql_chunk(user_id, amount, cursor or None)
+    return UserShortPage(items=items, next_cursor=next_cursor or "")
+
+
+@router.get("/following/gql", response_model=UserShortPage)
+async def user_following_gql(sessionid: str = Depends(get_sessionid),
+                             user_id: str = Query(...),
+                             amount: int = Query(50, ge=1, le=200),
+                             cursor: str = Query(""),
+                             clients: ClientStorage = Depends(get_clients)) -> UserShortPage:
+    """Get a page of user's following through the private GraphQL FollowingList query,
+    a different call from `/user/following` (v1 `friendships/{id}/following`).
+    `amount` only trims the page Instagram returns.
+    """
+    cl = await clients.get(sessionid)
+    items, next_cursor = await cl.user_following_private_gql_chunk(user_id, amount, cursor or None)
+    return UserShortPage(items=items, next_cursor=next_cursor or "")
+
+
 @router.get("/following", response_model=UserShortPage)
 async def user_following(sessionid: str = Depends(get_sessionid),
                          user_id: str = Query(...),

@@ -339,6 +339,8 @@ OPERATION_SUMMARIES = {
     "getUser": "Get user profile",
     "getUserFollowers": "List paginated user followers",
     "getUserFollowing": "List paginated accounts a user follows",
+    "getUserFollowersGql": "List paginated user followers via private GraphQL",
+    "getUserFollowingGql": "List paginated accounts a user follows via private GraphQL",
     "getUserAbout": "Get user about details",
     "getUserProfileWeb": "Get user web profile",
     "getUserStream": "Get user profile stream",

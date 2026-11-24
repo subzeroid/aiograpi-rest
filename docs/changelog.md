@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `GET /user/followers/gql` and `GET /user/following/gql`: follower and
+  following pages through aiograpi's private GraphQL list methods
+  (`user_followers_private_gql_chunk`, `user_following_private_gql_chunk`).
+  They take the same `user_id`, `amount` and `cursor` and return the same
+  `items` and `next_cursor` as the v1 routes. See "Follower and following
+  lists" in `docs/api.md` for live observations on throttling and cursors.
+
 ## v6.0.0 - 2026-05-21
 
 Release: <https://github.com/subzeroid/aiograpi-rest/releases/tag/v6.0.0>
